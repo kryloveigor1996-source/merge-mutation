@@ -15,6 +15,8 @@ var drag_index := -1
 var sound: Node
 var overlay: Control
 var create_button: Button
+var nav_left: Button
+var nav_right: Button
 var species_button: Button
 var collection_species := "slime"
 var banner := ""
@@ -84,11 +86,13 @@ func _ready() -> void:
 	if settings.load("user://merge_mutation_settings.cfg") == OK:
 		sound.set_enabled(bool(settings.get_value("audio","enabled",true)))
 	species_button=button("ВЫБОР ВИДА",Rect2(207,72,133,51),Color("e5dcff"),func(): show_panel("species"))
+	species_button.add_theme_color_override("font_disabled_color",INK)
+	species_button.add_theme_stylebox_override("disabled",style(Color("e5dcff")))
 	create_button = button("СОЗДАТЬ  ·  10",Rect2(37,558,286,58),Color("ffda69"),game._create_requested)
 	create_button.add_theme_font_size_override("font_size",20)
-	button("КОЛЛЕКЦИЯ",Rect2(18,638,104,54),Color("b5e9ee"),func(): show_panel("collection"))
-	button("УЛУЧШЕНИЯ",Rect2(128,638,104,54),Color("ded2fb"),func(): show_panel("upgrades"))
-	button("НАСТРОЙКИ",Rect2(238,638,104,54),Color("ffd7b6"),func(): show_panel("settings"))
+	nav_left=button("КОЛЛЕКЦИЯ",Rect2(18,638,104,54),Color("b5e9ee"),left_nav)
+	button("КАМПАНИЯ",Rect2(128,638,104,54),Color("ded2fb"),func(): show_panel("levels"))
+	nav_right=button("НАСТРОЙКИ",Rect2(238,638,104,54),Color("ffd7b6"),right_nav)
 	layout()
 	rebuild()
 
@@ -276,7 +280,7 @@ func _draw() -> void:
 	draw_line(Vector2(351,83),Vector2(351,599),INK,7)
 	draw_line(Vector2(351,83),Vector2(351,599),Color("81bac6"),4)
 	plate(Rect2(18,15,324,44),Color("4c9fba"))
-	label("MERGE MUTATION",Vector2(180,43),23,CREAM,true)
+	label("УРОВЕНЬ %d" % game.campaign.config.number if game.in_campaign() else "MERGE MUTATION",Vector2(180,43),23,CREAM,true)
 	# Original miniature flasks make the laboratory theme visible at a glance.
 	for x in [35,325]:
 		draw_circle(Vector2(x,38),8,INK)
@@ -285,27 +289,45 @@ func _draw() -> void:
 		draw_line(Vector2(x-5,24),Vector2(x+5,24),INK,2,true)
 		draw_circle(Vector2(x-2,36),2,Color.WHITE)
 	plate(Rect2(20,72,178,51),CREAM)
-	draw_circle(Vector2(42,97),12,Color("d49832"))
-	draw_circle(Vector2(42,95),11,Color("ffdb69"))
-	label("+",Vector2(42,100),17,Color("b77730"),true)
-	label("LAB COINS",Vector2(62,87),9)
-	label(str(game.coins),Vector2(62,112),23)
-	if is_instance_valid(species_button):
+	var playing: bool=game.in_campaign()
+	nav_left.text="ПОВТОРИТЬ" if playing else "КОЛЛЕКЦИЯ"
+	nav_right.text="ПЕСОЧНИЦА" if playing else "НАСТРОЙКИ"
+	species_button.disabled=playing
+	create_button.text="СОЗДАТЬ" if playing else "СОЗДАТЬ  ·  10"
+	create_button.disabled=playing and (game.campaign.status!="active" or game.campaign.creations_left()==0 or game.campaign.spawn_index()<0)
+	if playing:
+		label("СОЗДАНИЯ",Vector2(32,88),9)
+		label(str(game.campaign.creations_left()),Vector2(32,112),23)
+		label("ХОДЫ",Vector2(116,88),9)
+		label("∞" if game.campaign.moves_left()<0 else str(game.campaign.moves_left()),Vector2(116,112),23)
+		var next: String=game.campaign.next_species()
+		species_button.text="ДАЛЕЕ\n"+(Catalog.title(Catalog.make(next)) if not next.is_empty() else "Нет созданий")
+		label(game.campaign.config.name,Vector2(23,136),10)
+	else:
+		draw_circle(Vector2(42,97),12,Color("d49832"))
+		draw_circle(Vector2(42,95),11,Color("ffdb69"))
+		label("+",Vector2(42,100),17,Color("b77730"),true)
+		label("МОНЕТЫ · ★ %d" % game.campaign_progress.stars,Vector2(62,87),9)
+		label(str(game.coins),Vector2(62,112),23)
 		species_button.text="ВИД  ▾\n"+String(Catalog.species(game.active_species).get("name","Выбрать"))
-	label("ОПЫТ %03d" % game.merges,Vector2(23,136),9)
-	label("ФОРМЫ %02d / %d" % [game.known_discoveries(),Catalog.total_forms()],Vector2(238,136),9)
+		label("ОПЫТ %03d" % game.merges,Vector2(23,136),9)
+		label("ФОРМЫ %02d / %d" % [game.known_discoveries(),Catalog.total_forms()],Vector2(238,136),9)
 	# Containment tray with raised, checkerboard specimen pads.
 	plate(Rect2(18,139,324,389),Color("4d91a4"),16)
 	for index in range(30):
 		var p := cell_center(index)-Vector2(29,28)
 		var tile := Color("e8f4ed") if (index%5+floori(float(index)/5))%2==0 else Color("d2e9e5")
 		plate(Rect2(p,Vector2(58,58)),tile,10)
+		if game.in_campaign() and game.campaign.blocked(index):
+			plate(Rect2(p,Vector2(58,58)),Color("668893"),10)
+			draw_line(p+Vector2(15,15),p+Vector2(43,43),INK,4,true)
+			draw_line(p+Vector2(43,15),p+Vector2(15,43),INK,4,true)
 		if index == drag_index:
 			draw_style_box(style(Color("ffe8a0")),Rect2(p,Vector2(58,58)))
 	for screw in [Vector2(23,144),Vector2(337,144),Vector2(23,523),Vector2(337,523)]:
 		draw_circle(screw,3,Color("d5edf0"))
 		draw_line(screw-Vector2(1.5,0),screw+Vector2(1.5,0),INK,1)
-	wrapped_message(game.message)
+	wrapped_message(game.campaign.goals.text(game.campaign.config.goals) if game.in_campaign() else game.message)
 	label("Один вид + одна стадия = эволюция",Vector2(180,630),10,INK,true)
 	label("v2.0  /  ЛАБОРАТОРИЯ ЭВОЛЮЦИИ",Vector2(180,711),8,Color("4e7987"),true)
 
@@ -358,7 +380,7 @@ func show_panel(kind: String) -> void:
 	var content := VBoxContainer.new()
 	content.add_theme_constant_override("separation",12)
 	margin.add_child(content)
-	content.add_child(text_node({"collection":"КОЛЛЕКЦИЯ","species":"ВЫБОР ВИДА","settings":"НАСТРОЙКИ","upgrades":"УЛУЧШЕНИЯ"}.get(kind,kind),22))
+	content.add_child(text_node({"collection":"КОЛЛЕКЦИЯ","species":"ВЫБОР ВИДА","settings":"НАСТРОЙКИ","upgrades":"УЛУЧШЕНИЯ","levels":"КАМПАНИЯ","result":"РЕЗУЛЬТАТ"}.get(kind,kind),22))
 	var scroll := ScrollContainer.new()
 	scroll.size_flags_vertical = Control.SIZE_EXPAND_FILL
 	scroll.horizontal_scroll_mode = ScrollContainer.SCROLL_MODE_DISABLED
@@ -367,7 +389,11 @@ func show_panel(kind: String) -> void:
 	body.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	body.add_theme_constant_override("separation",10)
 	scroll.add_child(body)
-	if kind == "species":
+	if kind == "levels":
+		campaign_levels_panel(body)
+	elif kind == "result":
+		campaign_result_panel(body)
+	elif kind == "species":
 		body.add_child(text_node("Тестовый режим: доступны все виды. Создание первой стадии — 10 монет.",13))
 		for id in Catalog.ids():
 			var entry := Catalog.species(id)
@@ -443,16 +469,19 @@ func show_panel(kind: String) -> void:
 		var reset := Button.new()
 		reset.text = "НОВАЯ ИГРА…"
 		reset.custom_minimum_size.y = 54
-		reset.pressed.connect(func(): game.reset_dialog.popup_centered())
+		reset.pressed.connect(func():
+			game.reset_dialog.dialog_text="Начать заново? Поле, монеты и коллекция песочницы будут сброшены. Прогресс кампании сохранится."
+			game.reset_dialog.popup_centered()
+		)
 		body.add_child(reset)
 	var close := Button.new()
-	close.text = "В ЛАБОРАТОРИЮ"
+	close.text = "В ПЕСОЧНИЦУ" if kind in ["levels","result"] else "В ЛАБОРАТОРИЮ"
 	close.custom_minimum_size.y = 48
 	close.add_theme_stylebox_override("normal",style(Color("ffda69")))
 	close.add_theme_color_override("font_color",INK)
 	close.add_theme_color_override("font_focus_color",INK)
 	close.add_theme_color_override("font_hover_color",INK)
-	close.pressed.connect(close_panel)
+	close.pressed.connect(game.leave_campaign if kind in ["levels","result"] else close_panel)
 	content.add_child(close)
 	close.grab_focus()
 
@@ -460,3 +489,53 @@ func _unhandled_key_input(event: InputEvent) -> void:
 	if event.is_action_pressed("ui_cancel") and is_instance_valid(overlay):
 		close_panel()
 		get_viewport().set_input_as_handled()
+
+func left_nav() -> void:
+	if game.in_campaign():
+		game.reset_dialog.dialog_text="Начать этот уровень заново? Награды за пройденные уровни сохранятся."
+		game.reset_dialog.popup_centered()
+	else:
+		show_panel("collection")
+
+func right_nav() -> void:
+	if game.in_campaign(): game.leave_campaign()
+	else: show_panel("settings")
+
+func action_row(body: VBoxContainer,title: String,callback: Callable,disabled: bool=false,color: Color=Color("ded2fb")) -> void:
+	var control := Button.new()
+	control.text=title
+	control.custom_minimum_size.y=48
+	control.disabled=disabled
+	control.add_theme_stylebox_override("normal",style(color))
+	control.add_theme_stylebox_override("disabled",style(Color("ccd6d7")))
+	control.add_theme_color_override("font_disabled_color",Color("627f8c"))
+	control.add_theme_color_override("font_color",INK)
+	control.pressed.connect(callback)
+	body.add_child(control)
+
+func campaign_levels_panel(body: VBoxContainer) -> void:
+	body.add_child(text_node("★ %d · Пройдено %d/10\nНаграда за первое прохождение: 100 монет, за №5 и №10 — 150." % [game.campaign_progress.stars,game.campaign_progress.completed.size()],13))
+	for number in range(1,11):
+		var config: Dictionary=game.CampaignLevels.get_level(number)
+		var done: bool=number in game.campaign_progress.completed
+		var locked: bool=number>game.campaign_progress.unlocked()
+		var prefix := "✓ " if done else ("🔒 " if locked else "▶ ")
+		action_row(body,prefix+"%d. %s" % [number,config.name],func(): game.start_level(number),locked,Color("ffda69") if not locked and not done else Color("ded2fb"))
+	body.add_child(text_node("Выход и повтор начинают испытание заново. Поле песочницы сохраняется отдельно.",12))
+
+func campaign_result_panel(body: VBoxContainer) -> void:
+	if not game.in_campaign(): return
+	var won: bool=game.campaign.status=="won"
+	body.add_child(text_node("ЭКСПЕРИМЕНТ УДАЛСЯ!" if won else "ПОПРОБУЕМ ЕЩЁ РАЗ",21))
+	body.add_child(text_node(game.campaign.goals.text(game.campaign.config.goals),16))
+	if won:
+		body.add_child(text_node("+%d монет · +%d ★" % [game.last_reward.coins,game.last_reward.stars],23))
+		if game.last_reward.coins==0: body.add_child(text_node("Награда за первое прохождение уже получена.",14))
+		if game.campaign.config.number<10:
+			action_row(body,"СЛЕДУЮЩИЙ УРОВЕНЬ",func(): game.start_level(int(game.campaign.config.number)+1))
+		else:
+			body.add_child(text_node("Все десять уровней пройдены!",18))
+	else:
+		body.add_child(text_node(game.campaign.reason+". Монеты не списаны.",16))
+	action_row(body,"ПОВТОРИТЬ",func(): game.start_level(int(game.campaign.config.number)))
+	action_row(body,"ВЫБОР УРОВНЕЙ",func(): show_panel("levels"))

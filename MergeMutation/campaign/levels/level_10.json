@@ -1,0 +1,52 @@
+{
+  "id": "lab_10",
+  "number": 10,
+  "name": "Двойной прорыв",
+  "available_species": [
+    "horn",
+    "slime"
+  ],
+  "initial": [
+    {
+      "evolution_stage": 1,
+      "species_id": "horn",
+      "cell": 6
+    },
+    {
+      "evolution_stage": 2,
+      "species_id": "slime",
+      "cell": 8
+    }
+  ],
+  "sequence": [
+    "horn",
+    "slime",
+    "horn",
+    "slime",
+    "horn",
+    "slime",
+    "horn",
+    "slime",
+    "horn",
+    "slime"
+  ],
+  "creation_limit": 10,
+  "move_limit": 16,
+  "blocked_cells": [],
+  "goals": [
+    {
+      "evolution_stage": 2,
+      "count": 1,
+      "species_id": "horn",
+      "type": "reach_stage"
+    },
+    {
+      "evolution_stage": 3,
+      "count": 1,
+      "species_id": "slime",
+      "type": "reach_stage"
+    }
+  ],
+  "reward_coins": 150,
+  "reward_stars": 1
+}

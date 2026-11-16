@@ -4,6 +4,9 @@ extends Control
 const LabView = preload("res://scripts/lab_view.gd")
 const Catalog = preload("res://scripts/mutant_catalog.gd")
 const SaveCodec = preload("res://scripts/save_codec.gd")
+const CampaignSession = preload("res://scripts/campaign_session.gd")
+const CampaignProgress = preload("res://scripts/campaign_progress.gd")
+const CampaignLevels = preload("res://scripts/campaign_levels.gd")
 
 const COLS := 5
 const ROWS := 6
@@ -32,6 +35,62 @@ var rng := RandomNumberGenerator.new()
 var save_path := SAVE_PATH
 var reset_dialog: ConfirmationDialog
 var view: LabView
+var campaign: CampaignSession
+var campaign_progress := CampaignProgress.new()
+var sandbox_cells: Array=[]
+var last_reward := {"coins":0,"stars":0}
+
+func in_campaign() -> bool:
+	return campaign!=null
+
+func start_level(number: int) -> bool:
+	if number<1 or number>campaign_progress.unlocked(): return false
+	var attempt := CampaignSession.new()
+	if not attempt.start(CampaignLevels.get_level(number)): return false
+	_cancel_drag()
+	if not in_campaign(): sandbox_cells=cells.duplicate(true)
+	campaign=attempt
+	cells=campaign.cells
+	last_reward={"coins":0,"stars":0}
+	if not save_extra.has("campaign") and FileAccess.file_exists(save_path): needs_backup=true
+	save_extra["campaign"]=campaign_progress.encode()
+	for form in cells:
+		if form!=null: unlock(form)
+	if is_instance_valid(view):
+		view.close_panel()
+		view.rebuild()
+	settle_campaign_action()
+	return true
+
+func leave_campaign() -> void:
+	if in_campaign():
+		_cancel_drag()
+		cells=sandbox_cells.duplicate(true)
+		sandbox_cells.clear()
+		campaign=null
+		_save_game()
+		if is_instance_valid(view): view.rebuild()
+	if is_instance_valid(view): view.close_panel()
+
+func campaign_result(result: Dictionary) -> void:
+	if not result.ok: return
+	var discovered := unlock(result.form)
+	if is_instance_valid(view):
+		match result.kind:
+			"spawn": view.spawn(result.index)
+			"move": view.move(result.source,result.index)
+			"merge": view.merge(result.source,result.index,discovered)
+	settle_campaign_action()
+
+func settle_campaign_action() -> void:
+	if campaign.status=="won":
+		last_reward=campaign_progress.finish(int(campaign.config.number))
+		coins+=int(last_reward.coins)
+	save_extra["campaign"]=campaign_progress.encode()
+	_save_game()
+	if is_instance_valid(view):
+		view.queue_redraw()
+		if campaign.status!="active": view.show_panel("result")
 
 func _ready() -> void:
 	rng.randomize()
@@ -74,6 +133,9 @@ func _cancel_drag() -> void:
 	queue_redraw()
 
 func _new_game() -> void:
+	if in_campaign():
+		start_level(int(campaign.config.number))
+		return
 	# Explicit confirmed reset permits replacing a damaged v2 save, with a backup.
 	needs_backup=FileAccess.file_exists(save_path)
 	write_blocked=false
@@ -118,7 +180,7 @@ func known_discoveries() -> int:
 	return count
 
 func select_species(id: String) -> bool:
-	if not Catalog.available(id) or dragging:
+	if in_campaign() or not Catalog.available(id) or dragging:
 		return false
 	active_species=id
 	_save_game()
@@ -154,7 +216,7 @@ func _gui_input(event: InputEvent) -> void:
 		accept_event()
 
 func _press(pos: Vector2) -> void:
-	if dragging:
+	if dragging or (in_campaign() and campaign.status!="active"):
 		return
 	if Rect2(37, 558, 286, 58).has_point(pos):
 		_spawn()
@@ -172,6 +234,12 @@ func _release(pos: Vector2) -> void:
 	if not dragging:
 		return
 	var destination := _cell_at(pos)
+	if in_campaign():
+		var source := selected
+		var result := campaign.transfer(source,destination)
+		if result.ok: campaign_result(result)
+		_cancel_drag()
+		return
 	if destination >= 0 and destination != selected:
 		if cells[destination] == null:
 			cells[destination] = cells[selected]
@@ -199,9 +267,13 @@ func _cell_at(pos: Vector2) -> int:
 	var y := int(floor((pos.y - BOARD_Y) / CELL))
 	if x < 0 or x >= COLS or y < 0 or y >= ROWS:
 		return -1
-	return y * COLS + x
+	var index := y * COLS + x
+	return -1 if in_campaign() and campaign.blocked(index) else index
 
 func _spawn() -> void:
+	if in_campaign():
+		campaign_result(campaign.spawn())
+		return
 	if not Catalog.available(active_species):
 		_notice("Выберите доступный вид")
 		return
@@ -245,7 +317,8 @@ func _save_game() -> void:
 		if not FileAccess.file_exists(backup) and DirAccess.copy_absolute(save_path,backup)!=OK:
 			_notice("Не удалось создать резервную копию")
 			return
-	var data := SaveCodec.encode(cells,coins,merges,active_species,discoveries,save_extra)
+	var saved_cells := sandbox_cells if in_campaign() else cells
+	var data := SaveCodec.encode(saved_cells,coins,merges,active_species,discoveries,save_extra)
 	var temporary_path := save_path+".tmp"
 	var file := FileAccess.open(temporary_path,FileAccess.WRITE)
 	if file==null:
@@ -284,6 +357,14 @@ func _load_game() -> bool:
 		write_blocked=true
 		load_error=decoded.error
 		return false
+	var progress := CampaignProgress.new()
+	if not progress.decode(decoded.extra.get("campaign",{})):
+		write_blocked=true
+		load_error="Invalid campaign progress"
+		return false
+	campaign_progress=progress
+	campaign=null
+	sandbox_cells.clear()
 	cells.assign(decoded.cells)
 	coins=decoded.coins
 	merges=decoded.merges

@@ -1,0 +1,30 @@
+{
+  "id": "lab_03",
+  "number": 3,
+  "name": "Парный эксперимент",
+  "available_species": [
+    "slime"
+  ],
+  "initial": [],
+  "sequence": [
+    "slime",
+    "slime",
+    "slime",
+    "slime",
+    "slime",
+    "slime"
+  ],
+  "creation_limit": 6,
+  "move_limit": -1,
+  "blocked_cells": [],
+  "goals": [
+    {
+      "evolution_stage": 2,
+      "count": 2,
+      "species_id": "slime",
+      "type": "reach_stage"
+    }
+  ],
+  "reward_coins": 100,
+  "reward_stars": 1
+}

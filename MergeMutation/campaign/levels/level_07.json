@@ -1,0 +1,52 @@
+{
+  "id": "lab_07",
+  "number": 7,
+  "name": "Два независимых вида",
+  "available_species": [
+    "slime",
+    "eyeball"
+  ],
+  "initial": [
+    {
+      "evolution_stage": 1,
+      "species_id": "slime",
+      "cell": 6
+    },
+    {
+      "evolution_stage": 1,
+      "species_id": "eyeball",
+      "cell": 8
+    }
+  ],
+  "sequence": [
+    "slime",
+    "eyeball",
+    "slime",
+    "eyeball",
+    "slime",
+    "eyeball",
+    "slime"
+  ],
+  "creation_limit": 7,
+  "move_limit": 12,
+  "blocked_cells": [],
+  "goals": [
+    {
+      "type": "collect_forms",
+      "forms": [
+        {
+          "evolution_stage": 2,
+          "count": 1,
+          "species_id": "slime"
+        },
+        {
+          "evolution_stage": 2,
+          "count": 1,
+          "species_id": "eyeball"
+        }
+      ]
+    }
+  ],
+  "reward_coins": 100,
+  "reward_stars": 1
+}

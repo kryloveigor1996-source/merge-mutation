@@ -1,0 +1,32 @@
+{
+  "id": "lab_09",
+  "number": 9,
+  "name": "Большой глаз",
+  "available_species": [
+    "eyeball"
+  ],
+  "initial": [],
+  "sequence": [
+    "eyeball",
+    "eyeball",
+    "eyeball",
+    "eyeball",
+    "eyeball",
+    "eyeball",
+    "eyeball",
+    "eyeball"
+  ],
+  "creation_limit": 8,
+  "move_limit": 12,
+  "blocked_cells": [],
+  "goals": [
+    {
+      "evolution_stage": 3,
+      "count": 1,
+      "species_id": "eyeball",
+      "type": "reach_stage"
+    }
+  ],
+  "reward_coins": 100,
+  "reward_stars": 1
+}

@@ -1,0 +1,36 @@
+{
+  "id": "lab_04",
+  "number": 4,
+  "name": "Точные движения",
+  "available_species": [
+    "slime"
+  ],
+  "initial": [],
+  "sequence": [
+    "slime",
+    "slime",
+    "slime",
+    "slime",
+    "slime",
+    "slime",
+    "slime"
+  ],
+  "creation_limit": 7,
+  "move_limit": 12,
+  "blocked_cells": [
+    0,
+    4,
+    25,
+    29
+  ],
+  "goals": [
+    {
+      "evolution_stage": 3,
+      "count": 1,
+      "species_id": "slime",
+      "type": "reach_stage"
+    }
+  ],
+  "reward_coins": 100,
+  "reward_stars": 1
+}
