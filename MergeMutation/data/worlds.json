@@ -1,0 +1,146 @@
+{
+  "version": 1,
+  "worlds": [
+    {
+      "world_id": "laboratory",
+      "name": "Лаборатория",
+      "description": "Дом науки, нестабильных инкубаторов и очень смелых решений.",
+      "order": 0,
+      "portal_style": "science",
+      "levels": [
+        "lab_01",
+        "lab_02",
+        "lab_03",
+        "lab_04",
+        "lab_05",
+        "lab_06",
+        "lab_07",
+        "lab_08",
+        "lab_09",
+        "lab_10"
+      ],
+      "map": {
+        "theme": "laboratory",
+        "spacing": 112,
+        "preview_nodes": 0
+      },
+      "unlock": {
+        "type": "always"
+      },
+      "expeditions": {
+        "enabled": false,
+        "description": "Свободные экспедиции появятся позже.",
+        "generator_id": ""
+      }
+    },
+    {
+      "world_id": "toxic_swamp",
+      "name": "Токсичные болота",
+      "description": "Здесь даже мох светится от научного любопытства. Не пробуйте воду.",
+      "order": 1,
+      "portal_style": "swamp",
+      "levels": [],
+      "map": {
+        "theme": "swamp",
+        "spacing": 112,
+        "preview_nodes": 60
+      },
+      "unlock": {
+        "level_id": "lab_10",
+        "type": "level_completed",
+        "reason": "Пройдите десятое испытание лаборатории."
+      },
+      "expeditions": {
+        "enabled": false,
+        "description": "Исследования болот готовятся. Игровых испытаний пока нет.",
+        "generator_id": ""
+      }
+    },
+    {
+      "world_id": "prehistoric",
+      "name": "Доисторический мир",
+      "description": "Следы огромных лап ведут к очень старой науке.",
+      "order": 2,
+      "portal_style": "prehistoric",
+      "levels": [],
+      "map": {
+        "theme": "prehistoric",
+        "spacing": 112,
+        "preview_nodes": 0
+      },
+      "unlock": {
+        "reason": "Сигнал ещё не расшифрован. Мир и условия открытия готовятся.",
+        "type": "unavailable"
+      },
+      "expeditions": {
+        "enabled": false,
+        "description": "В разработке.",
+        "generator_id": ""
+      }
+    },
+    {
+      "world_id": "unknown_dimension",
+      "name": "Неизвестное измерение",
+      "description": "Приборы настойчиво предлагают смотреть в другую сторону.",
+      "order": 3,
+      "portal_style": "unknown",
+      "levels": [],
+      "map": {
+        "theme": "unknown",
+        "spacing": 112,
+        "preview_nodes": 0
+      },
+      "unlock": {
+        "reason": "Координаты отсутствуют. Мир и условия открытия готовятся.",
+        "type": "unavailable"
+      },
+      "expeditions": {
+        "enabled": false,
+        "description": "В разработке.",
+        "generator_id": ""
+      }
+    }
+  ],
+  "level_routes": {
+    "lab_01": {
+      "kind": "legacy_campaign",
+      "number": 1
+    },
+    "lab_02": {
+      "kind": "legacy_campaign",
+      "number": 2
+    },
+    "lab_03": {
+      "kind": "legacy_campaign",
+      "number": 3
+    },
+    "lab_04": {
+      "kind": "legacy_campaign",
+      "number": 4
+    },
+    "lab_05": {
+      "kind": "legacy_campaign",
+      "number": 5
+    },
+    "lab_06": {
+      "kind": "legacy_campaign",
+      "number": 6
+    },
+    "lab_07": {
+      "kind": "legacy_campaign",
+      "number": 7
+    },
+    "lab_08": {
+      "kind": "legacy_campaign",
+      "number": 8
+    },
+    "lab_09": {
+      "kind": "legacy_campaign",
+      "number": 9
+    },
+    "lab_10": {
+      "kind": "legacy_campaign",
+      "number": 10
+    }
+  }
+}
