@@ -1,4 +1,5 @@
 # Godot 4
+# Generated cache only. Keep *.png.import settings and *.gd.uid identities in Git.
 .godot/
 *.log
 
