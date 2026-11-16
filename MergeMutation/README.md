@@ -6,6 +6,8 @@ Visual previews with illustrative sample progress: [laboratory](docs/preview-v0.
 
 Level-1 sprite update: [current slime field](docs/slime-field.png) · [64px GPU edge proof on five backgrounds](docs/slime-cell-proof.png).
 
+Levels 2–3 sprite update: [three-species field](docs/mutants-levels-1-3.png) · [64px edge and scale proof](docs/mutants-levels-1-3-proof.png).
+
 ## Open
 1. Open Godot 4.7.2 (the version used for validation).
 2. In Project Manager choose **Import** and select `project.godot` in this folder.
@@ -24,7 +26,7 @@ Level-1 sprite update: [current slime field](docs/slime-field.png) · [64px GPU 
 ## Included
 - 5 × 6 board, 10 evolution levels, coins, randomized spawn, drag/drop, merge, saving/loading.
 - Bright tiled laboratory, raised specimen pads, coin/discovery counters, and large native touch buttons.
-- Glossy level-1 Slime PNG (`assets/mutants/slime_lv1.png`), with original procedural silhouettes for levels 2–10. Optional transparent 256×256 replacements remain supported.
+- Glossy PNG sprites for levels 1–3 (`slime_lv1.png`, `mutant_lv2.png`, `mutant_lv3.png`), with original procedural silhouettes for levels 4–10. Optional transparent 256×256 replacements remain supported.
 - Tween animations for spawning, selection, smoothed dragging, drops and merges; a gold AnimationPlayer discovery banner and short-lived particle bursts.
 - Four original synthesized sound effects, optional WAV/OGG replacements in `assets/audio/`, and a persisted mute setting.
 - Portrait 360 × 720 design, uniformly fitted and centered in the available viewport. Android display safe area is respected; touch coordinates use the inverse presentation transform.
@@ -43,6 +45,7 @@ godot --headless --editor --import --quit --path .
 godot --headless --path . --script res://tests/prototype_test.gd
 godot --headless --path . --script res://tests/presentation_test.gd
 godot --headless --path . --script res://tests/slime_sprite_test.gd
+godot --headless --path . --script res://tests/mutant_sprites_test.gd
 godot --headless --path . --quit-after 10
 ```
 
@@ -62,11 +65,18 @@ This renders an illustrative ten-species board and collection to `.godot/v02-pre
 slime field and an actual transparent 64×64 SubViewport, then checks its alpha bounds
 and produces a five-background edge proof in `.godot/`. The sprite-specific suite
 checks RGBA8 PNG data, exact size, alpha/padding, 62/64px resting and lifted bounds,
-imported mipmaps, retained animations and procedural fallbacks for levels 2–10.
+imported mipmaps, retained animations and procedural fallbacks for levels 4–10.
 
 The slime was prepared with imagegen from the supplied reference pose; it is not a
 pixel-identical mask of the flattened sheet. See `assets/mutants/slime_lv1.provenance.md`
 for the full prompt, alpha-processing steps and fidelity limitation.
+
+Levels 2 and 3 use the supplied artwork's existing transparency without AI
+reconstruction. `assets/mutants/levels-2-3.provenance.md` records source hashes,
+rebuild instructions and scale policy. All 214 checks pass, including 45 new
+checks of their assets, animations, cell bounds and merge-result textures.
+`godot --path . --script res://tests/capture_mutants.gd` creates a three-species
+field screenshot and actual 64x64 GPU captures on five backgrounds in `.godot/`.
 
 Slime integration validation (Godot 4.7.2): all existing 84 gameplay and 55
 presentation checks pass unchanged, plus 30 new sprite checks. Headless import and
