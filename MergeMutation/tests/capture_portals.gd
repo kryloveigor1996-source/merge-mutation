@@ -24,6 +24,7 @@ func run() -> void:
 	await shot("intro")
 	game.view.story_screen.complete()
 	await shot("hall-lab")
+	await shot("object-hint")
 	game.view.portal_ui.open_hub("toxic_swamp")
 	await shot("locked")
 	game.open_world_map("laboratory")
@@ -51,6 +52,8 @@ func run() -> void:
 	game.open_world_map("laboratory")
 	await create_timer(0.2).timeout
 	await shot("lab-complete")
+	game.view.portal_ui.open_preview("laboratory","lab_01")
+	await shot("level-preview-complete")
 	var won: bool=game.campaign_progress.completed.size()==10 and game.campaign_progress.stars==10
 	game.free()
 	DirAccess.remove_absolute("res://.godot/portal_capture_save.json")

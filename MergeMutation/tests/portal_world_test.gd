@@ -136,7 +136,9 @@ func run() -> void:
 	check(ui.page=="hub" and not ui.entering and not ui.hint.text.is_empty(),"locked portal explains requirement")
 	check(not game.open_world_map("toxic_swamp") and not game.start_world_level("laboratory","lab_02"),"locked map/level launch guarded in main")
 	ui.open_hub("laboratory")
-	ui.get_node("PortalEnter").pressed.emit()
+	var object_point := global(ui,Vector2(180,290))
+	touch(object_point,true)
+	touch(object_point,false)
 	check(ui.entering and ui.last_transition.is_running(),"portal opening uses animation")
 	await create_timer(0.65).timeout
 	check(ui.page=="map" and ui.selected=="laboratory","enter transition reaches world map")
@@ -165,7 +167,9 @@ func run() -> void:
 	touch(point,true)
 	touch(point,false)
 	await process_frame
-	check(game.in_campaign() and game.campaign.config.id=="lab_01" and not ui.visible,"real node touch starts tested lab level")
+	check(not game.in_campaign() and is_instance_valid(ui.preview),"real node touch opens preview before play")
+	ui.preview.get_node("PreviewPlay").pressed.emit()
+	check(game.in_campaign() and game.campaign.config.id=="lab_01" and not ui.visible,"play starts tested lab level")
 	game.leave_campaign()
 	game.open_portals()
 	check(not is_instance_valid(game.view.story_screen),"intro does not repeat")
@@ -194,6 +198,34 @@ func run() -> void:
 	check(is_instance_valid(game.view.story_screen) and game.view.story_screen.scene_id=="swamp_activation","lab_10 victory shows activation scene")
 	game.view.story_screen.complete()
 	check(game.journey_state.has_seen("swamp_activation"),"activation skippable and recorded")
+	game.open_world_map("laboratory")
+	check(ui.open_preview("laboratory","lab_10"),"multi-goal preview available after real completion")
+	await process_frame
+	await process_frame
+	var details: ScrollContainer=ui.preview.get_node("PreviewDetails")
+	var overflow := Control.new() # Exercise future long metadata.
+	overflow.custom_minimum_size=Vector2(1,700)
+	details.get_child(0).add_child(overflow)
+	await create_timer(0.1).timeout
+	var card_start := global(ui.preview,Vector2(270,450))
+	var card_end := global(ui.preview,Vector2(270,280))
+	touch(card_start,true)
+	await process_frame
+	drag(card_start+Vector2(0,-30),Vector2(0,-30))
+	await process_frame
+	drag(card_end,Vector2(0,-170))
+	touch(card_end,false)
+	await create_timer(0.15).timeout
+	check(details.scroll_vertical>0,"multi-goal preview scrolls with native touch")
+	details.scroll_vertical=0
+	var card_wheel := InputEventMouseButton.new()
+	card_wheel.button_index=MOUSE_BUTTON_WHEEL_DOWN
+	card_wheel.pressed=true
+	card_wheel.position=global(ui.preview,Vector2(270,380))
+	root.push_input(card_wheel,true)
+	await process_frame
+	check(details.scroll_vertical>0,"multi-goal preview scrolls with mouse wheel")
+	ui.close_preview()
 	game.open_portals()
 	ui.open_hub("toxic_swamp")
 	check(ui.main_door.unlocked,"open swamp door derives from completed lab_10")

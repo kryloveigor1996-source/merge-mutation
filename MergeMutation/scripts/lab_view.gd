@@ -602,6 +602,7 @@ func close_navigation() -> void:
 	close_story()
 	if is_instance_valid(portal_ui):
 		portal_ui.collection_return=false
+		portal_ui.close_preview()
 		portal_ui.hide()
 
 func show_story(id: String) -> void:

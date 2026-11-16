@@ -6,7 +6,7 @@
       "name": "Лаборатория",
       "description": "Дом науки, нестабильных инкубаторов и очень смелых решений.",
       "order": 0,
-      "portal_style": "science",
+      "portal_style": "notice_board",
       "levels": [
         "lab_01",
         "lab_02",

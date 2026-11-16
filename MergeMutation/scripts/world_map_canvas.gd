@@ -5,10 +5,13 @@ var model
 var pressed := false
 var travel := Vector2.ZERO
 var last_visible_count := 0
+var background_texture: Texture2D
 func setup(parent_ui: Control,value) -> void:
 	owner_ui=parent_ui
 	model=value
-	custom_minimum_size=Vector2(336,model.height())
+	custom_minimum_size=Vector2(model.width(),model.height())
+	var path: String=model.entry.map.get("layout",{}).get("background_texture","")
+	if path.begins_with("res://") and ResourceLoader.exists(path): background_texture=load(path) as Texture2D
 	mouse_filter=Control.MOUSE_FILTER_STOP
 func _gui_input(event: InputEvent) -> void:
 	if event is InputEventScreenTouch:
@@ -23,7 +26,7 @@ func _gui_input(event: InputEvent) -> void:
 	elif event is InputEventScreenDrag:
 		if event.index==0 and pressed:
 			travel+=event.relative
-			owner_ui.scroll_by(-event.relative.y)
+			owner_ui.pan_by(-event.relative)
 		accept_event()
 	elif event is InputEventMouseButton:
 		if event.button_index==MOUSE_BUTTON_LEFT:
@@ -39,7 +42,7 @@ func _gui_input(event: InputEvent) -> void:
 			accept_event()
 	elif event is InputEventMouseMotion and pressed:
 		travel+=event.relative
-		owner_ui.scroll_by(-event.relative.y)
+		owner_ui.pan_by(-event.relative)
 		accept_event()
 func activate(position: Vector2) -> void:
 	var index: int=model.hit(position)
@@ -47,12 +50,24 @@ func activate(position: Vector2) -> void:
 func _draw() -> void:
 	var top: float=owner_ui.map_scroll.scroll_vertical
 	var viewport_height: float=owner_ui.map_scroll.size.y
+	var visible_rect := Rect2(owner_ui.map_scroll.scroll_horizontal,top,owner_ui.map_scroll.size.x,viewport_height)
 	var swamp: bool=model.entry.map.theme=="swamp"
 	var background := Color("446f63") if swamp else Color("deece5")
-	draw_rect(Rect2(0,top,336,viewport_height),background)
-	var band: Vector2i=model.visible_range(top,viewport_height)
-	last_visible_count=band.y-band.x
-	for index in range(band.x,band.y):
+	draw_rect(visible_rect,background)
+	if background_texture: draw_texture_rect(background_texture,Rect2(0,0,model.width(),model.height()),false)
+	for route_index in model.visible_routes(visible_rect):
+		var route: Dictionary=model.routes[route_index]
+		for segment in route.segments:
+			var clipped: Vector2=model.clip_segment(segment.a,segment.b,visible_rect.grow(4))
+			if clipped.x<0: continue
+			var distance: float=ceilf((segment.offset+segment.length*clipped.x)/12.0)*12.0-segment.offset
+			while distance<=segment.length*clipped.y:
+				var position: Vector2=segment.a.lerp(segment.b,distance/segment.length)
+				draw_circle(position,2.5,Color("a7c1b4") if model.fogged(route.to) else Color("698c83"))
+				distance+=12
+	var indices: Array=model.visible_indices(top,viewport_height)
+	last_visible_count=indices.size()
+	for index in indices:
 		var point: Vector2=model.point(index)
 		for side in [-1,1]:
 			var decor := Vector2(168+side*140,point.y+31*sin(index*2.7+side))
@@ -62,12 +77,6 @@ func _draw() -> void:
 			else:
 				draw_style_box(W.box(Color("b8d8d0"),8),Rect2(decor-Vector2(15,21),Vector2(30,42)))
 				draw_circle(decor,4,Color("f5dda0"))
-		if index+1<model.nodes.size():
-			var next: Vector2=model.point(index+1)
-			for t in range(1,13):
-				var position := point.lerp(next,float(t)/13)
-				position.x=lerpf(point.x,next.x,smoothstep(0,1,float(t)/13))
-				draw_circle(position,2.5,Color("a7c1b4") if model.fogged(index+1) else Color("698c83"))
 		var state: String=model.state(index)
 		var fog: bool=model.fogged(index)
 		var color := Color("ffdc79") if state=="current" else (Color("9de1b0") if state=="completed" else Color("afc5c2"))

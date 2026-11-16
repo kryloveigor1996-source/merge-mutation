@@ -25,10 +25,27 @@ static func valid(entry: Variant) -> bool:
 		seen[id]=true
 	if not entry.map is Dictionary or not Catalog.integer(entry.map.get("preview_nodes",0),100000) or not entry.map.get("theme","") is String: return false
 	if not Catalog.integer(entry.map.get("spacing",112),1000) or entry.map.get("spacing",112)<80: return false
+	if not valid_layout(entry.map.get("layout",{})): return false
 	if not entry.unlock is Dictionary or not entry.unlock.get("type","") in ["always","level_completed","world_completed","unavailable"]: return false
 	if entry.unlock.type=="level_completed" and not Catalog.valid_id(entry.unlock.get("level_id")): return false
 	if entry.unlock.type=="world_completed" and not Catalog.valid_id(entry.unlock.get("world_id")): return false
 	return entry.expeditions is Dictionary and entry.expeditions.get("enabled",false) is bool
+static func valid_point(value: Variant) -> bool:
+	if not value is Array or value.size()!=2: return false
+	for number in value:
+		if not (number is float or number is int) or not is_finite(float(number)) or number<0 or number>10000000: return false
+	return true
+static func valid_layout(layout: Variant) -> bool:
+	if not layout is Dictionary or not valid_point(layout.get("canvas_size",[336,200])) or not layout.get("nodes",{}) is Dictionary: return false
+	for id in layout.get("nodes",{}):
+		if not id is String or not valid_point(layout.nodes[id]): return false
+	if layout.has("routes"):
+		if not layout.routes is Array: return false
+		for route in layout.routes:
+			if not route is Dictionary or not route.get("from") is String or not route.get("to") is String or not route.get("points",[]) is Array: return false
+			for point in route.get("points",[]):
+				if not valid_point(point): return false
+	return layout.get("background_texture","") is String
 static func register_world(entry: Dictionary) -> bool:
 	if not loaded: ensure()
 	if not valid(entry) or entries.has(entry.world_id): return false

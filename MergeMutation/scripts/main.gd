@@ -10,6 +10,7 @@ const CampaignLevels = preload("res://scripts/campaign_levels.gd")
 const Worlds = preload("res://scripts/world_registry.gd")
 const JourneyState = preload("res://scripts/journey_state.gd")
 const Dialogue = preload("res://scripts/context_dialogue.gd")
+const TEST_TELEPORT_CHARGES := 1
 
 const COLS := 5
 const ROWS := 6
@@ -76,10 +77,18 @@ func open_world_map(world_id: String) -> bool:
 
 func story_seen(id: String) -> void:
 	if Dialogue.scene(id).is_empty(): return
+	record_journey_seen(id)
+
+func record_journey_seen(id: String) -> void:
+	if id not in ["hub_board_hint","hub_portal_hint"] and Dialogue.scene(id).is_empty(): return
+	if journey_state.has_seen(id): return
 	if not save_extra.has("journey") and FileAccess.file_exists(save_path): needs_backup=true
 	journey_state.seen[id]=true
 	save_extra["journey"]=journey_state.encode()
 	_save_game()
+
+func preview_boosters() -> Dictionary:
+	return {"teleporter":TEST_TELEPORT_CHARGES}
 
 func in_campaign() -> bool:
 	return campaign!=null
@@ -87,7 +96,7 @@ func in_campaign() -> bool:
 func start_level(number: int,test_boosters: bool=true) -> bool:
 	if number<1 or number>campaign_progress.unlocked(): return false
 	var attempt := CampaignSession.new()
-	if not attempt.start(CampaignLevels.get_level(number),1 if test_boosters else 0): return false
+	if not attempt.start(CampaignLevels.get_level(number),TEST_TELEPORT_CHARGES if test_boosters else 0): return false
 	if is_instance_valid(view): view.close_navigation()
 	_cancel_drag()
 	teleport_mode=false

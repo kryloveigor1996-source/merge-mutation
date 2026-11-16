@@ -5,6 +5,9 @@ const Model = preload("res://scripts/world_map_model.gd")
 const MapCanvas = preload("res://scripts/world_map_canvas.gd")
 const Door = preload("res://scripts/portal_art.gd")
 const Dialogue = preload("res://scripts/context_dialogue.gd")
+const Board = preload("res://scripts/lab_notice_board.gd")
+const PreviewModel = preload("res://scripts/level_preview_model.gd")
+const PreviewScreen = preload("res://scripts/level_preview_screen.gd")
 var game: Control
 var lab_view: Node2D
 var page := "hub"
@@ -15,6 +18,7 @@ var map_model
 var map_scroll: ScrollContainer
 var map_canvas: Control
 var scroll_target := 0.0
+var horizontal_target := 0.0
 var applying_scroll := false
 var offsets: Dictionary={}
 var collection_return := false
@@ -26,6 +30,10 @@ var hint: Label
 var entering := false
 var last_transition: Tween
 var fade: Tween
+var preview: Control
+var swipe_distance := 0.0
+var object_hint_left := 0.0
+const OBJECT_RECT := Rect2(80,150,200,270)
 func setup(value: Control,view: Node2D) -> void:
 	game=value
 	lab_view=view
@@ -35,20 +43,27 @@ func setup(value: Control,view: Node2D) -> void:
 	z_index=22
 	hide()
 func clear_page() -> void:
-	if is_instance_valid(map_scroll): offsets[selected]=map_scroll.scroll_vertical
+	if is_instance_valid(map_scroll): offsets[selected]=Vector2(map_scroll.scroll_horizontal,map_scroll.scroll_vertical)
 	if last_transition: last_transition.kill()
 	entering=false
 	map_scroll=null
 	map_canvas=null
+	preview=null
+	object_hint_left=0
 	for child in get_children():
 		remove_child(child)
 		child.queue_free()
 func appear() -> void:
 	show()
 	if fade: fade.kill()
-	modulate.a=0
+	# The occluding surface must remain opaque throughout every transition.
+	modulate=Color.WHITE
 	fade=create_tween()
-	fade.tween_property(self,"modulate:a",1.0,0.18)
+	var content: CanvasItem=main_door if page=="hub" else map_scroll
+	if is_instance_valid(content):
+		content.modulate.a=0.55
+		fade.tween_property(content,"modulate:a",1.0,0.18)
+	else: fade.kill()
 func quote_for(context: String) -> void:
 	var line: Dictionary=game.dialogue.next_line(context)
 	if not line.is_empty(): quote=Dialogue.text(line)
@@ -78,13 +93,13 @@ func build_hub() -> void:
 	for offset in [-1,1]:
 		if world_ids.size()<2: continue
 		var other: String=world_ids[posmod(index+offset,world_ids.size())]
-		var neighbour := Door.new()
+		var neighbour = Board.new() if Worlds.world(other).portal_style=="notice_board" else Door.new()
 		neighbour.setup(Worlds.world(other).portal_style,Worlds.unlocked(other,done))
 		neighbour.position=Vector2(180+offset*212,291)
 		neighbour.scale=Vector2.ONE*0.86
 		neighbour.modulate=Color(0.72,0.8,0.82)
 		add_child(neighbour)
-	main_door=Door.new()
+	main_door=Board.new() if entry.portal_style=="notice_board" else Door.new()
 	main_door.setup(entry.portal_style,unlocked)
 	main_door.position=Vector2(180,291)
 	add_child(main_door)
@@ -108,7 +123,13 @@ func build_hub() -> void:
 	add_child(bar)
 	bar.size=Vector2(264,10)
 	hint=W.label(self,quote,Rect2(28,557,304,44),11,W.INK,true)
-	W.button(self,"PortalEnter","ВОЙТИ В ПОРТАЛ" if unlocked else "ПОЧЕМУ ЗАКРЫТ?",Rect2(22,610,316,48),enter_portal,Color("ffda69") if unlocked else Color("c3d5d4"))
+	var instruction := "Нажмите на стенд — карта лаборатории" if entry.portal_style=="notice_board" else "Нажмите на дверь — вход в мир"
+	W.label(self,instruction,Rect2(26,610,308,42),14,W.INK,true)
+	var hint_id := "hub_board_hint" if entry.portal_style=="notice_board" else "hub_portal_hint"
+	if not game.journey_state.has_seen(hint_id):
+		object_hint_left=5.0
+		hint.text=instruction+". Листайте в сторону, чтобы выбрать другой мир."
+		game.record_journey_seen(hint_id)
 	W.button(self,"PortalBack","В ЛАБОРАТОРИЮ",Rect2(22,666,152,48),close_to_lab,Color("b5e9ee"))
 	W.button(self,"PortalCollection","КОЛЛЕКЦИЯ",Rect2(186,666,152,48),show_collection,Color("ded2fb"))
 	queue_redraw()
@@ -130,21 +151,36 @@ func _gui_input(event: InputEvent) -> void:
 			swiping=true
 			swipe_start=event.position
 			swipe_travel=Vector2.ZERO
+			swipe_distance=0
 		else:
-			if swiping: swipe(swipe_travel if swipe_travel.length()>0 else event.position-swipe_start)
+			if swiping: release_object(event.position)
 			swiping=false
 		accept_event()
 	elif event is InputEventScreenDrag:
-		if event.index==0 and swiping: swipe_travel+=event.relative
+		if event.index==0 and swiping:
+			swipe_travel+=event.relative
+			swipe_distance+=event.relative.length()
 		accept_event()
 	elif event is InputEventMouseButton and event.button_index==MOUSE_BUTTON_LEFT:
 		if event.pressed:
 			swiping=true
 			swipe_start=event.position
+			swipe_travel=Vector2.ZERO
+			swipe_distance=0
 		else:
-			if swiping: swipe(event.position-swipe_start)
+			if swiping: release_object(event.position)
 			swiping=false
 		accept_event()
+	elif event is InputEventMouseMotion and swiping:
+		swipe_travel+=event.relative
+		swipe_distance+=event.relative.length()
+		accept_event()
+func release_object(position: Vector2) -> void:
+	var delta := position-swipe_start
+	if maxf(swipe_distance,delta.length())>12:
+		swipe(swipe_travel if swipe_travel.length()>0 else delta)
+	elif OBJECT_RECT.has_point(swipe_start) and OBJECT_RECT.has_point(position):
+		enter_portal()
 func enter_portal() -> void:
 	if entering: return
 	var done: Array=game.completed_world_level_ids()
@@ -154,8 +190,11 @@ func enter_portal() -> void:
 		main_door.create_tween().tween_property(main_door,"rotation",0.0,0.25).from(-0.025)
 		return
 	entering=true
-	quote_for("portal_enter")
-	hint.text=quote
+	object_hint_left=0
+	if selected=="laboratory": hint.text="Открываем чертежи лаборатории."
+	else:
+		quote_for("portal_enter")
+		hint.text=quote
 	var id := selected
 	last_transition=main_door.opening()
 	last_transition.tween_callback(func():
@@ -179,7 +218,7 @@ func open_map(id: String) -> bool:
 	map_scroll.name="WorldMapScroll"
 	map_scroll.position=Vector2(12,158)
 	map_scroll.size=Vector2(336,490)
-	map_scroll.horizontal_scroll_mode=ScrollContainer.SCROLL_MODE_DISABLED
+	map_scroll.horizontal_scroll_mode=ScrollContainer.SCROLL_MODE_SHOW_NEVER
 	map_scroll.vertical_scroll_mode=ScrollContainer.SCROLL_MODE_SHOW_NEVER
 	add_child(map_scroll)
 	map_canvas=MapCanvas.new()
@@ -193,7 +232,17 @@ func open_map(id: String) -> bool:
 		if not applying_scroll: scroll_target=value
 		active_canvas.queue_redraw()
 	)
-	scroll_target=clampf(float(offsets.get(id,maxf(0,map_model.point(map_model.current).y-180))),0,maxf(0,map_model.height()-map_scroll.size.y))
+	map_scroll.get_h_scroll_bar().value_changed.connect(func(value: float):
+		if active_scroll!=map_scroll or not is_instance_valid(active_canvas): return
+		if not applying_scroll: horizontal_target=value
+		active_canvas.queue_redraw()
+	)
+	var initial := Vector2(maxf(0,map_model.point(map_model.current).x-168),maxf(0,map_model.point(map_model.current).y-180)) if not map_model.nodes.is_empty() else Vector2.ZERO
+	var saved: Variant=offsets.get(id,initial)
+	if saved is Vector2: initial=saved
+	elif saved is int or saved is float: initial.y=float(saved)
+	scroll_target=clampf(initial.y,0,maxf(0,map_model.height()-map_scroll.size.y))
+	horizontal_target=clampf(initial.x,0,maxf(0,map_model.width()-map_scroll.size.x))
 	call_deferred("place_initial_scroll",id)
 	W.button(self,"MapBack","К ПОРТАЛАМ",Rect2(22,666,152,48),func(): open_hub(id),Color("b5e9ee"))
 	W.button(self,"MapCollection","КОЛЛЕКЦИЯ",Rect2(186,666,152,48),show_collection,Color("ded2fb"))
@@ -203,27 +252,62 @@ func activate_node(index: int) -> void:
 	if page!="map" or index<0 or index>=map_model.nodes.size(): return
 	var state: String=map_model.state(index)
 	if state in ["completed","current"]:
-		if game.start_world_level(selected,map_model.nodes[index].id): return
+		if open_preview(selected,map_model.nodes[index].id): return
 	hint.text="Это демонстрационный маршрут. Игровые испытания появятся позже." if state=="preview" else "Сначала завершите предыдущее испытание."
+func open_preview(world_id: String,level_id: String) -> bool:
+	var data := PreviewModel.build(world_id,level_id,game)
+	if data.is_empty(): return false
+	close_preview()
+	preview=PreviewScreen.new()
+	preview.name="LevelPreview"
+	preview.setup(self,data)
+	add_child(preview)
+	return true
+func close_preview() -> void:
+	if is_instance_valid(preview):
+		remove_child(preview)
+		preview.queue_free()
+	preview=null
+func play_preview() -> bool:
+	if not is_instance_valid(preview): return false
+	var data: Dictionary=preview.data
+	if not Worlds.can_launch(data.world_id,data.level_id,game.completed_world_level_ids()):
+		close_preview()
+		return false
+	if not game.start_world_level(data.world_id,data.level_id): return false
+	close_preview()
+	return true
 func place_initial_scroll(id: String) -> void:
 	if page!="map" or selected!=id or not is_instance_valid(map_scroll): return
 	applying_scroll=true
 	map_scroll.scroll_vertical=roundi(scroll_target)
+	map_scroll.scroll_horizontal=roundi(horizontal_target)
 	applying_scroll=false
 func scroll_by(amount: float) -> void:
 	if not is_instance_valid(map_scroll): return
 	scroll_target=clampf(scroll_target+amount,0,maxf(0,map_model.height()-map_scroll.size.y))
+func pan_by(amount: Vector2) -> void:
+	scroll_by(amount.y)
+	if is_instance_valid(map_scroll): horizontal_target=clampf(horizontal_target+amount.x,0,maxf(0,map_model.width()-map_scroll.size.x))
+func scroll_step(value: int,target: float,delta: float) -> int:
+	if absf(value-target)<=0.5: return value
+	var next := roundi(lerpf(value,target,1-exp(-18*delta)))
+	return next if next!=value else value+(1 if target>value else -1)
 func _process(delta: float) -> void:
+	if visible and page=="hub" and object_hint_left>0 and not is_instance_valid(lab_view.story_screen):
+		object_hint_left=maxf(0,object_hint_left-delta)
+		if object_hint_left==0 and is_instance_valid(hint): hint.text=quote
+		queue_redraw()
 	if not visible or page!="map" or not is_instance_valid(map_scroll): return
-	if absf(map_scroll.scroll_vertical-scroll_target)>0.5:
+	if absf(map_scroll.scroll_vertical-scroll_target)>0.5 or absf(map_scroll.scroll_horizontal-horizontal_target)>0.5:
 		applying_scroll=true
-		var next := roundi(lerpf(map_scroll.scroll_vertical,scroll_target,1-exp(-18*delta)))
-		if next==map_scroll.scroll_vertical: next+=1 if scroll_target>next else -1
-		map_scroll.scroll_vertical=next
+		map_scroll.scroll_vertical=scroll_step(map_scroll.scroll_vertical,scroll_target,delta)
+		map_scroll.scroll_horizontal=scroll_step(map_scroll.scroll_horizontal,horizontal_target,delta)
 		applying_scroll=false
 		map_canvas.queue_redraw()
 func close_to_lab() -> void:
 	cancel_opening()
+	close_preview()
 	collection_return=false
 	hide()
 	game.leave_campaign()
@@ -242,7 +326,8 @@ func restore_collection() -> void:
 		show()
 func _unhandled_key_input(event: InputEvent) -> void:
 	if visible and event.is_action_pressed("ui_cancel"):
-		if page=="map": open_hub(selected)
+		if is_instance_valid(preview): close_preview()
+		elif page=="map": open_hub(selected)
 		else: close_to_lab()
 		get_viewport().set_input_as_handled()
 func _draw() -> void:
@@ -259,3 +344,10 @@ func _draw() -> void:
 			draw_line(Vector2(x,116),Vector2(x,235),W.INK,7,true)
 			draw_line(Vector2(x,116),Vector2(x,235),Color("7cafab"),3,true)
 			draw_circle(Vector2(x,120),5,Color("ffdc79"))
+		if object_hint_left>0:
+			var highlight := StyleBoxFlat.new()
+			highlight.bg_color=Color.TRANSPARENT
+			highlight.border_color=Color("e8b345")
+			highlight.set_border_width_all(3)
+			highlight.set_corner_radius_all(20)
+			draw_style_box(highlight,OBJECT_RECT.grow(6))
