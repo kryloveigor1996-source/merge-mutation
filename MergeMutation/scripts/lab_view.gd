@@ -3,6 +3,7 @@ extends Node2D
 const Art = preload("res://scripts/mutant_art.gd")
 const Burst = preload("res://scripts/merge_burst.gd")
 const Audio = preload("res://scripts/lab_audio.gd")
+const Sizes = preload("res://scripts/mutant_sizes.gd")
 const DESIGN := Vector2(360,720)
 const INK := Color("25465a")
 const CREAM := Color("fff8de")
@@ -18,7 +19,14 @@ var banner_alpha := 0.0:
 	set(value):
 		banner_alpha = value
 		queue_redraw()
-var banner_scale := 1.0
+		if is_instance_valid(discovery_layer):
+			discovery_layer.queue_redraw()
+var banner_scale := 1.0:
+	set(value):
+		banner_scale=value
+		if is_instance_valid(discovery_layer):
+			discovery_layer.queue_redraw()
+var discovery_layer: Node2D
 var discovery_player: AnimationPlayer
 var panel_kind := ""
 var effects: Node2D
@@ -43,6 +51,10 @@ func layout() -> void:
 	scale = Vector2.ONE*(fitted.size.x/DESIGN.x)
 
 func _ready() -> void:
+	discovery_layer=Node2D.new()
+	discovery_layer.z_index=19
+	discovery_layer.draw.connect(_draw_discovery_banner)
+	add_child(discovery_layer)
 	effects = Node2D.new()
 	effects.z_index = 8
 	add_child(effects)
@@ -122,13 +134,19 @@ func plate(rect: Rect2,color: Color,radius: int=12) -> void:
 func cell_center(index: int) -> Vector2:
 	return Vector2(game.BOARD_X+(index%5)*game.CELL+31,game.BOARD_Y+floori(float(index)/5)*game.CELL+30)
 
-func add_creature(index: int) -> Node2D:
+func add_creature(index: int) -> Art:
 	var creature := Art.new()
 	creature.setup(game.cells[index])
-	creature.position = cell_center(index)
+	creature.position = rest_position(index,creature)
 	add_child(creature)
 	creatures[index] = creature
 	return creature
+
+func rest_position(index: int,creature: Art) -> Vector2:
+	return Sizes.clamp_center(cell_center(index),creature.guarded_bounds())
+
+func drag_position(pointer: Vector2,creature: Art) -> Vector2:
+	return Sizes.clamp_center(pointer+Vector2(0,-8),creature.guarded_bounds(true))
 
 func rebuild() -> void:
 	for tween: Tween in motion.values():
@@ -158,19 +176,24 @@ func pick(index: int) -> void:
 	drag_index = index
 	if motion.has(index):
 		(motion[index] as Tween).kill()
-	var creature: Node2D = creatures[index]
-	creature.z_index = 5
+	var creature: Art = creatures[index]
+	creature.z_index = Sizes.ACTIVE_Z
+	creature.position=Sizes.clamp_center(creature.position,creature.guarded_bounds(true))
 	creature.lift()
 	sound.play_event("select")
 	queue_redraw()
 
 func cancel_selection() -> void:
 	if creatures.has(drag_index):
-		var creature: Node2D = creatures[drag_index]
-		creature.z_index = 0
+		var creature: Art = creatures[drag_index]
+		var resting_index := drag_index
 		creature.settle()
 		var tween := create_tween()
-		tween.tween_property(creature,"position",cell_center(drag_index),0.18).set_trans(Tween.TRANS_QUAD).set_ease(Tween.EASE_OUT)
+		tween.tween_property(creature,"position",rest_position(drag_index,creature),0.18).set_trans(Tween.TRANS_QUAD).set_ease(Tween.EASE_OUT)
+		tween.finished.connect(func():
+			if is_instance_valid(creature) and drag_index!=resting_index:
+				creature.z_index=0
+		)
 		motion[drag_index] = tween
 	drag_index = -1
 	queue_redraw()
@@ -179,7 +202,7 @@ func move(source: int,destination: int) -> void:
 	if not creatures.has(source):
 		rebuild()
 		return
-	var creature: Node2D = creatures[source]
+	var creature: Art = creatures[source]
 	creatures.erase(source)
 	creatures[destination] = creature
 	drag_index = destination
@@ -219,8 +242,8 @@ func merge(source: int,destination: int,discovered: bool) -> void:
 
 func _process(delta: float) -> void:
 	if creatures.has(drag_index):
-		var creature: Node2D = creatures[drag_index]
-		creature.position = creature.position.lerp(game.pointer_pos+Vector2(0,-8),1-exp(-30*delta))
+		var creature: Art = creatures[drag_index]
+		creature.position = creature.position.lerp(drag_position(game.pointer_pos,creature),1-exp(-30*delta))
 		queue_redraw()
 
 func wrapped_message(value: String) -> void:
@@ -282,10 +305,15 @@ func _draw() -> void:
 	wrapped_message(game.message)
 	label("Two of a kind. One wild discovery.",Vector2(180,630),10,INK,true)
 	label("v0.2  /  THE MUTATION LAB",Vector2(180,711),8,Color("4e7987"),true)
-	if banner_alpha>0:
-		draw_set_transform(Vector2(180,141),0,Vector2.ONE*banner_scale)
-		plate(Rect2(-154,-16,308,32),Color("ffdf79",banner_alpha))
-		label(banner,Vector2(0,5),12,Color(INK,banner_alpha),true)
+
+func _draw_discovery_banner() -> void:
+	if banner_alpha<=0:
+		return
+	discovery_layer.draw_set_transform(Vector2(180,141),0,Vector2.ONE*banner_scale)
+	discovery_layer.draw_style_box(style(Color("ffdf79",banner_alpha)),Rect2(-154,-16,308,32))
+	var font := ThemeDB.fallback_font
+	var width := font.get_string_size(banner,HORIZONTAL_ALIGNMENT_LEFT,-1,12).x
+	discovery_layer.draw_string(font,Vector2(-width*0.5,5),banner,HORIZONTAL_ALIGNMENT_LEFT,-1,12,Color(INK,banner_alpha))
 
 func close_panel() -> void:
 	if is_instance_valid(overlay):
@@ -309,7 +337,7 @@ func show_panel(kind: String) -> void:
 	panel_kind = kind
 	overlay = Control.new()
 	overlay.size = DESIGN
-	overlay.z_index = 20
+	overlay.z_index = Sizes.OVERLAY_Z
 	add_child(overlay)
 	var shade := ColorRect.new()
 	shade.color = Color(0.07,0.2,0.28,0.64)
@@ -349,9 +377,9 @@ func show_panel(kind: String) -> void:
 			portrait.custom_minimum_size = Vector2(66,68)
 			row.add_child(portrait)
 			var art := Art.new()
-			art.setup(level)
+			art.setup(level,true)
 			art.position = Vector2(33,34)
-			art.scale = Vector2.ONE*0.9
+			art.scale = Vector2.ONE
 			if level>game.highest:
 				art.modulate = Color(0.18,0.28,0.33)
 			portrait.add_child(art)

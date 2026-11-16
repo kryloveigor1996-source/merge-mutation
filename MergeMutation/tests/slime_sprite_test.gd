@@ -46,13 +46,13 @@ func _run() -> void:
 	check(art.texture.get_image().has_mipmaps(),"mipmaps are imported for small-cell rendering")
 	check(art.texture_filter==CanvasItem.TEXTURE_FILTER_LINEAR_WITH_MIPMAPS,"illustration uses mipmapped filtering")
 	# The visible alpha bounds must stay in a 64x64 cell at rest and when lifted.
-	var visible := Rect2(Vector2(bounds.position)/256*56-Vector2(28,28),Vector2(bounds.size)/256*56)
+	var visible := Art.Sizes.visible_rect(1,Rect2(bounds))
 	for cell_size in [62,64]:
 		for lifted in [false,true]:
 			var transform := Transform2D(-0.09 if lifted else 0.0,Vector2.ONE*(1.17 if lifted else 1.0),0,Vector2.ONE*cell_size*0.5)
 			var fits := true
 			for point in [visible.position,Vector2(visible.end.x,visible.position.y),visible.end,Vector2(visible.position.x,visible.end.y)]:
-				if not Rect2(0,0,cell_size,cell_size).has_point(transform*point):
+				if not Rect2(0,0,cell_size,cell_size).grow(Art.Sizes.PICK_OVERHANG if lifted else Art.Sizes.IDLE_OVERHANG).has_point(transform*point):
 					fits = false
 			check(fits,"%dx%d bounds while lifted=%s" % [cell_size,cell_size,lifted])
 	art.pop()

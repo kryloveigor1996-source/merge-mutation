@@ -14,17 +14,25 @@ func check(condition: bool,message: String) -> void:
 		failures+=1
 		printerr("FAIL: ",message)
 
-func fits_cell(bounds: Rect2i,cell_size: int,lifted: bool) -> bool:
-	var visible := Rect2(Vector2(bounds.position)/256*56-Vector2(28,28),Vector2(bounds.size)/256*56)
+func fits_cell(bounds: Rect2i,cell_size: int,lifted: bool,level: int) -> bool:
+	var visible := Art.Sizes.visible_rect(level,Rect2(bounds))
 	# 1.20 exceeds the selection Tween's 1.17 target and covers its back-ease overshoot.
 	var transform := Transform2D(-0.09 if lifted else 0.0,Vector2.ONE*(1.20 if lifted else 1.0),0,Vector2.ONE*cell_size*0.5)
+	var allowance: float = Art.Sizes.PICK_OVERHANG if lifted else Art.Sizes.IDLE_OVERHANG
 	for point in [visible.position,Vector2(visible.end.x,visible.position.y),visible.end,Vector2(visible.position.x,visible.end.y)]:
-		if not Rect2(0,0,cell_size,cell_size).has_point(transform*point):
+		if not Rect2(0,0,cell_size,cell_size).grow(allowance).has_point(transform*point):
 			return false
 	return true
 
 func _initialize() -> void:
+	var options := configuration()
+	levels.assign(options.get("levels",[2,3]))
+	save_filename=options.get("save_filename","mutant_sprites_test_save.json")
+	suite_label=options.get("suite_label","Level 2/3 sprite checks")
 	call_deferred("_run")
+
+func configuration() -> Dictionary:
+	return {}
 
 func _run() -> void:
 	var extents: Array[int] = []
@@ -67,7 +75,7 @@ func _run() -> void:
 		check(settings.load(path+".import")==OK and settings.get_value("params","compress/mode")==0,"lossless import, level %d" % level)
 		for cell_size in [62,64]:
 			for lifted in [false,true]:
-				check(fits_cell(bounds,cell_size,lifted),"%dpx cell, level %d lifted=%s" % [cell_size,level,lifted])
+				check(fits_cell(bounds,cell_size,lifted,level),"%dpx cell overlap budget, level %d lifted=%s" % [cell_size,level,lifted])
 		art.pop()
 		await create_timer(0.48).timeout
 		check(art.scale.is_equal_approx(Vector2.ONE),"spawn animation retained, level %d" % level)

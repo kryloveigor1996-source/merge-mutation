@@ -30,6 +30,8 @@ animations, drag behavior and save files do not need to change.
 
 The slime is RGBA8, exactly 256×256, with alpha bounds `(16,34,224,188)` and no
 opaque background. Its import is lossless, with alpha-border correction and mipmaps.
-The existing 56×56 art rectangle remains unchanged, fitting both the current
-62-pixel board pitch and a 64×64 preview cell. Linear mipmapped minification keeps
-this glossy illustration smooth without adding a blur effect.
+Runtime display size is configured in `scripts/mutant_sizes.gd`, using the actual
+alpha bounds rather than the transparent canvas. Board sizes grow from 52px to
+84px; collection portraits use 48px. Small cell overlap is intentional. Original
+PNGs and their padding remain unchanged; do not resize the files to tune gameplay
+display size. Linear mipmapped filtering keeps the illustrations smooth.
