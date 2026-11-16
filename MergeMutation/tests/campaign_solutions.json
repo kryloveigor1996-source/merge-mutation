@@ -2,416 +2,396 @@
 	"1": {
 		"actions": [
 			{
-				"index": 0,
+				"index": 7,
 				"kind": "spawn",
 				"species_id": "slime"
 			},
 			{
-				"index": 1,
-				"kind": "spawn",
-				"species_id": "slime"
-			},
-			{
-				"index": 1,
+				"index": 7,
 				"kind": "merge",
-				"source": 0
+				"source": 6
 			}
 		],
-		"creations": 2,
+		"creations": 1,
+		"cutoff": false,
+		"exhaustive": false,
+		"explored": 9,
+		"limit": 60000,
 		"merges": 1,
+		"method": "BFS",
 		"moves": 1,
+		"transfers": 0,
+		"visited": 31,
 		"won": true
 	},
 	"10": {
 		"actions": [
 			{
-				"index": 0,
+				"index": 17,
 				"kind": "spawn",
 				"species_id": "horn"
 			},
 			{
-				"index": 6,
+				"index": 11,
+				"kind": "move",
+				"source": 6
+			},
+			{
+				"index": 12,
+				"kind": "move",
+				"source": 7
+			},
+			{
+				"index": 13,
+				"kind": "move",
+				"source": 8
+			},
+			{
+				"index": 16,
 				"kind": "merge",
-				"source": 0
+				"source": 11
 			},
 			{
-				"index": 0,
-				"kind": "spawn",
-				"species_id": "slime"
-			},
-			{
-				"index": 1,
-				"kind": "spawn",
-				"species_id": "horn"
-			},
-			{
-				"index": 2,
-				"kind": "spawn",
-				"species_id": "slime"
-			},
-			{
-				"index": 2,
+				"index": 18,
 				"kind": "merge",
-				"source": 0
+				"source": 13
 			},
 			{
-				"index": 8,
+				"index": 12,
 				"kind": "merge",
-				"source": 2
+				"source": 17
+			},
+			{
+				"index": 17,
+				"kind": "move",
+				"source": 16
+			},
+			{
+				"index": 18,
+				"kind": "merge",
+				"source": 17
 			}
 		],
-		"creations": 4,
-		"merges": 3,
-		"moves": 3,
+		"creations": 1,
+		"cutoff": false,
+		"exhaustive": false,
+		"explored": 21507,
+		"limit": 60000,
+		"merges": 4,
+		"method": "BFS",
+		"moves": 8,
+		"transfers": 4,
+		"visited": 33054,
 		"won": true
 	},
 	"2": {
 		"actions": [
 			{
-				"index": 8,
-				"kind": "merge",
+				"index": 7,
+				"kind": "move",
 				"source": 6
 			},
 			{
-				"index": 0,
-				"kind": "spawn",
-				"species_id": "slime"
-			},
-			{
-				"index": 1,
-				"kind": "spawn",
-				"species_id": "slime"
-			},
-			{
-				"index": 1,
-				"kind": "merge",
-				"source": 0
-			},
-			{
 				"index": 8,
 				"kind": "merge",
-				"source": 1
+				"source": 7
 			}
 		],
-		"creations": 2,
-		"merges": 3,
-		"moves": 3,
+		"creations": 0,
+		"cutoff": false,
+		"exhaustive": false,
+		"explored": 21,
+		"limit": 60000,
+		"merges": 1,
+		"method": "BFS",
+		"moves": 2,
+		"transfers": 1,
+		"visited": 63,
 		"won": true
 	},
 	"3": {
 		"actions": [
 			{
-				"index": 0,
-				"kind": "spawn",
-				"species_id": "slime"
-			},
-			{
-				"index": 1,
-				"kind": "spawn",
-				"species_id": "slime"
-			},
-			{
-				"index": 1,
+				"index": 7,
 				"kind": "merge",
-				"source": 0
+				"source": 6
 			},
 			{
-				"index": 0,
-				"kind": "spawn",
-				"species_id": "slime"
-			},
-			{
-				"index": 2,
-				"kind": "spawn",
-				"species_id": "slime"
-			},
-			{
-				"index": 2,
+				"index": 12,
 				"kind": "merge",
-				"source": 0
+				"source": 11
 			}
 		],
-		"creations": 4,
+		"creations": 0,
+		"cutoff": false,
+		"exhaustive": false,
+		"explored": 49,
+		"limit": 60000,
 		"merges": 2,
+		"method": "BFS",
 		"moves": 2,
+		"transfers": 0,
+		"visited": 303,
 		"won": true
 	},
 	"4": {
 		"actions": [
 			{
-				"index": 1,
-				"kind": "spawn",
-				"species_id": "slime"
+				"index": 7,
+				"kind": "move",
+				"source": 6
 			},
 			{
-				"index": 2,
-				"kind": "spawn",
-				"species_id": "slime"
-			},
-			{
-				"index": 2,
+				"index": 8,
 				"kind": "merge",
-				"source": 1
+				"source": 13
 			},
 			{
-				"index": 1,
-				"kind": "spawn",
-				"species_id": "slime"
-			},
-			{
-				"index": 3,
-				"kind": "spawn",
-				"species_id": "slime"
-			},
-			{
-				"index": 3,
+				"index": 8,
 				"kind": "merge",
-				"source": 1
-			},
-			{
-				"index": 3,
-				"kind": "merge",
-				"source": 2
+				"source": 7
 			}
 		],
-		"creations": 4,
-		"merges": 3,
+		"creations": 0,
+		"cutoff": false,
+		"exhaustive": false,
+		"explored": 343,
+		"limit": 60000,
+		"merges": 2,
+		"method": "BFS",
 		"moves": 3,
+		"transfers": 1,
+		"visited": 1412,
 		"won": true
 	},
 	"5": {
 		"actions": [
 			{
-				"index": 1,
-				"kind": "spawn",
-				"species_id": "slime"
+				"index": 7,
+				"kind": "move",
+				"source": 6
 			},
 			{
-				"index": 2,
-				"kind": "spawn",
-				"species_id": "slime"
-			},
-			{
-				"index": 2,
+				"index": 8,
 				"kind": "merge",
-				"source": 1
+				"source": 7
 			},
 			{
-				"index": 1,
-				"kind": "spawn",
-				"species_id": "slime"
+				"index": 13,
+				"kind": "move",
+				"source": 8
 			},
 			{
-				"index": 3,
-				"kind": "spawn",
-				"species_id": "slime"
+				"index": 17,
+				"kind": "move",
+				"source": 16
 			},
 			{
-				"index": 3,
+				"index": 18,
 				"kind": "merge",
-				"source": 1
+				"source": 17
 			},
 			{
-				"index": 3,
+				"index": 18,
 				"kind": "merge",
-				"source": 2
-			},
-			{
-				"index": 1,
-				"kind": "spawn",
-				"species_id": "slime"
-			},
-			{
-				"index": 2,
-				"kind": "spawn",
-				"species_id": "slime"
-			},
-			{
-				"index": 2,
-				"kind": "merge",
-				"source": 1
-			},
-			{
-				"index": 1,
-				"kind": "spawn",
-				"species_id": "slime"
-			},
-			{
-				"index": 5,
-				"kind": "spawn",
-				"species_id": "slime"
-			},
-			{
-				"index": 5,
-				"kind": "merge",
-				"source": 1
-			},
-			{
-				"index": 5,
-				"kind": "merge",
-				"source": 2
-			},
-			{
-				"index": 5,
-				"kind": "merge",
-				"source": 3
+				"source": 13
 			}
 		],
-		"creations": 8,
-		"merges": 7,
-		"moves": 7,
+		"creations": 0,
+		"cutoff": false,
+		"exhaustive": false,
+		"explored": 1062,
+		"limit": 60000,
+		"merges": 3,
+		"method": "BFS",
+		"moves": 6,
+		"transfers": 3,
+		"visited": 1488,
 		"won": true
 	},
 	"6": {
 		"actions": [
 			{
-				"index": 0,
-				"kind": "spawn",
-				"species_id": "eyeball"
+				"index": 8,
+				"kind": "move",
+				"source": 7
+			},
+			{
+				"index": 7,
+				"kind": "move",
+				"source": 6
 			},
 			{
 				"index": 12,
 				"kind": "merge",
-				"source": 0
+				"source": 7
+			},
+			{
+				"index": 7,
+				"kind": "move",
+				"source": 8
+			},
+			{
+				"index": 6,
+				"kind": "move",
+				"source": 7
+			},
+			{
+				"index": 11,
+				"kind": "merge",
+				"source": 6
 			}
 		],
-		"creations": 1,
-		"merges": 1,
-		"moves": 1,
+		"creations": 0,
+		"cutoff": false,
+		"exhaustive": false,
+		"explored": 217,
+		"limit": 60000,
+		"merges": 2,
+		"method": "BFS",
+		"moves": 6,
+		"transfers": 4,
+		"visited": 428,
 		"won": true
 	},
 	"7": {
 		"actions": [
 			{
-				"index": 0,
+				"index": 13,
 				"kind": "spawn",
 				"species_id": "slime"
 			},
 			{
-				"index": 6,
-				"kind": "merge",
-				"source": 0
+				"index": 7,
+				"kind": "move",
+				"source": 6
 			},
 			{
-				"index": 0,
-				"kind": "spawn",
-				"species_id": "eyeball"
+				"index": 12,
+				"kind": "merge",
+				"source": 11
 			},
 			{
 				"index": 8,
 				"kind": "merge",
-				"source": 0
+				"source": 13
+			},
+			{
+				"index": 8,
+				"kind": "merge",
+				"source": 7
 			}
 		],
-		"creations": 2,
-		"merges": 2,
-		"moves": 2,
+		"creations": 1,
+		"cutoff": false,
+		"exhaustive": false,
+		"explored": 286,
+		"limit": 60000,
+		"merges": 3,
+		"method": "BFS",
+		"moves": 4,
+		"transfers": 1,
+		"visited": 592,
 		"won": true
 	},
 	"8": {
 		"actions": [
 			{
-				"index": 0,
-				"kind": "spawn",
-				"species_id": "slime"
+				"index": 7,
+				"kind": "move",
+				"source": 6
 			},
 			{
-				"index": 1,
-				"kind": "spawn",
-				"species_id": "eyeball"
+				"index": 8,
+				"kind": "move",
+				"source": 7
 			},
 			{
-				"index": 2,
-				"kind": "spawn",
-				"species_id": "slime"
+				"index": 14,
+				"kind": "move",
+				"source": 13
 			},
 			{
-				"index": 2,
+				"index": 13,
+				"kind": "move",
+				"source": 8
+			},
+			{
+				"index": 18,
 				"kind": "merge",
-				"source": 0
-			},
-			{
-				"index": 0,
-				"kind": "spawn",
-				"species_id": "eyeball"
-			},
-			{
-				"index": 1,
-				"kind": "merge",
-				"source": 0
-			},
-			{
-				"index": 0,
-				"kind": "spawn",
-				"species_id": "slime"
-			},
-			{
-				"index": 3,
-				"kind": "spawn",
-				"species_id": "eyeball"
-			},
-			{
-				"index": 4,
-				"kind": "spawn",
-				"species_id": "slime"
-			},
-			{
-				"index": 4,
-				"kind": "merge",
-				"source": 0
-			},
-			{
-				"index": 4,
-				"kind": "merge",
-				"source": 2
+				"source": 13
 			}
 		],
-		"creations": 7,
-		"merges": 4,
-		"moves": 4,
+		"creations": 0,
+		"cutoff": false,
+		"exhaustive": false,
+		"explored": 85,
+		"limit": 60000,
+		"merges": 1,
+		"method": "BFS",
+		"moves": 5,
+		"transfers": 4,
+		"visited": 128,
 		"won": true
 	},
 	"9": {
 		"actions": [
 			{
-				"index": 0,
+				"index": 6,
 				"kind": "spawn",
-				"species_id": "eyeball"
+				"species_id": "slime"
 			},
 			{
-				"index": 1,
+				"index": 8,
 				"kind": "spawn",
-				"species_id": "eyeball"
+				"species_id": "slime"
 			},
 			{
-				"index": 1,
+				"index": 7,
+				"kind": "move",
+				"source": 6
+			},
+			{
+				"index": 6,
+				"kind": "spawn",
+				"species_id": "slime"
+			},
+			{
+				"index": 7,
 				"kind": "merge",
-				"source": 0
+				"source": 6
 			},
 			{
-				"index": 0,
+				"index": 13,
+				"kind": "move",
+				"source": 8
+			},
+			{
+				"index": 8,
 				"kind": "spawn",
-				"species_id": "eyeball"
+				"species_id": "slime"
 			},
 			{
-				"index": 2,
-				"kind": "spawn",
-				"species_id": "eyeball"
-			},
-			{
-				"index": 2,
+				"index": 8,
 				"kind": "merge",
-				"source": 0
+				"source": 13
 			},
 			{
-				"index": 2,
+				"index": 8,
 				"kind": "merge",
-				"source": 1
+				"source": 7
 			}
 		],
 		"creations": 4,
+		"cutoff": false,
+		"exhaustive": false,
+		"explored": 743,
+		"limit": 60000,
 		"merges": 3,
-		"moves": 3,
+		"method": "BFS",
+		"moves": 5,
+		"transfers": 2,
+		"visited": 1145,
 		"won": true
 	}
 }

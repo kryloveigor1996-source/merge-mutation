@@ -1,48 +1,80 @@
 {
   "id": "lab_07",
   "number": 7,
-  "name": "Два независимых вида",
+  "name": "Сначала освободи путь",
   "available_species": [
     "slime",
     "eyeball"
   ],
   "initial": [
     {
-      "evolution_stage": 1,
       "species_id": "slime",
-      "cell": 6
+      "cell": 6,
+      "evolution_stage": 2
     },
     {
-      "evolution_stage": 1,
+      "species_id": "slime",
+      "cell": 8,
+      "evolution_stage": 1
+    },
+    {
       "species_id": "eyeball",
-      "cell": 8
+      "cell": 11,
+      "evolution_stage": 1
+    },
+    {
+      "species_id": "eyeball",
+      "cell": 12,
+      "evolution_stage": 1
     }
   ],
   "sequence": [
-    "slime",
-    "eyeball",
-    "slime",
-    "eyeball",
-    "slime",
-    "eyeball",
     "slime"
   ],
-  "creation_limit": 7,
-  "move_limit": 12,
-  "blocked_cells": [],
+  "creation_limit": 1,
+  "move_limit": 7,
+  "blocked_cells": [
+    0,
+    1,
+    2,
+    3,
+    4,
+    5,
+    9,
+    10,
+    14,
+    15,
+    16,
+    17,
+    18,
+    19,
+    20,
+    21,
+    22,
+    23,
+    24,
+    25,
+    26,
+    27,
+    28,
+    29
+  ],
+  "spawn_points": [
+    13
+  ],
   "goals": [
     {
       "type": "collect_forms",
       "forms": [
         {
-          "evolution_stage": 2,
           "count": 1,
-          "species_id": "slime"
+          "species_id": "slime",
+          "evolution_stage": 3
         },
         {
-          "evolution_stage": 2,
           "count": 1,
-          "species_id": "eyeball"
+          "species_id": "eyeball",
+          "evolution_stage": 2
         }
       ]
     }

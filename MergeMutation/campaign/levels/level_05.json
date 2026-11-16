@@ -1,37 +1,65 @@
 {
   "id": "lab_05",
   "number": 5,
-  "name": "Большая эволюция",
+  "name": "Каскад эволюции",
   "available_species": [
     "slime"
   ],
-  "initial": [],
-  "sequence": [
-    "slime",
-    "slime",
-    "slime",
-    "slime",
-    "slime",
-    "slime",
-    "slime",
-    "slime",
-    "slime",
-    "slime"
+  "initial": [
+    {
+      "cell": 6,
+      "species_id": "slime",
+      "evolution_stage": 2
+    },
+    {
+      "cell": 8,
+      "species_id": "slime",
+      "evolution_stage": 2
+    },
+    {
+      "cell": 16,
+      "species_id": "slime",
+      "evolution_stage": 2
+    },
+    {
+      "cell": 18,
+      "species_id": "slime",
+      "evolution_stage": 2
+    }
   ],
-  "creation_limit": 10,
-  "move_limit": 16,
+  "sequence": [],
+  "creation_limit": 0,
+  "move_limit": 9,
   "blocked_cells": [
     0,
+    1,
+    2,
+    3,
     4,
+    5,
+    9,
+    10,
+    14,
+    15,
+    19,
+    20,
+    21,
+    22,
+    23,
+    24,
     25,
+    26,
+    27,
+    28,
     29
   ],
+  "spawn_points": [],
   "goals": [
     {
-      "evolution_stage": 4,
       "count": 1,
       "species_id": "slime",
-      "type": "reach_stage"
+      "type": "reach_stage",
+      "evolution_stage": 4
     }
   ],
   "reward_coins": 150,

@@ -44,8 +44,9 @@ func run() -> void:
 	game._spawn()
 	game._spawn()
 	for index in range(12):
-		var source := 1 if index%2==0 else 3
-		var destination := 3 if index%2==0 else 1
+		if game.campaign.status!="active": break
+		var source := 6 if index%2==0 else 11
+		var destination := 11 if index%2==0 else 6
 		game._press(game.view.cell_center(source))
 		game._release(game.view.cell_center(destination))
 	await create_timer(0.5).timeout

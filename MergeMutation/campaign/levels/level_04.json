@@ -1,34 +1,43 @@
 {
   "id": "lab_04",
   "number": 4,
-  "name": "Точные движения",
+  "name": "Выбери направление",
   "available_species": [
     "slime"
   ],
-  "initial": [],
+  "initial": [
+    {
+      "species_id": "slime",
+      "cell": 6,
+      "evolution_stage": 2
+    },
+    {
+      "species_id": "slime",
+      "cell": 8,
+      "evolution_stage": 1
+    },
+    {
+      "species_id": "slime",
+      "cell": 13,
+      "evolution_stage": 1
+    }
+  ],
   "sequence": [
-    "slime",
-    "slime",
-    "slime",
-    "slime",
-    "slime",
     "slime",
     "slime"
   ],
-  "creation_limit": 7,
-  "move_limit": 12,
-  "blocked_cells": [
-    0,
-    4,
-    25,
-    29
+  "creation_limit": 2,
+  "move_limit": 5,
+  "blocked_cells": [],
+  "spawn_points": [
+    16
   ],
   "goals": [
     {
-      "evolution_stage": 3,
       "count": 1,
       "species_id": "slime",
-      "type": "reach_stage"
+      "type": "reach_stage",
+      "evolution_stage": 3
     }
   ],
   "reward_coins": 100,

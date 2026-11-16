@@ -17,6 +17,9 @@ var overlay: Control
 var create_button: Button
 var nav_left: Button
 var nav_right: Button
+var teleport_button: Button
+var rejected_index := -1
+var rejection_time := 0.0
 var species_button: Button
 var collection_species := "slime"
 var banner := ""
@@ -90,6 +93,13 @@ func _ready() -> void:
 	species_button.add_theme_stylebox_override("disabled",style(Color("e5dcff")))
 	create_button = button("СОЗДАТЬ  ·  10",Rect2(37,558,286,58),Color("ffda69"),game._create_requested)
 	create_button.add_theme_font_size_override("font_size",20)
+	teleport_button=button("ТЕЛЕПОРТ",Rect2(266,558,72,58),Color("ded2fb"),game.toggle_teleporter)
+	teleport_button.size=Vector2(72,58)
+	teleport_button.add_theme_stylebox_override("disabled",style(Color("d5dedb")))
+	teleport_button.add_theme_color_override("font_disabled_color",Color("627f8c"))
+	create_button.add_theme_stylebox_override("disabled",style(Color("d5dedb")))
+	create_button.add_theme_color_override("font_disabled_color",Color("627f8c"))
+	teleport_button.hide()
 	nav_left=button("КОЛЛЕКЦИЯ",Rect2(18,638,104,54),Color("b5e9ee"),left_nav)
 	button("КАМПАНИЯ",Rect2(128,638,104,54),Color("ded2fb"),func(): show_panel("levels"))
 	nav_right=button("НАСТРОЙКИ",Rect2(238,638,104,54),Color("ffd7b6"),right_nav)
@@ -157,6 +167,8 @@ func drag_position(pointer: Vector2,creature: Art) -> Vector2:
 	return Sizes.clamp_center(pointer+Vector2(0,-8),creature.guarded_bounds(true))
 
 func rebuild() -> void:
+	rejection_time=0
+	rejected_index=-1
 	for tween: Tween in motion.values():
 		tween.kill()
 	motion.clear()
@@ -249,6 +261,9 @@ func merge(source: int,destination: int,discovered: bool) -> void:
 	queue_redraw()
 
 func _process(delta: float) -> void:
+	if rejection_time>0:
+		rejection_time=maxf(0,rejection_time-delta)
+		queue_redraw()
 	if creatures.has(drag_index):
 		var creature: Art = creatures[drag_index]
 		creature.position = creature.position.lerp(drag_position(game.pointer_pos,creature),1-exp(-30*delta))
@@ -294,6 +309,13 @@ func _draw() -> void:
 	nav_right.text="ПЕСОЧНИЦА" if playing else "НАСТРОЙКИ"
 	species_button.disabled=playing
 	create_button.text="СОЗДАТЬ" if playing else "СОЗДАТЬ  ·  10"
+	create_button.position=Vector2(25,558) if playing else Vector2(37,558)
+	create_button.custom_minimum_size=Vector2(233,58) if playing else Vector2(286,58)
+	create_button.size=create_button.custom_minimum_size
+	teleport_button.visible=playing
+	if playing:
+		teleport_button.text="ТЕЛЕПОРТ\nТЕСТ · %d%s" % [game.campaign.boosters.remaining("teleporter")," ✓" if game.teleport_mode else ""]
+		teleport_button.disabled=game.campaign.status!="active" or game.campaign.boosters.remaining("teleporter")==0
 	create_button.disabled=playing and (game.campaign.status!="active" or game.campaign.creations_left()==0 or game.campaign.spawn_index()<0)
 	if playing:
 		label("СОЗДАНИЯ",Vector2(32,88),9)
@@ -302,6 +324,7 @@ func _draw() -> void:
 		label("∞" if game.campaign.moves_left()<0 else str(game.campaign.moves_left()),Vector2(116,112),23)
 		var next: String=game.campaign.next_species()
 		species_button.text="ДАЛЕЕ\n"+(Catalog.title(Catalog.make(next)) if not next.is_empty() else "Нет созданий")
+		if not next.is_empty() and game.campaign.spawn_index()<0: species_button.text+="\nТочка занята"
 		label(game.campaign.config.name,Vector2(23,136),10)
 	else:
 		draw_circle(Vector2(42,97),12,Color("d49832"))
@@ -322,13 +345,31 @@ func _draw() -> void:
 			plate(Rect2(p,Vector2(58,58)),Color("668893"),10)
 			draw_line(p+Vector2(15,15),p+Vector2(43,43),INK,4,true)
 			draw_line(p+Vector2(43,15),p+Vector2(15,43),INK,4,true)
+		if playing and index in game.campaign.config.spawn_points:
+			var frame := StyleBoxFlat.new()
+			frame.bg_color=Color.TRANSPARENT
+			frame.border_color=Color("218eaa")
+			frame.set_border_width_all(3)
+			frame.set_corner_radius_all(10)
+			draw_style_box(frame,Rect2(p+Vector2(3,3),Vector2(52,52)))
+			draw_line(p+Vector2(46,6),p+Vector2(46,16),Color("14758f"),2,true)
+			draw_polyline(PackedVector2Array([p+Vector2(42,12),p+Vector2(46,16),p+Vector2(50,12)]),Color("14758f"),2,true)
+		if playing and game.dragging and valid_target(index):
+			var highlight := StyleBoxFlat.new()
+			highlight.bg_color=Color(0.75,0.95,0.6,0.3)
+			highlight.border_color=Color("a66fea") if game.teleport_mode else Color("4baf68")
+			highlight.set_border_width_all(3)
+			highlight.set_corner_radius_all(10)
+			draw_style_box(highlight,Rect2(p+Vector2(1,1),Vector2(56,56)))
+		if rejection_time>0 and index==rejected_index:
+			draw_rect(Rect2(p+Vector2(2,2),Vector2(54,54)),Color("df5365"),false,3)
 		if index == drag_index:
 			draw_style_box(style(Color("ffe8a0")),Rect2(p,Vector2(58,58)))
 	for screw in [Vector2(23,144),Vector2(337,144),Vector2(23,523),Vector2(337,523)]:
 		draw_circle(screw,3,Color("d5edf0"))
 		draw_line(screw-Vector2(1.5,0),screw+Vector2(1.5,0),INK,1)
-	wrapped_message(game.campaign.goals.text(game.campaign.config.goals) if game.in_campaign() else game.message)
-	label("Один вид + одна стадия = эволюция",Vector2(180,630),10,INK,true)
+	wrapped_message(game.campaign.goals.text(game.campaign.config.goals) if playing and game.message_time<=0 else game.message)
+	label("Один шаг по стороне · Голубая рамка: появление" if playing else "Один вид + одна стадия = эволюция",Vector2(180,630),9,INK,true)
 	label("v2.0  /  ЛАБОРАТОРИЯ ЭВОЛЮЦИИ",Vector2(180,711),8,Color("4e7987"),true)
 
 func _draw_discovery_banner() -> void:
@@ -539,3 +580,18 @@ func campaign_result_panel(body: VBoxContainer) -> void:
 		body.add_child(text_node(game.campaign.reason+". Монеты не списаны.",16))
 	action_row(body,"ПОВТОРИТЬ",func(): game.start_level(int(game.campaign.config.number)))
 	action_row(body,"ВЫБОР УРОВНЕЙ",func(): show_panel("levels"))
+
+func valid_target(index: int) -> bool:
+	if not game.in_campaign() or game.selected<0 or index==game.selected or game.campaign.blocked(index): return false
+	if game.teleport_mode:
+		return game.campaign.boosters.remaining("teleporter")>0 and game.cells[index]==null
+	return game.campaign.can_transfer(game.selected,index)
+
+func reject_drop(index: int) -> void:
+	rejected_index=index
+	rejection_time=0.4
+	if creatures.has(game.selected):
+		var creature: Art=creatures[game.selected]
+		creature.modulate=Color("ffb7c0")
+		creature.create_tween().tween_property(creature,"modulate",Color.WHITE,0.3)
+	queue_redraw()

@@ -22,6 +22,7 @@ func write(path: String,value: String) -> void:
 	file.close()
 func config(initial: Array,sequence: Array,limit: int,goal: Dictionary) -> Dictionary:
 	var data := Levels.get_level(1)
+	data.erase("spawn_points")
 	data.initial=initial
 	data.sequence=sequence
 	data.creation_limit=sequence.size()
@@ -53,7 +54,7 @@ func run() -> void:
 		var result := s.spawn()
 		check(result.ok and result.form==Catalog.make(expected[index]) and s.creations_left()==before-1,"ordered queue consumes one creation")
 	check(not s.spawn().ok and s.creations_left()==0,"no negative creations")
-	var c := config([{"cell":6,"species_id":"slime","evolution_stage":1}],[],3,{"type":"reach_stage","species_id":"slime","evolution_stage":3})
+	var c := config([{"cell":6,"species_id":"slime","evolution_stage":1}],[],3,{"type":"reach_stage","species_id":"slime","evolution_stage":2})
 	# Add an actual pair so the attempt is still playable without new creations.
 	c.initial.append({"cell":8,"species_id":"slime","evolution_stage":1})
 	s.start(c)
@@ -70,10 +71,11 @@ func run() -> void:
 	s.cells[9]=null
 	s.cells[10]=null
 	check(s.transfer(7,8).ok and s.moves_left()==1 and s.goals.merges==1,"merge costs one move")
+	s.start(config([{"cell":8,"species_id":"slime","evolution_stage":2}],[],1,{"type":"reach_stage","species_id":"slime","evolution_stage":3}))
 	check(s.status=="lost" and not s.transfer(8,7).ok,"exhausted opportunities fail and lock")
-	c=config([{"cell":6,"species_id":"slime","evolution_stage":1},{"cell":8,"species_id":"slime","evolution_stage":1}],[],1,{"type":"reach_stage","species_id":"slime","evolution_stage":2})
+	c=config([{"cell":6,"species_id":"slime","evolution_stage":1},{"cell":7,"species_id":"slime","evolution_stage":1}],[],1,{"type":"reach_stage","species_id":"slime","evolution_stage":2})
 	s.start(c)
-	s.transfer(6,8)
+	s.transfer(6,7)
 	check(s.status=="won" and s.moves_left()==0,"victory on last move wins")
 	check(not s.spawn().ok and not s.transfer(8,9).ok,"victory locks actions")
 	c=config([],['slime','slime'],-1,{"type":"reach_stage","species_id":"slime","evolution_stage":2})
@@ -92,7 +94,9 @@ func run() -> void:
 	s.start(c)
 	s.spawn()
 	check(s.status=="lost" and not s.reason.is_empty(),"no possible merge or creation fails")
-	s.start(Levels.get_level(4))
+	var legacy := config([],['slime','slime'],10,{"type":"reach_stage","species_id":"slime","evolution_stage":3})
+	legacy.blocked_cells=[0.0,4.0,25.0,29.0]
+	s.start(legacy)
 	for blocked_index in [0,4,25,29]:
 		check(s.blocked(blocked_index),"JSON float blocked index normalized")
 	check(not s.transfer(0,1).ok and not s.transfer(1,4).ok,"blocked cells reject actions")
@@ -134,10 +138,10 @@ func run() -> void:
 	root.add_child(game)
 	game.view.sound.set_enabled(false)
 	check(game.campaign_progress.stars==0 and game.campaign_progress.unlocked()==1,"v2 without campaign loads")
-	check(not game.start_level(2),"future level locked")
+	check(not game.start_level(2,false),"future level locked")
 	var total_reward := 0
 	for number in range(1,11):
-		check(game.start_level(number),"start unlocked level %d" % number)
+		check(game.start_level(number,false),"start unlocked level %d" % number)
 		check(game.sandbox_cells==original_cells and game.active_species=="horn" and game.merges==42,"sandbox isolated on entry")
 		check(not game.select_species("ultra"),"campaign cannot select arbitrary species")
 		var proof: Dictionary=proofs[str(number)]
@@ -159,7 +163,7 @@ func run() -> void:
 		game._spawn()
 		game._press(game.view.cell_center(1))
 		check(game.cells==state and not game.dragging,"terminal main board locked")
-		check(game.start_level(number),"replay permitted")
+		check(game.start_level(number,false),"replay permitted")
 		for action in proof.actions:
 			if action.kind=="spawn": game._spawn()
 			else:
@@ -172,19 +176,19 @@ func run() -> void:
 	check(game.campaign_progress.completed.size()==10 and game.campaign_progress.claimed.size()==10,"all completed and claimed")
 	var backup: String=game.save_path+".pre-update-"+old_hash.substr(0,12)+".bak"
 	check(FileAccess.get_sha256(backup)==old_hash,"original v2 backup byte identical")
-	game.start_level(10)
+	game.start_level(10,false)
 	game._spawn()
 	game._save_game()
 	check(game._load_game() and not game.in_campaign() and game.cells==original_cells and game.campaign_progress.stars==10,"reload restores sandbox and progress, no partial attempt")
 	check(game.coins==1877 and game.save_extra.custom_settings.enabled==false,"currency and independent fields preserved")
 	check(game.campaign_progress.finish(10).coins==0,"reload cannot duplicate award")
-	game.start_level(4)
+	game.start_level(9,false)
 	for blocked_index in [0,4,25,29]:
 		check(game._cell_at(game.view.cell_center(blocked_index))==-1,"blocked cells excluded from actual input")
 	game._spawn()
 	game._spawn()
-	game._press(game.view.cell_center(1))
-	game._release(game.view.cell_center(2))
+	game._press(game.view.cell_center(6))
+	game._release(game.view.cell_center(7))
 	game.view.nav_left.pressed.emit()
 	check(game.reset_dialog.visible,"restart asks before abandoning attempt")
 	game.reset_dialog.confirmed.emit()
@@ -195,7 +199,7 @@ func run() -> void:
 	check(game.view.overlay.find_children("*","Button",true,false).size()==11,"ten levels and sandbox exit")
 	game.view.overlay.find_children("*","Button",true,false)[3].pressed.emit()
 	check(game.in_campaign() and game.campaign.config.number==4,"native level button opens matching configuration")
-	game.start_level(1)
+	game.start_level(1,false)
 	await process_frame
 	var balance: int=game.coins
 	var touch := InputEventScreenTouch.new()

@@ -1,28 +1,43 @@
 {
   "id": "lab_03",
   "number": 3,
-  "name": "Парный эксперимент",
+  "name": "Две новые формы",
   "available_species": [
     "slime"
   ],
-  "initial": [],
-  "sequence": [
-    "slime",
-    "slime",
-    "slime",
-    "slime",
-    "slime",
-    "slime"
+  "initial": [
+    {
+      "species_id": "slime",
+      "cell": 6,
+      "evolution_stage": 1
+    },
+    {
+      "species_id": "slime",
+      "cell": 7,
+      "evolution_stage": 1
+    },
+    {
+      "species_id": "slime",
+      "cell": 11,
+      "evolution_stage": 1
+    },
+    {
+      "species_id": "slime",
+      "cell": 12,
+      "evolution_stage": 1
+    }
   ],
-  "creation_limit": 6,
+  "sequence": [],
+  "creation_limit": 0,
   "move_limit": -1,
   "blocked_cells": [],
+  "spawn_points": [],
   "goals": [
     {
-      "evolution_stage": 2,
       "count": 2,
       "species_id": "slime",
-      "type": "reach_stage"
+      "type": "reach_stage",
+      "evolution_stage": 2
     }
   ],
   "reward_coins": 100,

@@ -1,39 +1,33 @@
 {
   "id": "lab_02",
   "number": 2,
-  "name": "Третья стадия",
+  "name": "Один шаг навстречу",
   "available_species": [
     "slime"
   ],
   "initial": [
     {
-      "evolution_stage": 1,
       "species_id": "slime",
-      "cell": 6
+      "cell": 6,
+      "evolution_stage": 1
     },
     {
-      "evolution_stage": 1,
       "species_id": "slime",
-      "cell": 8
+      "cell": 8,
+      "evolution_stage": 1
     }
   ],
-  "sequence": [
-    "slime",
-    "slime",
-    "slime",
-    "slime",
-    "slime",
-    "slime"
-  ],
-  "creation_limit": 6,
+  "sequence": [],
+  "creation_limit": 0,
   "move_limit": -1,
   "blocked_cells": [],
+  "spawn_points": [],
   "goals": [
     {
-      "evolution_stage": 3,
       "count": 1,
       "species_id": "slime",
-      "type": "reach_stage"
+      "type": "reach_stage",
+      "evolution_stage": 2
     }
   ],
   "reward_coins": 100,

@@ -39,15 +39,18 @@ var campaign: CampaignSession
 var campaign_progress := CampaignProgress.new()
 var sandbox_cells: Array=[]
 var last_reward := {"coins":0,"stars":0}
+var teleport_mode := false
 
 func in_campaign() -> bool:
 	return campaign!=null
 
-func start_level(number: int) -> bool:
+func start_level(number: int,test_boosters: bool=true) -> bool:
 	if number<1 or number>campaign_progress.unlocked(): return false
 	var attempt := CampaignSession.new()
-	if not attempt.start(CampaignLevels.get_level(number)): return false
+	if not attempt.start(CampaignLevels.get_level(number),1 if test_boosters else 0): return false
 	_cancel_drag()
+	teleport_mode=false
+	message_time=0
 	if not in_campaign(): sandbox_cells=cells.duplicate(true)
 	campaign=attempt
 	cells=campaign.cells
@@ -63,6 +66,7 @@ func start_level(number: int) -> bool:
 	return true
 
 func leave_campaign() -> void:
+	teleport_mode=false
 	if in_campaign():
 		_cancel_drag()
 		cells=sandbox_cells.duplicate(true)
@@ -73,7 +77,9 @@ func leave_campaign() -> void:
 	if is_instance_valid(view): view.close_panel()
 
 func campaign_result(result: Dictionary) -> void:
-	if not result.ok: return
+	if not result.ok:
+		_notice(result.get("reason","Действие недоступно"))
+		return
 	var discovered := unlock(result.form)
 	if is_instance_valid(view):
 		match result.kind:
@@ -81,6 +87,14 @@ func campaign_result(result: Dictionary) -> void:
 			"move": view.move(result.source,result.index)
 			"merge": view.merge(result.source,result.index,discovered)
 	settle_campaign_action()
+
+func toggle_teleporter() -> void:
+	if not in_campaign() or campaign.status!="active" or dragging: return
+	if campaign.boosters.remaining("teleporter")==0:
+		_notice("Нет заряда Телепортатора")
+		return
+	teleport_mode=not teleport_mode
+	_notice("Телепорт: перетащите мутанта в свободную клетку" if teleport_mode else "Обычное перемещение: только соседняя клетка")
 
 func settle_campaign_action() -> void:
 	if campaign.status=="won":
@@ -120,6 +134,7 @@ func _process(delta: float) -> void:
 
 func _notification(what: int) -> void:
 	if what == NOTIFICATION_APPLICATION_FOCUS_OUT or what == NOTIFICATION_APPLICATION_PAUSED:
+		teleport_mode=false
 		_cancel_drag()
 	if what == NOTIFICATION_WM_CLOSE_REQUEST or what == NOTIFICATION_APPLICATION_PAUSED:
 		if cells.size() == COLS * ROWS:
@@ -218,7 +233,11 @@ func _gui_input(event: InputEvent) -> void:
 func _press(pos: Vector2) -> void:
 	if dragging or (in_campaign() and campaign.status!="active"):
 		return
-	if Rect2(37, 558, 286, 58).has_point(pos):
+	if in_campaign() and Rect2(266,558,72,58).has_point(pos):
+		toggle_teleporter()
+		return
+	var create_rect := Rect2(25,558,233,58) if in_campaign() else Rect2(37,558,286,58)
+	if create_rect.has_point(pos):
 		_spawn()
 		return
 	var index := _cell_at(pos)
@@ -236,8 +255,13 @@ func _release(pos: Vector2) -> void:
 	var destination := _cell_at(pos)
 	if in_campaign():
 		var source := selected
-		var result := campaign.transfer(source,destination)
-		if result.ok: campaign_result(result)
+		var result := campaign.use_booster("teleporter",source,destination) if teleport_mode else campaign.transfer(source,destination)
+		if result.ok:
+			teleport_mode=false
+			campaign_result(result)
+		else:
+			_notice(result.get("reason","Действие недоступно"))
+			if is_instance_valid(view): view.reject_drop(destination if destination>=0 else source)
 		_cancel_drag()
 		return
 	if destination >= 0 and destination != selected:

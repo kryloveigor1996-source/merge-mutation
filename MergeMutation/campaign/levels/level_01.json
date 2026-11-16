@@ -1,26 +1,32 @@
 {
   "id": "lab_01",
   "number": 1,
-  "name": "Первое открытие",
+  "name": "Соседи",
   "available_species": [
     "slime"
   ],
-  "initial": [],
+  "initial": [
+    {
+      "cell": 6,
+      "species_id": "slime",
+      "evolution_stage": 1
+    }
+  ],
   "sequence": [
-    "slime",
-    "slime",
-    "slime",
     "slime"
   ],
-  "creation_limit": 4,
+  "creation_limit": 1,
   "move_limit": -1,
   "blocked_cells": [],
+  "spawn_points": [
+    7
+  ],
   "goals": [
     {
-      "evolution_stage": 2,
       "count": 1,
       "species_id": "slime",
-      "type": "reach_stage"
+      "type": "reach_stage",
+      "evolution_stage": 2
     }
   ],
   "reward_coins": 100,
