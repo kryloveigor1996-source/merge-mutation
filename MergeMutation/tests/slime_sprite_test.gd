@@ -66,7 +66,7 @@ func _run() -> void:
 	check(art.scale.is_equal_approx(Vector2.ONE),"PNG returns to resting scale")
 	for level in range(2,11):
 		art.setup(level)
-		if level<=3:
+		if level<=6:
 			check(art.texture!=null and art.texture.resource_path==Art.SPRITES[level],"named PNG retained for level %d" % level)
 		else:
 			check(art.texture==null,"procedural fallback retained for level %d" % level)

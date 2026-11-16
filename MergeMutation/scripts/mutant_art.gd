@@ -1,9 +1,9 @@
 extends Node2D
-## Levels 1–3 use named PNG sprites; levels 4–10 retain numbered optional slots.
+## Levels 1–6 use named PNG sprites; levels 7–10 retain numbered optional slots.
 ## All fallback shapes below are original, drawn with Godot primitives.
 
 const PALETTE := [Color("8ee85c"), Color("58d9ec"), Color("ffbe61"), Color("ff8fba"), Color("749cff"), Color("c899ff"), Color("55dcc5"), Color("ff9868"), Color("a7db55"), Color("ec9cff")]
-const SPRITES := {1:"res://assets/mutants/slime_lv1.png",2:"res://assets/mutants/mutant_lv2.png",3:"res://assets/mutants/mutant_lv3.png"}
+const SPRITES := {1:"res://assets/mutants/slime_lv1.png",2:"res://assets/mutants/mutant_lv2.png",3:"res://assets/mutants/mutant_lv3.png",4:"res://assets/mutants/mutant_lv4.png",5:"res://assets/mutants/mutant_lv5.png",6:"res://assets/mutants/mutant_lv6.png"}
 var level := 1
 var texture: Texture2D
 var animation: Tween
