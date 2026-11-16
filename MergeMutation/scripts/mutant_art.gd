@@ -1,5 +1,5 @@
 extends Node2D
-## Replace assets/mutants/01.png … 10.png with transparent 256x256 art.
+## Level 1 uses slime_lv1.png; levels 2–10 support optional 02.png … 10.png.
 ## All fallback shapes below are original, drawn with Godot primitives.
 
 const PALETTE := [Color("8ee85c"), Color("58d9ec"), Color("ffbe61"), Color("ff8fba"), Color("749cff"), Color("c899ff"), Color("55dcc5"), Color("ff9868"), Color("a7db55"), Color("ec9cff")]
@@ -9,9 +9,11 @@ var animation: Tween
 
 func setup(value: int) -> void:
 	level = clampi(value, 1, 10)
-	var path := "res://assets/mutants/%02d.png" % level
+	texture = null
+	var path := "res://assets/mutants/slime_lv1.png" if level == 1 else "res://assets/mutants/%02d.png" % level
 	if ResourceLoader.exists(path):
 		texture = load(path) as Texture2D
+	texture_filter = CanvasItem.TEXTURE_FILTER_LINEAR_WITH_MIPMAPS
 	queue_redraw()
 
 func pop(start_scale: float = 0.05) -> void:
