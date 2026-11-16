@@ -1,6 +1,7 @@
 extends Control
-## Merge Mutation: self-contained Godot 4 playable prototype.
+## Merge Mutation: gameplay state, rules and backwards-compatible saves.
 ## No external assets or addons required.
+const LabView = preload("res://scripts/lab_view.gd")
 
 const COLS := 5
 const ROWS := 6
@@ -29,6 +30,7 @@ var message_time := 0.0
 var rng := RandomNumberGenerator.new()
 var save_path := SAVE_PATH
 var reset_dialog: ConfirmationDialog
+var view: LabView
 
 func _ready() -> void:
 	rng.randomize()
@@ -38,6 +40,10 @@ func _ready() -> void:
 	reset_dialog.dialog_text = "Start a new game?\nCurrent progress will be replaced."
 	reset_dialog.confirmed.connect(_new_game)
 	add_child(reset_dialog)
+	view = LabView.new()
+	view.game = self
+	add_child(view)
+	resized.connect(view.layout)
 	set_process(true)
 	queue_redraw()
 
@@ -47,6 +53,8 @@ func _process(delta: float) -> void:
 		if message_time <= 0.0:
 			message = "Drag matching creatures together!"
 			queue_redraw()
+			if is_instance_valid(view):
+				view.queue_redraw()
 
 func _notification(what: int) -> void:
 	if what == NOTIFICATION_APPLICATION_FOCUS_OUT or what == NOTIFICATION_APPLICATION_PAUSED:
@@ -56,6 +64,8 @@ func _notification(what: int) -> void:
 			_save_game()
 
 func _cancel_drag() -> void:
+	if is_instance_valid(view):
+		view.cancel_selection()
 	selected = -1
 	dragging = false
 	queue_redraw()
@@ -72,39 +82,42 @@ func _new_game() -> void:
 	message = "Drag matching creatures together!"
 	message_time = 0.0
 	_save_game()
+	if is_instance_valid(view):
+		view.rebuild()
+		view.close_panel()
 	queue_redraw()
+
+func _design_position(pos: Vector2) -> Vector2:
+	return view.to_local(pos) if is_instance_valid(view) else pos
 
 func _gui_input(event: InputEvent) -> void:
 	if event is InputEventMouseButton and event.button_index == MOUSE_BUTTON_LEFT:
 		if event.pressed:
-			_press(event.position)
+			_press(_design_position(event.position))
 		else:
-			_release(event.position)
+			_release(_design_position(event.position))
 		accept_event()
 	elif event is InputEventMouseMotion and dragging:
-		pointer_pos = event.position
+		pointer_pos = _design_position(event.position)
 		queue_redraw()
 		accept_event()
 	elif event is InputEventScreenTouch:
 		if event.index != 0:
 			return
 		if event.pressed:
-			_press(event.position)
+			_press(_design_position(event.position))
 		else:
-			_release(event.position)
+			_release(_design_position(event.position))
 		accept_event()
 	elif event is InputEventScreenDrag and dragging:
 		if event.index != 0:
 			return
-		pointer_pos = event.position
+		pointer_pos = _design_position(event.position)
 		queue_redraw()
 		accept_event()
 
 func _press(pos: Vector2) -> void:
 	if dragging:
-		return
-	if Rect2(270, 620, 75, 20).has_point(pos):
-		reset_dialog.popup_centered()
 		return
 	if Rect2(37, 558, 286, 58).has_point(pos):
 		_spawn()
@@ -114,6 +127,8 @@ func _press(pos: Vector2) -> void:
 		selected = index
 		dragging = true
 		pointer_pos = pos
+		if is_instance_valid(view):
+			view.pick(index)
 		queue_redraw()
 
 func _release(pos: Vector2) -> void:
@@ -124,6 +139,8 @@ func _release(pos: Vector2) -> void:
 		if cells[destination] == 0:
 			cells[destination] = cells[selected]
 			cells[selected] = 0
+			if is_instance_valid(view):
+				view.move(selected,destination)
 			_save_game()
 		elif cells[destination] == cells[selected] and cells[destination] < MAX_LEVEL:
 			var new_level: int = cells[destination] + 1
@@ -131,7 +148,10 @@ func _release(pos: Vector2) -> void:
 			cells[selected] = 0
 			coins += 15 * new_level
 			merges += 1
+			var discovered := new_level > highest
 			highest = maxi(highest, new_level)
+			if is_instance_valid(view):
+				view.merge(selected,destination,discovered)
 			_notice("New mutation: %s! +%d coins" % [NAMES[new_level], 15 * new_level])
 			_save_game()
 		else:
@@ -157,14 +177,24 @@ func _spawn() -> void:
 		_notice("Board full: merge some creatures first!")
 		return
 	coins -= SPAWN_COST
-	cells[empty[rng.randi_range(0, empty.size() - 1)]] = 1
+	var index: int = empty[rng.randi_range(0, empty.size() - 1)]
+	cells[index] = 1
+	if is_instance_valid(view):
+		view.spawn(index)
 	_save_game()
 	queue_redraw()
+
+func _create_requested() -> void:
+	# Native buttons also receive touch; a second finger must not buy mid-drag.
+	if not dragging:
+		_spawn()
 
 func _notice(value: String) -> void:
 	message = value
 	message_time = 3.0
 	queue_redraw()
+	if is_instance_valid(view):
+		view.queue_redraw()
 
 func _save_game() -> void:
 	var data := {"coins": coins, "merges": merges, "highest": highest, "cells": cells}
@@ -216,70 +246,4 @@ func _valid_integer(value: Variant, maximum: int) -> bool:
 	return is_finite(float(value)) and value >= 0 and value <= maximum and floor(float(value)) == value
 
 func _draw() -> void:
-	var bg := Rect2(Vector2.ZERO, size)
-	draw_rect(bg, Color("17112c"))
-	# Background accents.
-	draw_circle(Vector2(325, 80), 100, Color("271b49"))
-	draw_circle(Vector2(10, 490), 90, Color("24193d"))
-	_label("MERGE MUTATION", Vector2(180, 45), 26, Color("bdfb65"), HORIZONTAL_ALIGNMENT_CENTER)
-	_label("CARTOON LAB PROTOTYPE", Vector2(180, 65), 11, Color("a5a0c9"), HORIZONTAL_ALIGNMENT_CENTER)
-	_panel(Rect2(20, 80, 154, 48), Color("342651"))
-	_panel(Rect2(185, 80, 155, 48), Color("342651"))
-	_label("COINS", Vector2(34, 99), 11, Color("bcb1d8"))
-	_label(str(coins), Vector2(34, 118), 21, Color("ffe16e"))
-	_label("BEST MUTANT", Vector2(199, 99), 11, Color("bcb1d8"))
-	_label("LEVEL %d" % highest, Vector2(199, 118), 20, Color("90f1e6"))
-	_panel(Rect2(18, 139, 324, 389), Color("40325e"))
-	for i in range(cells.size()):
-		var col := i % COLS
-		var row := floori(float(i) / COLS)
-		var p := Vector2(BOARD_X + col * CELL, BOARD_Y + row * CELL)
-		var r := Rect2(p + Vector2(2, 2), Vector2(58, 58))
-		_panel(r, Color("554570") if (row + col) % 2 == 0 else Color("4d3f69"))
-		if i == selected and dragging:
-			draw_rect(r, Color("eaff83", 0.30))
-		elif cells[i] > 0:
-			_creature(p + Vector2(31, 30), cells[i], 1.0)
-	if dragging and selected >= 0:
-		_creature(pointer_pos, cells[selected], 1.15)
-	_label(message, Vector2(180, 546), 12, Color("f4dffb"), HORIZONTAL_ALIGNMENT_CENTER)
-	_panel(Rect2(37, 558, 286, 58), Color("79c832"))
-	_label("CREATE SLIME", Vector2(180, 582), 22, Color("152b18"), HORIZONTAL_ALIGNMENT_CENTER)
-	_label("10 coins  |  %d merges" % merges, Vector2(180, 603), 12, Color("244c22"), HORIZONTAL_ALIGNMENT_CENTER)
-	_panel(Rect2(270, 620, 75, 20), Color("342651"))
-	_label("NEW GAME", Vector2(307, 634), 11, Color("f4dffb"), HORIZONTAL_ALIGNMENT_CENTER)
-
-func _panel(rect: Rect2, color: Color) -> void:
-	draw_rect(rect, color)
-	draw_rect(Rect2(rect.position, Vector2(rect.size.x, 2)), color.lightened(0.14))
-
-func _label(value: String, pos: Vector2, font_size: int, color: Color, alignment: HorizontalAlignment = HORIZONTAL_ALIGNMENT_LEFT) -> void:
-	var font := ThemeDB.fallback_font
-	var x := pos.x
-	if alignment == HORIZONTAL_ALIGNMENT_CENTER:
-		x -= font.get_string_size(value, HORIZONTAL_ALIGNMENT_LEFT, -1, font_size).x / 2.0
-	draw_string(font, Vector2(x, pos.y), value, HORIZONTAL_ALIGNMENT_LEFT, -1, font_size, color)
-
-func _creature(center: Vector2, level: int, scale_factor: float) -> void:
-	var c: Color = COLORS[level]
-	var radius := 21.0 * scale_factor
-	draw_circle(center + Vector2(0, 4) * scale_factor, radius + 2, Color("221633"))
-	draw_circle(center, radius, c)
-	draw_circle(center + Vector2(-7, -9) * scale_factor, 6 * scale_factor, Color(1, 1, 1, 0.24))
-	if level >= 3:
-		for side in [-1, 1]:
-			var horn_center := center + Vector2(12 * side, -18) * scale_factor
-			draw_circle(horn_center, 6 * scale_factor, Color("ffe5ad"))
-	if level >= 6:
-		draw_circle(center + Vector2(-22, 2) * scale_factor, 9 * scale_factor, c.darkened(0.20))
-		draw_circle(center + Vector2(22, 2) * scale_factor, 9 * scale_factor, c.darkened(0.20))
-	var eye_count := 1 if level % 3 == 2 else 2
-	if level >= 9:
-		eye_count = 3
-	for e in range(eye_count):
-		var offset := Vector2(0, -5) if eye_count == 1 else Vector2((e - (eye_count - 1) / 2.0) * 13, -6)
-		var eye := center + offset * scale_factor
-		draw_circle(eye, 6.5 * scale_factor, Color.WHITE)
-		draw_circle(eye + Vector2(1.5, 0.5) * scale_factor, 3.0 * scale_factor, Color("20233c"))
-	draw_arc(center + Vector2(0, 5) * scale_factor, 7 * scale_factor, 0.25, PI - 0.25, 14, Color("4c2546"), 2.2 * scale_factor)
-	_label(str(level), center + Vector2(0, 17) * scale_factor, int(11 * scale_factor), Color("19172c"), HORIZONTAL_ALIGNMENT_CENTER)
+	draw_rect(Rect2(Vector2.ZERO,size),Color("b9dfdf"))
