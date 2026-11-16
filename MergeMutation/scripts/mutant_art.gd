@@ -1,4 +1,5 @@
 extends Node2D
+const Sizes = preload("res://scripts/mutant_sizes.gd")
 ## Levels 1–6 use named PNG sprites; levels 7–10 retain numbered optional slots.
 ## All fallback shapes below are original, drawn with Godot primitives.
 
@@ -7,15 +8,44 @@ const SPRITES := {1:"res://assets/mutants/slime_lv1.png",2:"res://assets/mutants
 var level := 1
 var texture: Texture2D
 var animation: Tween
+var source_bounds := Rect2(-28,-28,56,56)
+var collection_mode := false
+static var alpha_cache: Dictionary = {}
 
-func setup(value: int) -> void:
+func setup(value: int,collection: bool=false) -> void:
 	level = clampi(value, 1, 10)
+	collection_mode=collection
 	texture = null
 	var path: String = SPRITES.get(level,"res://assets/mutants/%02d.png" % level)
 	if ResourceLoader.exists(path):
 		texture = load(path) as Texture2D
+	if texture:
+		if not alpha_cache.has(path):
+			var image := texture.get_image()
+			if image.is_compressed():
+				image.decompress()
+			alpha_cache[path]=Rect2(image.get_used_rect())
+		source_bounds=alpha_cache[path]
+	else:
+		source_bounds=Sizes.PROCEDURAL_BOUNDS[level]
 	texture_filter = CanvasItem.TEXTURE_FILTER_LINEAR_WITH_MIPMAPS
 	queue_redraw()
+
+func visible_rect() -> Rect2:
+	return Sizes.visible_rect(level,source_bounds,collection_mode)
+
+func shadow_rect() -> Rect2:
+	var width := minf(Sizes.pixels(level,collection_mode)*0.78,58.0)
+	return Rect2(-width*0.5,visible_rect().end.y-6,width,9)
+
+func render_bounds() -> Rect2:
+	return visible_rect().merge(shadow_rect())
+
+func guarded_bounds(picked: bool=false) -> Rect2:
+	var factor: float = Sizes.PICK_GUARD if picked else Sizes.REST_GUARD
+	if not picked:
+		return Transform2D(0,Vector2.ONE*factor,0,Vector2.ZERO)*render_bounds()
+	return (Transform2D(-0.09,Vector2.ONE*factor,0,Vector2.ZERO)*render_bounds()).merge(Transform2D(0.09,Vector2.ONE*factor,0,Vector2.ZERO)*render_bounds())
 
 func pop(start_scale: float = 0.05) -> void:
 	if animation:
@@ -49,12 +79,15 @@ func disk(pos: Vector2, radius: float, color: Color) -> void:
 	draw_circle(pos, radius, color)
 
 func _draw() -> void:
-	draw_set_transform(Vector2(0, 21), 0, Vector2(1, 0.26))
-	draw_circle(Vector2.ZERO, 23, Color(0.08, 0.23, 0.29, 0.22))
+	var shadow := shadow_rect()
+	draw_set_transform(shadow.get_center(),0,Vector2(1,shadow.size.y/shadow.size.x))
+	draw_circle(Vector2.ZERO,shadow.size.x*0.5,Color(0.08,0.23,0.29,0.22))
 	draw_set_transform(Vector2.ZERO)
 	if texture:
-		draw_texture_rect(texture, Rect2(-28, -28, 56, 56), false)
+		draw_texture_rect_region(texture,visible_rect(),source_bounds)
 		return
+	var factor := Sizes.pixels(level,collection_mode)/maxf(source_bounds.size.x,source_bounds.size.y)
+	draw_set_transform(-source_bounds.get_center()*factor,0,Vector2.ONE*factor)
 	var color: Color = PALETTE[level - 1]
 	# A unique silhouette for each of the ten evolutions.
 	match level:

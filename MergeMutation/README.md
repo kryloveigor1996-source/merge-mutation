@@ -10,6 +10,8 @@ Levels 2–3 sprite update: [three-species field](docs/mutants-levels-1-3.png) �
 
 Levels 4–6 sprite update: [six-species field](docs/mutants-levels-1-6.png) · [64px edge and scale proof](docs/mutants-levels-1-6-proof.png).
 
+Progressive sizes: [before](docs/progressive-before.png) · [after](docs/progressive-after.png) · [dense ten-level board](docs/progressive-dense.png) · [technical report](docs/progressive-sizes.md).
+
 ## Open
 1. Open Godot 4.7.2 (the version used for validation).
 2. In Project Manager choose **Import** and select `project.godot` in this folder.
@@ -49,6 +51,7 @@ godot --headless --path . --script res://tests/presentation_test.gd
 godot --headless --path . --script res://tests/slime_sprite_test.gd
 godot --headless --path . --script res://tests/mutant_sprites_test.gd
 godot --headless --path . --script res://tests/mutant_levels_4_6_test.gd
+godot --headless --path . --script res://tests/progressive_sizes_test.gd
 godot --headless --path . --quit-after 10
 ```
 
@@ -87,6 +90,18 @@ The shared sprite checks are data-driven; the new 4–6 entry adds 66 checks, fo
 **280 passing checks** overall. `tests/capture_mutants_1_6.gd` captures all six PNG
 species and verifies their actual GPU alpha bounds in 64×64 cells. Existing PNGs
 for levels 1–3, gameplay rules, save data and animations are unchanged.
+
+Display sizes now come from `scripts/mutant_sizes.gd`: visible edges grow from
+52px to 84px; collection portraits stay at 48px. PNG alpha padding is excluded
+without changing the files. Controlled overlap never changes which logical cell
+is touched; visual drag positions stay clear of resource/action UI. The full suite
+now has 509 passing checks. Strict old 64px-capture fixtures are historical; new
+proofs use unclipped 128px viewports. See the technical report for the final table.
+
+On Windows, `pwsh -File tools/check_gdscript.ps1 -GodotPath "<path-to-godot.exe>"`
+independently compiles every project GDScript, including all tests/helpers. The
+two specialized runners return configuration dictionaries rather than assigning
+inherited fields during `_initialize()`, avoiding stale parent-member lookup.
 
 Slime integration validation (Godot 4.7.2): all existing 84 gameplay and 55
 presentation checks pass unchanged, plus 30 new sprite checks. Headless import and
