@@ -2,9 +2,9 @@
 
 Level 1 uses `slime_lv1.png`, a glossy green character prepared from the supplied
 reference with the built-in imagegen editor. See `slime_lv1.provenance.md` for its
-source, prompt and extraction limitation. Levels 2–3 use the original supplied
-cutout drawings, normalized to `mutant_lv2.png` / `mutant_lv3.png` without redrawing;
-see `levels-2-3.provenance.md`. Levels 4–10 retain the original Godot
+source, prompt and extraction limitation. Levels 2–6 use the original supplied
+cutout drawings, normalized to `mutant_lv2.png` … `mutant_lv6.png` without redrawing;
+see `levels-2-3.provenance.md` and `levels-4-6.provenance.md`. Levels 7–10 retain the original Godot
 drawings in `scripts/mutant_art.gd` unless an optional numbered replacement exists.
 No image-generation service is needed at runtime.
 
@@ -16,9 +16,9 @@ padding, using these filenames:
 | `slime_lv1.png` | 1 | Slime |
 | `mutant_lv2.png` | 2 | Eyeling / Глазастик |
 | `mutant_lv3.png` | 3 | Hornling / Рогач |
-| `04.png` | 4 | Bubbler |
-| `05.png` | 5 | Shellback |
-| `06.png` | 6 | Wingling |
+| `mutant_lv4.png` | 4 | Bubbler / Пузырник |
+| `mutant_lv5.png` | 5 | Shellback / Панцирник |
+| `mutant_lv6.png` | 6 | Wingling / Крылатик |
 | `07.png` | 7 | Tentacly |
 | `08.png` | 8 | Chimera |
 | `09.png` | 9 | Mutant Rex |

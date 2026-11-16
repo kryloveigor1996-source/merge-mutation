@@ -3,6 +3,10 @@ const Art = preload("res://scripts/mutant_art.gd")
 const Scene = preload("res://scenes/main.tscn")
 var checks := 0
 var failures := 0
+var levels: Array[int] = [2,3]
+var save_filename := "mutant_sprites_test_save.json"
+var suite_label := "Level 2/3 sprite checks"
+const REWARDS := {2:30,3:45,4:60,5:75,6:90}
 
 func check(condition: bool,message: String) -> void:
 	checks+=1
@@ -24,7 +28,7 @@ func _initialize() -> void:
 
 func _run() -> void:
 	var extents: Array[int] = []
-	for level in [2,3]:
+	for level in levels:
 		var path := "res://assets/mutants/mutant_lv%d.png" % level
 		var bytes := FileAccess.get_file_as_bytes(path)
 		check(bytes.size()>1000,"PNG present for level %d" % level)
@@ -51,7 +55,8 @@ func _run() -> void:
 					empty_border = false
 		check(empty_border,"real alpha-zero border, level %d" % level)
 		check(transparent>25000 and partial>100,"transparent exterior/antialiasing, level %d" % level)
-		check(image.get_pixel(128,24).a==0,"space between horns/antennae is transparent, level %d" % level)
+		var probe := Vector2i(128,24) if level<=3 else Vector2i(24,24)
+		check(image.get_pixelv(probe).a==0,"space outside the silhouette is transparent, level %d" % level)
 		var art := Art.new()
 		art.setup(level)
 		root.add_child(art)
@@ -73,34 +78,33 @@ func _run() -> void:
 		await create_timer(0.22).timeout
 		check(art.scale.is_equal_approx(Vector2.ONE),"settle animation retained, level %d" % level)
 		art.free()
-	check(extents==[216,216],"both species have the same full-silhouette extent")
+	check(extents.size()==levels.size() and extents.all(func(value: int) -> bool: return value==216),"species share the same full-silhouette extent")
 	DirAccess.make_dir_recursive_absolute("res://.godot")
 	var game = Scene.instantiate()
-	game.save_path = "res://.godot/mutant_sprites_test_save.json"
+	game.save_path = "res://.godot/"+save_filename
 	root.add_child(game)
 	game.view.sound.set_enabled(false)
 	game._new_game()
-	game.cells.fill(0)
-	game.cells[0]=1
-	game.cells[1]=1
-	game.view.rebuild()
-	game._press(game.view.cell_center(0))
-	game._release(game.view.cell_center(1))
-	check(game.cells[1]==2 and game.coins==130,"1+1 makes level 2, existing reward")
-	check(game.view.creatures[1].texture.resource_path==Art.SPRITES[2],"merge result shows level-2 PNG")
-	game.cells[0]=2
-	game.view.rebuild()
-	game._press(game.view.cell_center(0))
-	game._release(game.view.cell_center(1))
-	check(game.cells[1]==3 and game.coins==175,"2+2 makes level 3, existing reward")
-	check(game.view.creatures[1].texture.resource_path==Art.SPRITES[3],"merge result shows level-3 PNG")
+	for target in levels:
+		game.cells.fill(0)
+		game.cells[0]=target-1
+		game.cells[1]=target-1
+		game.view.rebuild()
+		var before_coins: int = game.coins
+		game._press(game.view.cell_center(0))
+		game._release(game.view.cell_center(1))
+		check(game.cells[1]==target and game.coins==before_coins+REWARDS[target],"merge creates level %d with existing reward" % target)
+		check(game.view.creatures[1].texture.resource_path==Art.SPRITES[target],"merge result shows level-%d PNG" % target)
 	game.view.show_panel("collection")
 	check(is_instance_valid(game.view.overlay),"collection opens with new art")
 	game.view.close_panel()
 	game._save_game()
-	check(game._load_game() and game.cells[1]==3 and game.coins==175,"progress remains compatible")
+	var saved_coins: int = game.coins
+	game.cells.fill(0)
+	game.coins=0
+	check(game._load_game() and game.cells[1]==levels.back() and game.coins==saved_coins,"progress remains compatible")
 	await create_timer(0.9).timeout
 	game.free()
-	DirAccess.remove_absolute("res://.godot/mutant_sprites_test_save.json")
-	print("Level 2/3 sprite checks: %d; failures: %d" % [checks,failures])
+	DirAccess.remove_absolute("res://.godot/"+save_filename)
+	print("%s: %d; failures: %d" % [suite_label,checks,failures])
 	quit(1 if failures else 0)

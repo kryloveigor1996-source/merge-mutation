@@ -1,7 +1,7 @@
 extends SceneTree
 ## Offline authoring utility. Requires the user-supplied local reference PNGs.
 ## No color key, redraw, AI reconstruction, runtime dependency or paid API.
-const SOURCES := {2:"eyeball_reference.png",3:"horned_reference.png"}
+const SOURCES := {2:"eyeball_reference.png",3:"horned_reference.png",4:"bubble_reference.png",5:"shell_reference.png",6:"wing_reference.png"}
 const MAX_EXTENT := 216
 
 func _initialize() -> void:
@@ -14,6 +14,12 @@ func _initialize() -> void:
 			quit(1)
 			return
 		image.convert(Image.FORMAT_RGBA8)
+		var transparent_pixels := 0
+		for y in image.get_height():
+			for x in image.get_width():
+				if image.get_pixel(x,y).a==0:
+					transparent_pixels+=1
+		print(source_path," size=",image.get_size()," format=",image.get_format()," alpha_zero_pixels=",transparent_pixels)
 		# The source already has real alpha. Clear invisible alpha noise only;
 		# never remove black pupils, cream eyes, white highlights or dark outlines.
 		var has_transparency := false
