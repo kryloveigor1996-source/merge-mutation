@@ -27,16 +27,17 @@ var dragging := false
 var message := "Drag matching creatures together!"
 var message_time := 0.0
 var rng := RandomNumberGenerator.new()
+var save_path := SAVE_PATH
+var reset_dialog: ConfirmationDialog
 
 func _ready() -> void:
 	rng.randomize()
-	cells.resize(COLS * ROWS)
-	cells.fill(0)
 	if not _load_game():
-		cells[6] = 1
-		cells[8] = 1
-		cells[16] = 1
-		cells[18] = 1
+		_new_game()
+	reset_dialog = ConfirmationDialog.new()
+	reset_dialog.dialog_text = "Start a new game?\nCurrent progress will be replaced."
+	reset_dialog.confirmed.connect(_new_game)
+	add_child(reset_dialog)
 	set_process(true)
 	queue_redraw()
 
@@ -48,8 +49,30 @@ func _process(delta: float) -> void:
 			queue_redraw()
 
 func _notification(what: int) -> void:
+	if what == NOTIFICATION_APPLICATION_FOCUS_OUT or what == NOTIFICATION_APPLICATION_PAUSED:
+		_cancel_drag()
 	if what == NOTIFICATION_WM_CLOSE_REQUEST or what == NOTIFICATION_APPLICATION_PAUSED:
-		_save_game()
+		if cells.size() == COLS * ROWS:
+			_save_game()
+
+func _cancel_drag() -> void:
+	selected = -1
+	dragging = false
+	queue_redraw()
+
+func _new_game() -> void:
+	_cancel_drag()
+	cells.resize(COLS * ROWS)
+	cells.fill(0)
+	for index in [6, 8, 16, 18]:
+		cells[index] = 1
+	coins = 100
+	merges = 0
+	highest = 1
+	message = "Drag matching creatures together!"
+	message_time = 0.0
+	_save_game()
+	queue_redraw()
 
 func _gui_input(event: InputEvent) -> void:
 	if event is InputEventMouseButton and event.button_index == MOUSE_BUTTON_LEFT:
@@ -63,17 +86,26 @@ func _gui_input(event: InputEvent) -> void:
 		queue_redraw()
 		accept_event()
 	elif event is InputEventScreenTouch:
+		if event.index != 0:
+			return
 		if event.pressed:
 			_press(event.position)
 		else:
 			_release(event.position)
 		accept_event()
 	elif event is InputEventScreenDrag and dragging:
+		if event.index != 0:
+			return
 		pointer_pos = event.position
 		queue_redraw()
 		accept_event()
 
 func _press(pos: Vector2) -> void:
+	if dragging:
+		return
+	if Rect2(270, 620, 75, 20).has_point(pos):
+		reset_dialog.popup_centered()
+		return
 	if Rect2(37, 558, 286, 58).has_point(pos):
 		_spawn()
 		return
@@ -104,9 +136,7 @@ func _release(pos: Vector2) -> void:
 			_save_game()
 		else:
 			_notice("Match two creatures of the same level")
-	selected = -1
-	dragging = false
-	queue_redraw()
+	_cancel_drag()
 
 func _cell_at(pos: Vector2) -> int:
 	var x := int(floor((pos.x - BOARD_X) / CELL))
@@ -138,28 +168,52 @@ func _notice(value: String) -> void:
 
 func _save_game() -> void:
 	var data := {"coins": coins, "merges": merges, "highest": highest, "cells": cells}
-	var file := FileAccess.open(SAVE_PATH, FileAccess.WRITE)
-	if file != null:
-		file.store_string(JSON.stringify(data))
+	var temporary_path := save_path + ".tmp"
+	var file := FileAccess.open(temporary_path, FileAccess.WRITE)
+	if file == null:
+		_notice("Could not save progress")
+		return
+	file.store_string(JSON.stringify(data))
+	file.flush()
+	var error := file.get_error()
+	file.close()
+	if error != OK or DirAccess.rename_absolute(temporary_path, save_path) != OK:
+		_notice("Could not save progress")
 
 func _load_game() -> bool:
-	if not FileAccess.file_exists(SAVE_PATH):
+	if not FileAccess.file_exists(save_path):
 		return false
-	var file := FileAccess.open(SAVE_PATH, FileAccess.READ)
+	var file := FileAccess.open(save_path, FileAccess.READ)
 	if file == null:
 		return false
-	var parsed: Variant = JSON.parse_string(file.get_as_text())
+	var json := JSON.new()
+	if json.parse(file.get_as_text()) != OK:
+		return false
+	var parsed: Variant = json.data
 	if not parsed is Dictionary:
 		return false
 	var values: Variant = parsed.get("cells", [])
 	if not values is Array or values.size() != COLS * ROWS:
 		return false
-	for i in range(values.size()):
-		cells[i] = clampi(int(values[i]), 0, MAX_LEVEL)
-	coins = maxi(0, int(parsed.get("coins", 100)))
-	merges = maxi(0, int(parsed.get("merges", 0)))
-	highest = clampi(int(parsed.get("highest", 1)), 1, MAX_LEVEL)
+	# Validate everything before changing live state; JSON numbers are floats.
+	for value in values:
+		if not _valid_integer(value, MAX_LEVEL):
+			return false
+	for key in ["coins", "merges", "highest"]:
+		if not _valid_integer(parsed.get(key), 2147483647):
+			return false
+	if int(parsed.highest) < 1 or int(parsed.highest) > MAX_LEVEL:
+		return false
+	cells.assign(values)
+	coins = int(parsed.coins)
+	merges = int(parsed.merges)
+	highest = maxi(int(parsed.highest), cells.max())
 	return true
+
+func _valid_integer(value: Variant, maximum: int) -> bool:
+	if not (value is int or value is float):
+		return false
+	return is_finite(float(value)) and value >= 0 and value <= maximum and floor(float(value)) == value
 
 func _draw() -> void:
 	var bg := Rect2(Vector2.ZERO, size)
@@ -192,6 +246,8 @@ func _draw() -> void:
 	_panel(Rect2(37, 558, 286, 58), Color("79c832"))
 	_label("CREATE SLIME", Vector2(180, 582), 22, Color("152b18"), HORIZONTAL_ALIGNMENT_CENTER)
 	_label("10 coins  |  %d merges" % merges, Vector2(180, 603), 12, Color("244c22"), HORIZONTAL_ALIGNMENT_CENTER)
+	_panel(Rect2(270, 620, 75, 20), Color("342651"))
+	_label("NEW GAME", Vector2(307, 634), 11, Color("f4dffb"), HORIZONTAL_ALIGNMENT_CENTER)
 
 func _panel(rect: Rect2, color: Color) -> void:
 	draw_rect(rect, color)
