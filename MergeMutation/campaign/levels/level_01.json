@@ -1,0 +1,28 @@
+{
+  "id": "lab_01",
+  "number": 1,
+  "name": "Первое открытие",
+  "available_species": [
+    "slime"
+  ],
+  "initial": [],
+  "sequence": [
+    "slime",
+    "slime",
+    "slime",
+    "slime"
+  ],
+  "creation_limit": 4,
+  "move_limit": -1,
+  "blocked_cells": [],
+  "goals": [
+    {
+      "evolution_stage": 2,
+      "count": 1,
+      "species_id": "slime",
+      "type": "reach_stage"
+    }
+  ],
+  "reward_coins": 100,
+  "reward_stars": 1
+}

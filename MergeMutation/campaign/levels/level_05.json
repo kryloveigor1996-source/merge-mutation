@@ -1,0 +1,39 @@
+{
+  "id": "lab_05",
+  "number": 5,
+  "name": "Большая эволюция",
+  "available_species": [
+    "slime"
+  ],
+  "initial": [],
+  "sequence": [
+    "slime",
+    "slime",
+    "slime",
+    "slime",
+    "slime",
+    "slime",
+    "slime",
+    "slime",
+    "slime",
+    "slime"
+  ],
+  "creation_limit": 10,
+  "move_limit": 16,
+  "blocked_cells": [
+    0,
+    4,
+    25,
+    29
+  ],
+  "goals": [
+    {
+      "evolution_stage": 4,
+      "count": 1,
+      "species_id": "slime",
+      "type": "reach_stage"
+    }
+  ],
+  "reward_coins": 150,
+  "reward_stars": 1
+}

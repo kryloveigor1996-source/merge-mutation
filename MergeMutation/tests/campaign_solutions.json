@@ -1,0 +1,417 @@
+{
+	"1": {
+		"actions": [
+			{
+				"index": 0,
+				"kind": "spawn",
+				"species_id": "slime"
+			},
+			{
+				"index": 1,
+				"kind": "spawn",
+				"species_id": "slime"
+			},
+			{
+				"index": 1,
+				"kind": "merge",
+				"source": 0
+			}
+		],
+		"creations": 2,
+		"merges": 1,
+		"moves": 1,
+		"won": true
+	},
+	"10": {
+		"actions": [
+			{
+				"index": 0,
+				"kind": "spawn",
+				"species_id": "horn"
+			},
+			{
+				"index": 6,
+				"kind": "merge",
+				"source": 0
+			},
+			{
+				"index": 0,
+				"kind": "spawn",
+				"species_id": "slime"
+			},
+			{
+				"index": 1,
+				"kind": "spawn",
+				"species_id": "horn"
+			},
+			{
+				"index": 2,
+				"kind": "spawn",
+				"species_id": "slime"
+			},
+			{
+				"index": 2,
+				"kind": "merge",
+				"source": 0
+			},
+			{
+				"index": 8,
+				"kind": "merge",
+				"source": 2
+			}
+		],
+		"creations": 4,
+		"merges": 3,
+		"moves": 3,
+		"won": true
+	},
+	"2": {
+		"actions": [
+			{
+				"index": 8,
+				"kind": "merge",
+				"source": 6
+			},
+			{
+				"index": 0,
+				"kind": "spawn",
+				"species_id": "slime"
+			},
+			{
+				"index": 1,
+				"kind": "spawn",
+				"species_id": "slime"
+			},
+			{
+				"index": 1,
+				"kind": "merge",
+				"source": 0
+			},
+			{
+				"index": 8,
+				"kind": "merge",
+				"source": 1
+			}
+		],
+		"creations": 2,
+		"merges": 3,
+		"moves": 3,
+		"won": true
+	},
+	"3": {
+		"actions": [
+			{
+				"index": 0,
+				"kind": "spawn",
+				"species_id": "slime"
+			},
+			{
+				"index": 1,
+				"kind": "spawn",
+				"species_id": "slime"
+			},
+			{
+				"index": 1,
+				"kind": "merge",
+				"source": 0
+			},
+			{
+				"index": 0,
+				"kind": "spawn",
+				"species_id": "slime"
+			},
+			{
+				"index": 2,
+				"kind": "spawn",
+				"species_id": "slime"
+			},
+			{
+				"index": 2,
+				"kind": "merge",
+				"source": 0
+			}
+		],
+		"creations": 4,
+		"merges": 2,
+		"moves": 2,
+		"won": true
+	},
+	"4": {
+		"actions": [
+			{
+				"index": 1,
+				"kind": "spawn",
+				"species_id": "slime"
+			},
+			{
+				"index": 2,
+				"kind": "spawn",
+				"species_id": "slime"
+			},
+			{
+				"index": 2,
+				"kind": "merge",
+				"source": 1
+			},
+			{
+				"index": 1,
+				"kind": "spawn",
+				"species_id": "slime"
+			},
+			{
+				"index": 3,
+				"kind": "spawn",
+				"species_id": "slime"
+			},
+			{
+				"index": 3,
+				"kind": "merge",
+				"source": 1
+			},
+			{
+				"index": 3,
+				"kind": "merge",
+				"source": 2
+			}
+		],
+		"creations": 4,
+		"merges": 3,
+		"moves": 3,
+		"won": true
+	},
+	"5": {
+		"actions": [
+			{
+				"index": 1,
+				"kind": "spawn",
+				"species_id": "slime"
+			},
+			{
+				"index": 2,
+				"kind": "spawn",
+				"species_id": "slime"
+			},
+			{
+				"index": 2,
+				"kind": "merge",
+				"source": 1
+			},
+			{
+				"index": 1,
+				"kind": "spawn",
+				"species_id": "slime"
+			},
+			{
+				"index": 3,
+				"kind": "spawn",
+				"species_id": "slime"
+			},
+			{
+				"index": 3,
+				"kind": "merge",
+				"source": 1
+			},
+			{
+				"index": 3,
+				"kind": "merge",
+				"source": 2
+			},
+			{
+				"index": 1,
+				"kind": "spawn",
+				"species_id": "slime"
+			},
+			{
+				"index": 2,
+				"kind": "spawn",
+				"species_id": "slime"
+			},
+			{
+				"index": 2,
+				"kind": "merge",
+				"source": 1
+			},
+			{
+				"index": 1,
+				"kind": "spawn",
+				"species_id": "slime"
+			},
+			{
+				"index": 5,
+				"kind": "spawn",
+				"species_id": "slime"
+			},
+			{
+				"index": 5,
+				"kind": "merge",
+				"source": 1
+			},
+			{
+				"index": 5,
+				"kind": "merge",
+				"source": 2
+			},
+			{
+				"index": 5,
+				"kind": "merge",
+				"source": 3
+			}
+		],
+		"creations": 8,
+		"merges": 7,
+		"moves": 7,
+		"won": true
+	},
+	"6": {
+		"actions": [
+			{
+				"index": 0,
+				"kind": "spawn",
+				"species_id": "eyeball"
+			},
+			{
+				"index": 12,
+				"kind": "merge",
+				"source": 0
+			}
+		],
+		"creations": 1,
+		"merges": 1,
+		"moves": 1,
+		"won": true
+	},
+	"7": {
+		"actions": [
+			{
+				"index": 0,
+				"kind": "spawn",
+				"species_id": "slime"
+			},
+			{
+				"index": 6,
+				"kind": "merge",
+				"source": 0
+			},
+			{
+				"index": 0,
+				"kind": "spawn",
+				"species_id": "eyeball"
+			},
+			{
+				"index": 8,
+				"kind": "merge",
+				"source": 0
+			}
+		],
+		"creations": 2,
+		"merges": 2,
+		"moves": 2,
+		"won": true
+	},
+	"8": {
+		"actions": [
+			{
+				"index": 0,
+				"kind": "spawn",
+				"species_id": "slime"
+			},
+			{
+				"index": 1,
+				"kind": "spawn",
+				"species_id": "eyeball"
+			},
+			{
+				"index": 2,
+				"kind": "spawn",
+				"species_id": "slime"
+			},
+			{
+				"index": 2,
+				"kind": "merge",
+				"source": 0
+			},
+			{
+				"index": 0,
+				"kind": "spawn",
+				"species_id": "eyeball"
+			},
+			{
+				"index": 1,
+				"kind": "merge",
+				"source": 0
+			},
+			{
+				"index": 0,
+				"kind": "spawn",
+				"species_id": "slime"
+			},
+			{
+				"index": 3,
+				"kind": "spawn",
+				"species_id": "eyeball"
+			},
+			{
+				"index": 4,
+				"kind": "spawn",
+				"species_id": "slime"
+			},
+			{
+				"index": 4,
+				"kind": "merge",
+				"source": 0
+			},
+			{
+				"index": 4,
+				"kind": "merge",
+				"source": 2
+			}
+		],
+		"creations": 7,
+		"merges": 4,
+		"moves": 4,
+		"won": true
+	},
+	"9": {
+		"actions": [
+			{
+				"index": 0,
+				"kind": "spawn",
+				"species_id": "eyeball"
+			},
+			{
+				"index": 1,
+				"kind": "spawn",
+				"species_id": "eyeball"
+			},
+			{
+				"index": 1,
+				"kind": "merge",
+				"source": 0
+			},
+			{
+				"index": 0,
+				"kind": "spawn",
+				"species_id": "eyeball"
+			},
+			{
+				"index": 2,
+				"kind": "spawn",
+				"species_id": "eyeball"
+			},
+			{
+				"index": 2,
+				"kind": "merge",
+				"source": 0
+			},
+			{
+				"index": 2,
+				"kind": "merge",
+				"source": 1
+			}
+		],
+		"creations": 4,
+		"merges": 3,
+		"moves": 3,
+		"won": true
+	}
+}

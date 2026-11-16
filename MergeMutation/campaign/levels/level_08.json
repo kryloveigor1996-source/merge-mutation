@@ -1,0 +1,33 @@
+{
+  "id": "lab_08",
+  "number": 8,
+  "name": "Серия слияний",
+  "available_species": [
+    "slime",
+    "eyeball"
+  ],
+  "initial": [],
+  "sequence": [
+    "slime",
+    "eyeball",
+    "slime",
+    "eyeball",
+    "slime",
+    "eyeball",
+    "slime",
+    "eyeball",
+    "slime",
+    "eyeball"
+  ],
+  "creation_limit": 10,
+  "move_limit": 16,
+  "blocked_cells": [],
+  "goals": [
+    {
+      "type": "merge_count",
+      "count": 4
+    }
+  ],
+  "reward_coins": 100,
+  "reward_stars": 1
+}

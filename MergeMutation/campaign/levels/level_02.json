@@ -1,0 +1,41 @@
+{
+  "id": "lab_02",
+  "number": 2,
+  "name": "Третья стадия",
+  "available_species": [
+    "slime"
+  ],
+  "initial": [
+    {
+      "evolution_stage": 1,
+      "species_id": "slime",
+      "cell": 6
+    },
+    {
+      "evolution_stage": 1,
+      "species_id": "slime",
+      "cell": 8
+    }
+  ],
+  "sequence": [
+    "slime",
+    "slime",
+    "slime",
+    "slime",
+    "slime",
+    "slime"
+  ],
+  "creation_limit": 6,
+  "move_limit": -1,
+  "blocked_cells": [],
+  "goals": [
+    {
+      "evolution_stage": 3,
+      "count": 1,
+      "species_id": "slime",
+      "type": "reach_stage"
+    }
+  ],
+  "reward_coins": 100,
+  "reward_stars": 1
+}
