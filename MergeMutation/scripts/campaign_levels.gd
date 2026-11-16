@@ -26,6 +26,12 @@ static func valid(data: Variant) -> bool:
 	for index in data.blocked_cells:
 		if not Catalog.integer(index,29) or occupied.has(int(index)): return false
 		occupied[int(index)]=true
+	if data.has("spawn_points"):
+		if not data.spawn_points is Array: return false
+		var points := {}
+		for index in data.spawn_points:
+			if not Catalog.integer(index,29) or occupied.has(int(index)) or points.has(int(index)): return false
+			points[int(index)]=true
 	for item in data.initial:
 		if not Catalog.known_form(item) or not item.species_id in data.available_species or not Catalog.integer(item.get("cell"),29) or occupied.has(int(item.cell)): return false
 		occupied[int(item.cell)]=true
