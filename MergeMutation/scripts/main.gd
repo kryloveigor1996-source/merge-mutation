@@ -7,6 +7,10 @@ const SaveCodec = preload("res://scripts/save_codec.gd")
 const CampaignSession = preload("res://scripts/campaign_session.gd")
 const CampaignProgress = preload("res://scripts/campaign_progress.gd")
 const CampaignLevels = preload("res://scripts/campaign_levels.gd")
+const Worlds = preload("res://scripts/world_registry.gd")
+const JourneyState = preload("res://scripts/journey_state.gd")
+const Dialogue = preload("res://scripts/context_dialogue.gd")
+const TEST_TELEPORT_CHARGES := 1
 
 const COLS := 5
 const ROWS := 6
@@ -40,6 +44,51 @@ var campaign_progress := CampaignProgress.new()
 var sandbox_cells: Array=[]
 var last_reward := {"coins":0,"stars":0}
 var teleport_mode := false
+var journey_state := JourneyState.new()
+var dialogue := Dialogue.new()
+var last_context_line := ""
+
+func completed_world_level_ids() -> Array[String]:
+	return Worlds.completed_ids(campaign_progress)
+
+func start_world_level(world_id: String,level_id: String) -> bool:
+	if not Worlds.can_launch(world_id,level_id,completed_world_level_ids()): return false
+	var route := Worlds.route(level_id)
+	# The registry/map is generic; this adapter launches existing, tested content only.
+	if route.get("kind")!="legacy_campaign": return false
+	var number := int(route.get("number",0))
+	var data := CampaignLevels.get_level(number)
+	if data.is_empty() or data.id!=level_id: return false
+	return start_level(number)
+
+func open_portals() -> void:
+	leave_campaign()
+	if not is_instance_valid(view): return
+	view.portal_ui.open_hub()
+	if "lab_10" in completed_world_level_ids() and not journey_state.has_seen("swamp_activation"):
+		view.show_story("swamp_activation")
+	elif campaign_progress.completed.is_empty() and not journey_state.has_seen("intro"):
+		view.show_story("intro")
+
+func open_world_map(world_id: String) -> bool:
+	if not Worlds.unlocked(world_id,completed_world_level_ids()) or not is_instance_valid(view): return false
+	leave_campaign()
+	return view.portal_ui.open_map(world_id)
+
+func story_seen(id: String) -> void:
+	if Dialogue.scene(id).is_empty(): return
+	record_journey_seen(id)
+
+func record_journey_seen(id: String) -> void:
+	if id not in ["hub_board_hint","hub_portal_hint"] and Dialogue.scene(id).is_empty(): return
+	if journey_state.has_seen(id): return
+	if not save_extra.has("journey") and FileAccess.file_exists(save_path): needs_backup=true
+	journey_state.seen[id]=true
+	save_extra["journey"]=journey_state.encode()
+	_save_game()
+
+func preview_boosters() -> Dictionary:
+	return {"teleporter":TEST_TELEPORT_CHARGES}
 
 func in_campaign() -> bool:
 	return campaign!=null
@@ -47,7 +96,8 @@ func in_campaign() -> bool:
 func start_level(number: int,test_boosters: bool=true) -> bool:
 	if number<1 or number>campaign_progress.unlocked(): return false
 	var attempt := CampaignSession.new()
-	if not attempt.start(CampaignLevels.get_level(number),1 if test_boosters else 0): return false
+	if not attempt.start(CampaignLevels.get_level(number),TEST_TELEPORT_CHARGES if test_boosters else 0): return false
+	if is_instance_valid(view): view.close_navigation()
 	_cancel_drag()
 	teleport_mode=false
 	message_time=0
@@ -66,6 +116,7 @@ func start_level(number: int,test_boosters: bool=true) -> bool:
 	return true
 
 func leave_campaign() -> void:
+	if is_instance_valid(view): view.close_story()
 	teleport_mode=false
 	if in_campaign():
 		_cancel_drag()
@@ -104,7 +155,12 @@ func settle_campaign_action() -> void:
 	_save_game()
 	if is_instance_valid(view):
 		view.queue_redraw()
-		if campaign.status!="active": view.show_panel("result")
+		if campaign.status!="active":
+			var line := dialogue.next_line("victory" if campaign.status=="won" else "defeat")
+			last_context_line=Dialogue.text(line) if not line.is_empty() else ""
+			view.show_panel("result")
+			if campaign.status=="won" and campaign.config.id=="lab_10" and last_reward.stars>0 and not journey_state.has_seen("swamp_activation"):
+				view.show_story("swamp_activation")
 
 func _ready() -> void:
 	rng.randomize()
@@ -386,6 +442,12 @@ func _load_game() -> bool:
 		write_blocked=true
 		load_error="Invalid campaign progress"
 		return false
+	var journey := JourneyState.new()
+	if not journey.decode(decoded.extra.get("journey",{})):
+		write_blocked=true
+		load_error="Invalid journey metadata"
+		return false
+	journey_state=journey
 	campaign_progress=progress
 	campaign=null
 	sandbox_cells.clear()

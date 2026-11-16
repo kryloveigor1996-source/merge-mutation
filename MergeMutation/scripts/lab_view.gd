@@ -5,6 +5,8 @@ const Art = preload("res://scripts/mutant_art.gd")
 const Burst = preload("res://scripts/merge_burst.gd")
 const Audio = preload("res://scripts/lab_audio.gd")
 const Sizes = preload("res://scripts/mutant_sizes.gd")
+const PortalHub = preload("res://scripts/portal_hub.gd")
+const StoryScreen = preload("res://scripts/story_screen.gd")
 const DESIGN := Vector2(360,720)
 const INK := Color("25465a")
 const CREAM := Color("fff8de")
@@ -39,6 +41,8 @@ var discovery_player: AnimationPlayer
 var panel_kind := ""
 var effects: Node2D
 var style_cache: Dictionary = {}
+var portal_ui: PortalHub
+var story_screen: StoryScreen
 
 static func fitted_rect(available: Rect2) -> Rect2:
 	var factor := minf(available.size.x/DESIGN.x,available.size.y/DESIGN.y)
@@ -101,10 +105,13 @@ func _ready() -> void:
 	create_button.add_theme_color_override("font_disabled_color",Color("627f8c"))
 	teleport_button.hide()
 	nav_left=button("КОЛЛЕКЦИЯ",Rect2(18,638,104,54),Color("b5e9ee"),left_nav)
-	button("КАМПАНИЯ",Rect2(128,638,104,54),Color("ded2fb"),func(): show_panel("levels"))
+	button("ПОРТАЛЫ",Rect2(128,638,104,54),Color("ded2fb"),game.open_portals)
 	nav_right=button("НАСТРОЙКИ",Rect2(238,638,104,54),Color("ffd7b6"),right_nav)
 	layout()
 	rebuild()
+	portal_ui=PortalHub.new()
+	portal_ui.setup(game,self)
+	add_child(portal_ui)
 
 func style(color: Color,radius: int=13) -> StyleBoxFlat:
 	var key := color.to_html()+str(radius)
@@ -387,6 +394,7 @@ func close_panel() -> void:
 		overlay.queue_free()
 	overlay = null
 	panel_kind = ""
+	if is_instance_valid(portal_ui): portal_ui.restore_collection()
 
 func text_node(value: String,font_size: int=15) -> Label:
 	var control := Label.new()
@@ -569,6 +577,7 @@ func campaign_result_panel(body: VBoxContainer) -> void:
 	var won: bool=game.campaign.status=="won"
 	body.add_child(text_node("ЭКСПЕРИМЕНТ УДАЛСЯ!" if won else "ПОПРОБУЕМ ЕЩЁ РАЗ",21))
 	body.add_child(text_node(game.campaign.goals.text(game.campaign.config.goals),16))
+	if not game.last_context_line.is_empty(): body.add_child(text_node(game.last_context_line,13))
 	if won:
 		body.add_child(text_node("+%d монет · +%d ★" % [game.last_reward.coins,game.last_reward.stars],23))
 		if game.last_reward.coins==0: body.add_child(text_node("Награда за первое прохождение уже получена.",14))
@@ -579,7 +588,37 @@ func campaign_result_panel(body: VBoxContainer) -> void:
 	else:
 		body.add_child(text_node(game.campaign.reason+". Монеты не списаны.",16))
 	action_row(body,"ПОВТОРИТЬ",func(): game.start_level(int(game.campaign.config.number)))
-	action_row(body,"ВЫБОР УРОВНЕЙ",func(): show_panel("levels"))
+	action_row(body,"КАРТА ЛАБОРАТОРИИ",func(): game.open_world_map("laboratory"))
+	if game.campaign.status=="won" and game.campaign.config.id=="lab_10":
+		action_row(body,"К БОЛОТНОМУ ПОРТАЛУ",game.open_portals)
+
+func close_story() -> void:
+	if is_instance_valid(story_screen):
+		story_screen.hide()
+		story_screen.queue_free()
+	story_screen=null
+
+func close_navigation() -> void:
+	close_story()
+	if is_instance_valid(portal_ui):
+		portal_ui.collection_return=false
+		portal_ui.close_preview()
+		portal_ui.hide()
+
+func show_story(id: String) -> void:
+	close_story()
+	story_screen=StoryScreen.new()
+	story_screen.z_index=25
+	if not story_screen.setup(id,func(completed_id: String):
+		game.story_seen(completed_id)
+		close_story()
+	):
+		story_screen.free()
+		story_screen=null
+		return
+	add_child(story_screen)
+	story_screen.modulate.a=0
+	story_screen.create_tween().tween_property(story_screen,"modulate:a",1.0,0.15)
 
 func valid_target(index: int) -> bool:
 	if not game.in_campaign() or game.selected<0 or index==game.selected or game.campaign.blocked(index): return false
