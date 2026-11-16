@@ -162,7 +162,6 @@ func _load_game() -> bool:
 	return true
 
 func _draw() -> void:
-	var font := ThemeDB.fallback_font
 	var bg := Rect2(Vector2.ZERO, size)
 	draw_rect(bg, Color("17112c"))
 	# Background accents.
@@ -179,7 +178,7 @@ func _draw() -> void:
 	_panel(Rect2(18, 139, 324, 389), Color("40325e"))
 	for i in range(cells.size()):
 		var col := i % COLS
-		var row := i / COLS
+		var row := floori(float(i) / COLS)
 		var p := Vector2(BOARD_X + col * CELL, BOARD_Y + row * CELL)
 		var r := Rect2(p + Vector2(2, 2), Vector2(58, 58))
 		_panel(r, Color("554570") if (row + col) % 2 == 0 else Color("4d3f69"))
@@ -206,7 +205,7 @@ func _label(value: String, pos: Vector2, font_size: int, color: Color, alignment
 	draw_string(font, Vector2(x, pos.y), value, HORIZONTAL_ALIGNMENT_LEFT, -1, font_size, color)
 
 func _creature(center: Vector2, level: int, scale_factor: float) -> void:
-	var c := COLORS[level]
+	var c: Color = COLORS[level]
 	var radius := 21.0 * scale_factor
 	draw_circle(center + Vector2(0, 4) * scale_factor, radius + 2, Color("221633"))
 	draw_circle(center, radius, c)
