@@ -1,4 +1,5 @@
 extends SceneTree
+const Catalog = preload("res://scripts/mutant_catalog.gd")
 ## GPU QA with an isolated save; writes PNG previews, never player progress.
 const Scene = preload("res://scenes/main.tscn")
 const Art = preload("res://scripts/mutant_art.gd")
@@ -18,8 +19,8 @@ func _capture() -> void:
 	root.add_child(game)
 	game.view.sound.set_enabled(false)
 	game._new_game()
-	game.cells[12]=2
-	game.highest=2
+	game.cells[12]=Catalog.make(Catalog.legacy_id(2))
+	game.unlock(Catalog.make("eyeball"))
 	game.view.rebuild()
 	var cell := SubViewport.new()
 	cell.size = Vector2i(64,64)

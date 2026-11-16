@@ -13,11 +13,11 @@ const PICK_OVERHANG := 32.0
 # Includes outlines, horns, crowns and tentacle caps; excludes the ground shadow.
 const PROCEDURAL_BOUNDS := [Rect2(),Rect2(-25,-24,50,46),Rect2(-28,-33,56,56),Rect2(-23,-24,46,47),Rect2(-29,-28,58,57),Rect2(-29,-25,58,50),Rect2(-30,-21,60,42),Rect2(-24,-27,50,55),Rect2(-29,-29,58,58),Rect2(-24,-34,48,63),Rect2(-29,-38,58,63)]
 
-static func pixels(level: int,collection: bool=false) -> float:
-	return COLLECTION_PX if collection else VISIBLE_PX[clampi(level,1,10)]
+static func pixels(level: int,collection: bool=false,stage: int=1,growth: float=0.04) -> float:
+	return COLLECTION_PX if collection else minf(86.0,VISIBLE_PX[clampi(level,1,10)]*(1.0+minf(stage-1,20)*growth))
 
-static func visible_rect(level: int,source: Rect2,collection: bool=false) -> Rect2:
-	var factor := pixels(level,collection)/maxf(source.size.x,source.size.y)
+static func visible_rect(level: int,source: Rect2,collection: bool=false,stage: int=1,growth: float=0.04) -> Rect2:
+	var factor := pixels(level,collection,stage,growth)/maxf(source.size.x,source.size.y)
 	var dimensions := source.size*factor
 	return Rect2(-dimensions*0.5,dimensions)
 

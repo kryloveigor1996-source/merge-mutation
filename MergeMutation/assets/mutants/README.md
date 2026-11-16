@@ -1,4 +1,6 @@
-# Mutant artwork slot
+# Mutant artwork slots — species catalog
+
+In 2.0 these filenames are legacy names for base species, not evolution stages. Stage-specific paths live in `scripts/mutant_catalog.gd`, in each species `images` dictionary. Set `images[1]` for the base or `images[2]` … for finished evolution art. Missing stage images fall back to the base, then the procedural silhouette. The old optional `07.png` … `10.png` names below require explicit catalog entries now.
 
 Level 1 uses `slime_lv1.png`, a glossy green character prepared from the supplied
 reference with the built-in imagegen editor. See `slime_lv1.provenance.md` for its
@@ -11,7 +13,7 @@ No image-generation service is needed at runtime.
 To replace a character, add a **256 × 256 transparent PNG**, centered with a little
 padding, using these filenames:
 
-| File | Level | Character |
+| File | Legacy art index | Character |
 | --- | --- | --- |
 | `slime_lv1.png` | 1 | Slime |
 | `mutant_lv2.png` | 2 | Eyeling / Глазастик |
