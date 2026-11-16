@@ -1,5 +1,6 @@
 extends Node2D
 ## Presentation only: does not own coins, cells, merge rules or the save format.
+const Catalog = preload("res://scripts/mutant_catalog.gd")
 const Art = preload("res://scripts/mutant_art.gd")
 const Burst = preload("res://scripts/merge_burst.gd")
 const Audio = preload("res://scripts/lab_audio.gd")
@@ -14,6 +15,8 @@ var drag_index := -1
 var sound: Node
 var overlay: Control
 var create_button: Button
+var species_button: Button
+var collection_species := "slime"
 var banner := ""
 var banner_alpha := 0.0:
 	set(value):
@@ -80,11 +83,12 @@ func _ready() -> void:
 	var settings := ConfigFile.new()
 	if settings.load("user://merge_mutation_settings.cfg") == OK:
 		sound.set_enabled(bool(settings.get_value("audio","enabled",true)))
-	create_button = button("CREATE SLIME  ·  10",Rect2(37,558,286,58),Color("ffda69"),game._create_requested)
+	species_button=button("ВЫБОР ВИДА",Rect2(207,72,133,51),Color("e5dcff"),func(): show_panel("species"))
+	create_button = button("СОЗДАТЬ  ·  10",Rect2(37,558,286,58),Color("ffda69"),game._create_requested)
 	create_button.add_theme_font_size_override("font_size",20)
-	button("COLLECTION",Rect2(18,638,104,54),Color("b5e9ee"),func(): show_panel("collection"))
-	button("UPGRADES",Rect2(128,638,104,54),Color("ded2fb"),func(): show_panel("upgrades"))
-	button("SETTINGS",Rect2(238,638,104,54),Color("ffd7b6"),func(): show_panel("settings"))
+	button("КОЛЛЕКЦИЯ",Rect2(18,638,104,54),Color("b5e9ee"),func(): show_panel("collection"))
+	button("УЛУЧШЕНИЯ",Rect2(128,638,104,54),Color("ded2fb"),func(): show_panel("upgrades"))
+	button("НАСТРОЙКИ",Rect2(238,638,104,54),Color("ffd7b6"),func(): show_panel("settings"))
 	layout()
 	rebuild()
 
@@ -136,7 +140,7 @@ func cell_center(index: int) -> Vector2:
 
 func add_creature(index: int) -> Art:
 	var creature := Art.new()
-	creature.setup(game.cells[index])
+	creature.setup_form(game.cells[index])
 	creature.position = rest_position(index,creature)
 	add_child(creature)
 	creatures[index] = creature
@@ -161,7 +165,7 @@ func rebuild() -> void:
 	for child in effects.get_children():
 		child.free()
 	for index in range(game.cells.size()):
-		if game.cells[index]>0:
+		if game.cells[index]!=null:
 			add_creature(index)
 	queue_redraw()
 
@@ -234,7 +238,7 @@ func merge(source: int,destination: int,discovered: bool) -> void:
 	effects.add_child(burst)
 	sound.play_event("discover" if discovered else "merge")
 	if discovered:
-		banner = "DISCOVERED!  %s" % game.NAMES[game.cells[destination]]
+		banner = "ОТКРЫТО: %s" % Catalog.title(game.cells[destination])
 		banner_alpha = 1
 		discovery_player.stop()
 		discovery_player.play("discovery")
@@ -286,11 +290,10 @@ func _draw() -> void:
 	label("+",Vector2(42,100),17,Color("b77730"),true)
 	label("LAB COINS",Vector2(62,87),9)
 	label(str(game.coins),Vector2(62,112),23)
-	plate(Rect2(207,72,133,51),Color("e5dcff"))
-	label("DISCOVERED",Vector2(220,87),9)
-	label("%02d / 10" % game.highest,Vector2(220,112),23)
-	label("EXPERIMENT %03d" % game.merges,Vector2(23,136),9)
-	label("LAB 01",Vector2(300,136),9,INK,false)
+	if is_instance_valid(species_button):
+		species_button.text="ВИД  ▾\n"+String(Catalog.species(game.active_species).get("name","Выбрать"))
+	label("ОПЫТ %03d" % game.merges,Vector2(23,136),9)
+	label("ФОРМЫ %02d / %d" % [game.known_discoveries(),Catalog.total_forms()],Vector2(238,136),9)
 	# Containment tray with raised, checkerboard specimen pads.
 	plate(Rect2(18,139,324,389),Color("4d91a4"),16)
 	for index in range(30):
@@ -303,8 +306,8 @@ func _draw() -> void:
 		draw_circle(screw,3,Color("d5edf0"))
 		draw_line(screw-Vector2(1.5,0),screw+Vector2(1.5,0),INK,1)
 	wrapped_message(game.message)
-	label("Two of a kind. One wild discovery.",Vector2(180,630),10,INK,true)
-	label("v0.2  /  THE MUTATION LAB",Vector2(180,711),8,Color("4e7987"),true)
+	label("Один вид + одна стадия = эволюция",Vector2(180,630),10,INK,true)
+	label("v2.0  /  ЛАБОРАТОРИЯ ЭВОЛЮЦИИ",Vector2(180,711),8,Color("4e7987"),true)
 
 func _draw_discovery_banner() -> void:
 	if banner_alpha<=0:
@@ -355,7 +358,7 @@ func show_panel(kind: String) -> void:
 	var content := VBoxContainer.new()
 	content.add_theme_constant_override("separation",12)
 	margin.add_child(content)
-	content.add_child(text_node(kind.to_upper(),22))
+	content.add_child(text_node({"collection":"КОЛЛЕКЦИЯ","species":"ВЫБОР ВИДА","settings":"НАСТРОЙКИ","upgrades":"УЛУЧШЕНИЯ"}.get(kind,kind),22))
 	var scroll := ScrollContainer.new()
 	scroll.size_flags_vertical = Control.SIZE_EXPAND_FILL
 	scroll.horizontal_scroll_mode = ScrollContainer.SCROLL_MODE_DISABLED
@@ -364,29 +367,58 @@ func show_panel(kind: String) -> void:
 	body.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	body.add_theme_constant_override("separation",10)
 	scroll.add_child(body)
-	if kind == "collection":
-		body.add_child(text_node("%d of 10 species discovered" % game.highest,13))
-		for level in range(1,11):
+	if kind == "species":
+		body.add_child(text_node("Тестовый режим: доступны все виды. Создание первой стадии — 10 монет.",13))
+		for id in Catalog.ids():
+			var entry := Catalog.species(id)
+			var choice := Button.new()
+			choice.text=("✓ " if id==game.active_species else "")+entry.name
+			choice.custom_minimum_size.y=48
+			choice.disabled=not Catalog.available(id)
+			choice.add_theme_stylebox_override("normal",style((entry.color as Color).lightened(0.45)))
+			choice.add_theme_color_override("font_color",INK)
+			choice.pressed.connect(func():
+				if game.select_species(id):
+					close_panel()
+					queue_redraw()
+			)
+			body.add_child(choice)
+	elif kind == "collection":
+		body.add_child(text_node("Открыто %d / %d форм" % [game.known_discoveries(),Catalog.total_forms()],13))
+		var picker := OptionButton.new()
+		picker.custom_minimum_size.y=48
+		picker.add_theme_stylebox_override("normal",style(Color("e5dcff")))
+		picker.add_theme_color_override("font_color",INK)
+		var ids := Catalog.ids()
+		for id in ids:
+			picker.add_item(Catalog.species(id).name)
+		picker.select(maxi(0,ids.find(collection_species)))
+		picker.item_selected.connect(func(index: int):
+			collection_species=ids[index]
+			show_panel("collection")
+		)
+		body.add_child(picker)
+		for stage in range(1,Catalog.maximum(collection_species)+1):
+			var known: bool=game.is_unlocked(collection_species,stage)
 			var card := PanelContainer.new()
-			card.custom_minimum_size = Vector2(0,72)
-			card.add_theme_stylebox_override("panel",style(Color("dcf0e8") if level<=game.highest else Color("dce3e4")))
+			card.custom_minimum_size=Vector2(0,64)
+			card.add_theme_stylebox_override("panel",style(Color("dcf0e8") if known else Color("dce3e4")))
 			body.add_child(card)
 			var row := HBoxContainer.new()
 			card.add_child(row)
 			var portrait := Control.new()
-			portrait.custom_minimum_size = Vector2(66,68)
+			portrait.custom_minimum_size=Vector2(66,60)
 			row.add_child(portrait)
 			var art := Art.new()
-			art.setup(level,true)
-			art.position = Vector2(33,34)
-			art.scale = Vector2.ONE
-			if level>game.highest:
-				art.modulate = Color(0.18,0.28,0.33)
+			art.setup_form(Catalog.make(collection_species,stage),true)
+			art.position=Vector2(33,30)
+			if not known:
+				art.modulate=Color(0.08,0.12,0.15)
 			portrait.add_child(art)
-			row.add_child(text_node((game.NAMES[level] if level<=game.highest else "Unknown specimen")+"\nLEVEL %02d" % level,13))
+			row.add_child(text_node((Catalog.title(Catalog.make(collection_species,stage)) if known else "Неизвестная форма")+"\nСТАДИЯ "+Catalog.stage_label(stage),13))
 	elif kind == "upgrades":
 		body.add_child(text_node("THE NEXT EXPERIMENT",18))
-		body.add_child(text_node("Lab upgrades are coming in a future update. For now, discover all ten mutants!",16))
+		body.add_child(text_node("Улучшения появятся позже. Сейчас доступны десять видов и пять стадий каждого.",16))
 		for title in ["Incubator","Lab equipment","Specimen habitats"]:
 			var planned := Button.new()
 			planned.text = title+"  /  SOON"
@@ -407,14 +439,14 @@ func show_panel(kind: String) -> void:
 				game._notice("Could not save sound setting")
 		)
 		body.add_child(toggle)
-		body.add_child(text_node("Merge Mutation v0.2\nCombine matching creatures. Each merge earns 15 × the new level in coins. Creating a slime costs 10 coins.",15))
+		body.add_child(text_node("Merge Mutation 2.0\nОбъединяйте один вид одной стадии. Награда: 15 × новая стадия. Создание выбранного вида стадии I: 10 монет.",15))
 		var reset := Button.new()
-		reset.text = "NEW GAME…"
+		reset.text = "НОВАЯ ИГРА…"
 		reset.custom_minimum_size.y = 54
 		reset.pressed.connect(func(): game.reset_dialog.popup_centered())
 		body.add_child(reset)
 	var close := Button.new()
-	close.text = "BACK TO LAB"
+	close.text = "В ЛАБОРАТОРИЮ"
 	close.custom_minimum_size.y = 48
 	close.add_theme_stylebox_override("normal",style(Color("ffda69")))
 	close.add_theme_color_override("font_color",INK)

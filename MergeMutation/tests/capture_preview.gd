@@ -1,4 +1,5 @@
 extends SceneTree
+const Catalog = preload("res://scripts/mutant_catalog.gd")
 ## Optional GPU visual QA. Generates an illustrative cast preview, never player data.
 const Scene = preload("res://scenes/main.tscn")
 
@@ -16,13 +17,13 @@ func _capture() -> void:
 	game.save_path = "res://.godot/preview_save.json"
 	root.add_child(game)
 	game.view.sound.set_enabled(false)
-	game.cells.fill(0)
+	game.cells.fill(null)
 	for level in range(1,11):
-		game.cells[level-1] = level
+		game.cells[level-1] = Catalog.make(Catalog.legacy_id(level))
 	for index in [16,18,26,28]:
-		game.cells[index]=1
+		game.cells[index]=Catalog.make(Catalog.legacy_id(1))
 	game.coins=420
-	game.highest=10
+	for id in Catalog.ids(): game.unlock(Catalog.make(id))
 	game.merges=12
 	game.view.rebuild()
 	await process_frame

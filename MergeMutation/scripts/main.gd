@@ -2,30 +2,31 @@ extends Control
 ## Merge Mutation: gameplay state, rules and backwards-compatible saves.
 ## No external assets or addons required.
 const LabView = preload("res://scripts/lab_view.gd")
+const Catalog = preload("res://scripts/mutant_catalog.gd")
+const SaveCodec = preload("res://scripts/save_codec.gd")
 
 const COLS := 5
 const ROWS := 6
 const CELL := 62.0
 const BOARD_X := 25.0
 const BOARD_Y := 147.0
-const MAX_LEVEL := 10
 const SPAWN_COST := 10
-const SAVE_PATH := "user://merge_mutation_save.json"
-const NAMES := ["", "Slime", "Eyeling", "Hornling", "Bubbler", "Shellback", "Wingling", "Tentacly", "Chimera", "Mutant Rex", "Ultra Mutant"]
-const COLORS := [
-	Color.TRANSPARENT, Color("83e529"), Color("28c9f2"), Color("ffab32"),
-	Color("ff74b6"), Color("488df0"), Color("ac69f6"), Color("24d6cf"),
-	Color("ff9a37"), Color("5cda5e"), Color("da5aff")
-]
+const SAVE_PATH := "user://merge_mutation_save_v2.json"
+const LEGACY_SAVE_PATH := "user://merge_mutation_save.json"
 
-var cells: Array[int] = []
+var cells: Array = []
 var coins: int = 100
 var merges: int = 0
-var highest: int = 1
+var discoveries: Dictionary = {}
+var active_species := "slime"
+var save_extra: Dictionary = {}
+var write_blocked := false
+var needs_backup := false
+var load_error := ""
 var selected: int = -1
 var pointer_pos := Vector2.ZERO
 var dragging := false
-var message := "Drag matching creatures together!"
+var message := "Соединяйте одинаковые виды одной стадии"
 var message_time := 0.0
 var rng := RandomNumberGenerator.new()
 var save_path := SAVE_PATH
@@ -35,9 +36,9 @@ var view: LabView
 func _ready() -> void:
 	rng.randomize()
 	if not _load_game():
-		_new_game()
+		_start_fresh(not write_blocked)
 	reset_dialog = ConfirmationDialog.new()
-	reset_dialog.dialog_text = "Start a new game?\nCurrent progress will be replaced."
+	reset_dialog.dialog_text = "Начать заново?\nПоле, монеты и коллекция будут сброшены."
 	reset_dialog.confirmed.connect(_new_game)
 	add_child(reset_dialog)
 	view = LabView.new()
@@ -46,12 +47,14 @@ func _ready() -> void:
 	resized.connect(view.layout)
 	set_process(true)
 	queue_redraw()
+	if write_blocked:
+		_notice("Ошибка загрузки: файл сохранён. Запись заблокирована до «Новой игры».")
 
 func _process(delta: float) -> void:
 	if message_time > 0.0:
 		message_time -= delta
 		if message_time <= 0.0:
-			message = "Drag matching creatures together!"
+			message = "Соединяйте одинаковые виды одной стадии"
 			queue_redraw()
 			if is_instance_valid(view):
 				view.queue_redraw()
@@ -71,21 +74,55 @@ func _cancel_drag() -> void:
 	queue_redraw()
 
 func _new_game() -> void:
+	# Explicit confirmed reset permits replacing a damaged v2 save, with a backup.
+	needs_backup=FileAccess.file_exists(save_path)
+	write_blocked=false
+	load_error=""
+	_start_fresh(true)
+
+func _start_fresh(persist: bool) -> void:
 	_cancel_drag()
 	cells.resize(COLS * ROWS)
-	cells.fill(0)
+	cells.fill(null)
+	discoveries.clear()
+	active_species="slime"
 	for index in [6, 8, 16, 18]:
-		cells[index] = 1
+		cells[index] = Catalog.make("slime")
+		unlock(cells[index])
 	coins = 100
 	merges = 0
-	highest = 1
-	message = "Drag matching creatures together!"
+	message = "Соединяйте одинаковые виды одной стадии"
 	message_time = 0.0
-	_save_game()
+	if persist:
+		_save_game()
 	if is_instance_valid(view):
 		view.rebuild()
 		view.close_panel()
 	queue_redraw()
+
+func unlock(form: Dictionary) -> bool:
+	var key := Catalog.key(form)
+	if discoveries.has(key):
+		return false
+	discoveries[key]=true
+	return true
+
+func is_unlocked(id: String,stage: int) -> bool:
+	return discoveries.has(Catalog.key(Catalog.make(id,stage)))
+
+func known_discoveries() -> int:
+	var count := 0
+	for key in discoveries:
+		if Catalog.known_form(Catalog.from_key(key)):
+			count+=1
+	return count
+
+func select_species(id: String) -> bool:
+	if not Catalog.available(id) or dragging:
+		return false
+	active_species=id
+	_save_game()
+	return true
 
 func _design_position(pos: Vector2) -> Vector2:
 	return view.to_local(pos) if is_instance_valid(view) else pos
@@ -123,7 +160,7 @@ func _press(pos: Vector2) -> void:
 		_spawn()
 		return
 	var index := _cell_at(pos)
-	if index >= 0 and cells[index] > 0:
+	if index >= 0 and cells[index] != null:
 		selected = index
 		dragging = true
 		pointer_pos = pos
@@ -136,26 +173,25 @@ func _release(pos: Vector2) -> void:
 		return
 	var destination := _cell_at(pos)
 	if destination >= 0 and destination != selected:
-		if cells[destination] == 0:
+		if cells[destination] == null:
 			cells[destination] = cells[selected]
-			cells[selected] = 0
+			cells[selected] = null
 			if is_instance_valid(view):
 				view.move(selected,destination)
 			_save_game()
-		elif cells[destination] == cells[selected] and cells[destination] < MAX_LEVEL:
-			var new_level: int = cells[destination] + 1
-			cells[destination] = new_level
-			cells[selected] = 0
-			coins += 15 * new_level
+		elif Catalog.can_merge(cells[selected],cells[destination]):
+			cells[destination] = Catalog.evolve(cells[destination])
+			var new_stage: int = cells[destination].evolution_stage
+			cells[selected] = null
+			coins += 15 * new_stage
 			merges += 1
-			var discovered := new_level > highest
-			highest = maxi(highest, new_level)
+			var discovered := unlock(cells[destination])
 			if is_instance_valid(view):
 				view.merge(selected,destination,discovered)
-			_notice("New mutation: %s! +%d coins" % [NAMES[new_level], 15 * new_level])
+			_notice("%s! +%d монет" % [Catalog.title(cells[destination]),15*new_stage])
 			_save_game()
 		else:
-			_notice("Match two creatures of the same level")
+			_notice("Нужны одинаковые вид и стадия ниже максимальной")
 	_cancel_drag()
 
 func _cell_at(pos: Vector2) -> int:
@@ -166,19 +202,23 @@ func _cell_at(pos: Vector2) -> int:
 	return y * COLS + x
 
 func _spawn() -> void:
+	if not Catalog.available(active_species):
+		_notice("Выберите доступный вид")
+		return
 	if coins < SPAWN_COST:
-		_notice("Not enough coins!")
+		_notice("Недостаточно монет")
 		return
 	var empty: Array[int] = []
 	for i in range(cells.size()):
-		if cells[i] == 0:
+		if cells[i] == null:
 			empty.append(i)
 	if empty.is_empty():
-		_notice("Board full: merge some creatures first!")
+		_notice("Поле заполнено: объедините существ")
 		return
 	coins -= SPAWN_COST
 	var index: int = empty[rng.randi_range(0, empty.size() - 1)]
-	cells[index] = 1
+	cells[index] = Catalog.make(active_species)
+	unlock(cells[index])
 	if is_instance_valid(view):
 		view.spawn(index)
 	_save_game()
@@ -197,53 +237,69 @@ func _notice(value: String) -> void:
 		view.queue_redraw()
 
 func _save_game() -> void:
-	var data := {"coins": coins, "merges": merges, "highest": highest, "cells": cells}
-	var temporary_path := save_path + ".tmp"
-	var file := FileAccess.open(temporary_path, FileAccess.WRITE)
-	if file == null:
-		_notice("Could not save progress")
+	if write_blocked:
+		_notice("Запись заблокирована: исходный файл сохранён")
+		return
+	if needs_backup and FileAccess.file_exists(save_path):
+		var backup := save_path+".pre-update-"+FileAccess.get_sha256(save_path).substr(0,12)+".bak"
+		if not FileAccess.file_exists(backup) and DirAccess.copy_absolute(save_path,backup)!=OK:
+			_notice("Не удалось создать резервную копию")
+			return
+	var data := SaveCodec.encode(cells,coins,merges,active_species,discoveries,save_extra)
+	var temporary_path := save_path+".tmp"
+	var file := FileAccess.open(temporary_path,FileAccess.WRITE)
+	if file==null:
+		_notice("Не удалось сохранить прогресс")
 		return
 	file.store_string(JSON.stringify(data))
 	file.flush()
 	var error := file.get_error()
 	file.close()
-	if error != OK or DirAccess.rename_absolute(temporary_path, save_path) != OK:
-		_notice("Could not save progress")
+	if error!=OK or DirAccess.rename_absolute(temporary_path,save_path)!=OK:
+		_notice("Не удалось сохранить прогресс")
+	else:
+		needs_backup=false
 
 func _load_game() -> bool:
-	if not FileAccess.file_exists(save_path):
-		return false
-	var file := FileAccess.open(save_path, FileAccess.READ)
-	if file == null:
+	var source := save_path
+	if not FileAccess.file_exists(source):
+		# Test/custom paths never fall back to the real player's legacy save.
+		if save_path==SAVE_PATH and FileAccess.file_exists(LEGACY_SAVE_PATH):
+			source=LEGACY_SAVE_PATH
+		else:
+			return false
+	var file := FileAccess.open(source,FileAccess.READ)
+	if file==null or file.get_length()>4194304:
+		write_blocked=true
+		load_error="Cannot read save"
 		return false
 	var json := JSON.new()
-	if json.parse(file.get_as_text()) != OK:
+	if json.parse(file.get_as_text())!=OK:
+		write_blocked=true
+		load_error="Invalid JSON"
 		return false
-	var parsed: Variant = json.data
-	if not parsed is Dictionary:
+	file.close()
+	var decoded := SaveCodec.decode(json.data,COLS*ROWS)
+	if not decoded.ok:
+		write_blocked=true
+		load_error=decoded.error
 		return false
-	var values: Variant = parsed.get("cells", [])
-	if not values is Array or values.size() != COLS * ROWS:
-		return false
-	# Validate everything before changing live state; JSON numbers are floats.
-	for value in values:
-		if not _valid_integer(value, MAX_LEVEL):
-			return false
-	for key in ["coins", "merges", "highest"]:
-		if not _valid_integer(parsed.get(key), 2147483647):
-			return false
-	if int(parsed.highest) < 1 or int(parsed.highest) > MAX_LEVEL:
-		return false
-	cells.assign(values)
-	coins = int(parsed.coins)
-	merges = int(parsed.merges)
-	highest = maxi(int(parsed.highest), cells.max())
+	cells.assign(decoded.cells)
+	coins=decoded.coins
+	merges=decoded.merges
+	active_species=decoded.active_species
+	discoveries=decoded.discoveries
+	save_extra=decoded.extra
+	write_blocked=false
+	load_error=""
+	needs_backup=decoded.needs_backup and source==save_path
+	if source!=save_path:
+		# Migration goes into a separate v2 file. The legacy file is never changed.
+		_save_game()
 	return true
 
-func _valid_integer(value: Variant, maximum: int) -> bool:
-	if not (value is int or value is float):
-		return false
-	return is_finite(float(value)) and value >= 0 and value <= maximum and floor(float(value)) == value
+func _valid_integer(value: Variant,maximum: int) -> bool:
+	return Catalog.integer(value,maximum)
 
 func _draw() -> void:
 	draw_rect(Rect2(Vector2.ZERO,size),Color("b9dfdf"))

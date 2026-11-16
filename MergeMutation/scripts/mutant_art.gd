@@ -1,10 +1,15 @@
 extends Node2D
+const Catalog = preload("res://scripts/mutant_catalog.gd")
+const Tint = preload("res://scripts/species_tint.gdshader")
 const Sizes = preload("res://scripts/mutant_sizes.gd")
-## Levels 1–6 use named PNG sprites; levels 7–10 retain numbered optional slots.
+## Six species use unchanged PNGs; four species retain procedural silhouettes.
 ## All fallback shapes below are original, drawn with Godot primitives.
 
-const PALETTE := [Color("8ee85c"), Color("58d9ec"), Color("ffbe61"), Color("ff8fba"), Color("749cff"), Color("c899ff"), Color("55dcc5"), Color("ff9868"), Color("a7db55"), Color("ec9cff")]
 const SPRITES := {1:"res://assets/mutants/slime_lv1.png",2:"res://assets/mutants/mutant_lv2.png",3:"res://assets/mutants/mutant_lv3.png",4:"res://assets/mutants/mutant_lv4.png",5:"res://assets/mutants/mutant_lv5.png",6:"res://assets/mutants/mutant_lv6.png"}
+var species_id := "slime"
+var evolution_stage := 1
+var growth := 0.04
+var size_index := 1
 var level := 1
 var texture: Texture2D
 var animation: Tween
@@ -13,12 +18,26 @@ var collection_mode := false
 static var alpha_cache: Dictionary = {}
 
 func setup(value: int,collection: bool=false) -> void:
-	level = clampi(value, 1, 10)
+	# Legacy art-slot convenience for asset tools; gameplay uses setup_form.
+	setup_form(Catalog.make(Catalog.legacy_id(clampi(value,1,10))),collection)
+
+func setup_form(form: Dictionary,collection: bool=false) -> void:
+	species_id=String(form.get("species_id","unknown"))
+	evolution_stage=maxi(1,int(form.get("evolution_stage",1)))
+	var entry := Catalog.species(species_id)
+	var display: Dictionary=entry.get("display",{})
+	level=clampi(int(display.get("art_index",1)),1,10)
+	size_index=clampi(int(display.get("size_index",level)),1,10)
+	growth=clampf(float(display.get("stage_growth",0.04)),0.0,0.1)
 	collection_mode=collection
-	texture = null
-	var path: String = SPRITES.get(level,"res://assets/mutants/%02d.png" % level)
-	if ResourceLoader.exists(path):
-		texture = load(path) as Texture2D
+	texture=null
+	var images: Dictionary=entry.get("images",{})
+	var path: String=images.get(evolution_stage,images.get(1,""))
+	if not path.is_empty() and ResourceLoader.exists(path):
+		texture=load(path) as Texture2D
+	if texture==null and images.has(1) and path!=images[1] and ResourceLoader.exists(images[1]):
+		path=images[1]
+		texture=load(path) as Texture2D
 	if texture:
 		if not alpha_cache.has(path):
 			var image := texture.get_image()
@@ -28,14 +47,19 @@ func setup(value: int,collection: bool=false) -> void:
 		source_bounds=alpha_cache[path]
 	else:
 		source_bounds=Sizes.PROCEDURAL_BOUNDS[level]
-	texture_filter = CanvasItem.TEXTURE_FILTER_LINEAR_WITH_MIPMAPS
+	var tint := ShaderMaterial.new()
+	tint.shader=Tint
+	tint.set_shader_parameter("target_color",entry.get("color",Color("8aa3af")))
+	tint.set_shader_parameter("strength",0.85 if species_id in ["eyeball","wing"] else minf(0.24,(evolution_stage-1)*0.06))
+	material=tint
+	texture_filter=CanvasItem.TEXTURE_FILTER_LINEAR_WITH_MIPMAPS
 	queue_redraw()
 
 func visible_rect() -> Rect2:
-	return Sizes.visible_rect(level,source_bounds,collection_mode)
+	return Sizes.visible_rect(size_index,source_bounds,collection_mode,evolution_stage,growth)
 
 func shadow_rect() -> Rect2:
-	var width := minf(Sizes.pixels(level,collection_mode)*0.78,58.0)
+	var width := minf(Sizes.pixels(size_index,collection_mode,evolution_stage,growth)*0.78,58.0)
 	return Rect2(-width*0.5,visible_rect().end.y-6,width,9)
 
 func render_bounds() -> Rect2:
@@ -85,10 +109,11 @@ func _draw() -> void:
 	draw_set_transform(Vector2.ZERO)
 	if texture:
 		draw_texture_rect_region(texture,visible_rect(),source_bounds)
+		_draw_stage()
 		return
-	var factor := Sizes.pixels(level,collection_mode)/maxf(source_bounds.size.x,source_bounds.size.y)
+	var factor := Sizes.pixels(size_index,collection_mode,evolution_stage,growth)/maxf(source_bounds.size.x,source_bounds.size.y)
 	draw_set_transform(-source_bounds.get_center()*factor,0,Vector2.ONE*factor)
-	var color: Color = PALETTE[level - 1]
+	var color: Color = Catalog.species(species_id).get("color",Color("8aa3af"))
 	# A unique silhouette for each of the ten evolutions.
 	match level:
 		1: # Little pear-shaped slime.
@@ -149,3 +174,19 @@ func _draw() -> void:
 		draw_circle(eye+Vector2(0,-1),1.2,Color.WHITE)
 	draw_arc(Vector2(0,7),5.5,0.1,PI-0.1,12,Color("233e50"),2,true)
 	draw_circle(Vector2(-9,-13),3,Color(1,1,1,0.28))
+
+	draw_set_transform(Vector2.ZERO)
+	_draw_stage()
+
+func _draw_stage() -> void:
+	var rect := visible_rect()
+	var y := rect.end.y-4.0
+	var count := mini(evolution_stage,5)
+	for index in range(count):
+		var pos := Vector2((index-(count-1)*0.5)*6.0,y)
+		draw_circle(pos,2.7,Color("25465a"))
+		draw_circle(pos,1.7,Color("ffdc69") if evolution_stage>=Catalog.maximum(species_id) else Color("fff8de"))
+	if evolution_stage>=4:
+		draw_arc(Vector2.ZERO,minf(rect.size.x,rect.size.y)*0.42,PI,TAU,24,Color(1,0.86,0.4,0.65),1.5,true)
+	if evolution_stage>=Catalog.maximum(species_id) and Catalog.maximum(species_id)>0:
+		draw_circle(Vector2(0,rect.position.y+4),3.2,Color("ffdc69"))

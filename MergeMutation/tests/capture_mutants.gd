@@ -1,4 +1,5 @@
 extends SceneTree
+const Catalog = preload("res://scripts/mutant_catalog.gd")
 ## Real GPU cell captures on five backgrounds; disposable save only.
 const Scene = preload("res://scenes/main.tscn")
 const Art = preload("res://scripts/mutant_art.gd")
@@ -34,15 +35,15 @@ func _capture() -> void:
 	root.add_child(game)
 	game.view.sound.set_enabled(false)
 	game._new_game()
-	game.cells.fill(0)
+	game.cells.fill(null)
 	for row in [1,3,5]:
 		for column in range(3):
 			var group_index := floori(float(row)/2)
-			game.cells[row*5+column+1]=captured_levels[(group_index*3+column)%captured_levels.size()]
+			game.cells[row*5+column+1]=Catalog.make(Catalog.legacy_id(captured_levels[(group_index*3+column)%captured_levels.size()]))
 	if dense:
 		for index in range(30):
-			game.cells[index]=captured_levels[index%captured_levels.size()]
-	game.highest=captured_levels.max()
+			game.cells[index]=Catalog.make(Catalog.legacy_id(captured_levels[index%captured_levels.size()]))
+	for id in Catalog.ids(): game.unlock(Catalog.make(id))
 	game.view.rebuild()
 	var viewports: Array[SubViewport] = []
 	for level in captured_levels:

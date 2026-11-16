@@ -1,4 +1,5 @@
 extends SceneTree
+const Catalog = preload("res://scripts/mutant_catalog.gd")
 const Art = preload("res://scripts/mutant_art.gd")
 const Scene = preload("res://scenes/main.tscn")
 var checks := 0
@@ -6,7 +7,6 @@ var failures := 0
 var levels: Array[int] = [2,3]
 var save_filename := "mutant_sprites_test_save.json"
 var suite_label := "Level 2/3 sprite checks"
-const REWARDS := {2:30,3:45,4:60,5:75,6:90}
 
 func check(condition: bool,message: String) -> void:
 	checks+=1
@@ -94,23 +94,23 @@ func _run() -> void:
 	game.view.sound.set_enabled(false)
 	game._new_game()
 	for target in levels:
-		game.cells.fill(0)
-		game.cells[0]=target-1
-		game.cells[1]=target-1
+		game.cells.fill(null)
+		game.cells[0]=Catalog.make(Catalog.legacy_id(target))
+		game.cells[1]=Catalog.make(Catalog.legacy_id(target))
 		game.view.rebuild()
 		var before_coins: int = game.coins
 		game._press(game.view.cell_center(0))
 		game._release(game.view.cell_center(1))
-		check(game.cells[1]==target and game.coins==before_coins+REWARDS[target],"merge creates level %d with existing reward" % target)
+		check(game.cells[1]==Catalog.make(Catalog.legacy_id(target),2) and game.coins==before_coins+30,"merge creates level %d with existing reward" % target)
 		check(game.view.creatures[1].texture.resource_path==Art.SPRITES[target],"merge result shows level-%d PNG" % target)
 	game.view.show_panel("collection")
 	check(is_instance_valid(game.view.overlay),"collection opens with new art")
 	game.view.close_panel()
 	game._save_game()
 	var saved_coins: int = game.coins
-	game.cells.fill(0)
+	game.cells.fill(null)
 	game.coins=0
-	check(game._load_game() and game.cells[1]==levels.back() and game.coins==saved_coins,"progress remains compatible")
+	check(game._load_game() and game.cells[1]==Catalog.make(Catalog.legacy_id(levels.back()),2) and game.coins==saved_coins,"progress remains compatible")
 	await create_timer(0.9).timeout
 	game.free()
 	DirAccess.remove_absolute("res://.godot/"+save_filename)
