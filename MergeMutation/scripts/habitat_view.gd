@@ -1,17 +1,25 @@
 extends Control
 const W=preload("res://scripts/journey_widgets.gd")
 const Art=preload("res://scripts/mutant_art.gd")
+const EnvView=preload("res://scripts/habitat_environment.gd")
 const PALETTES:={"stone":["ac937b","625d61"],"acid":["8adca2","267b7c"],"air":["b4dcf4","7563ac"],"crystal":["d5b8e9","6a597e"],"forest":["b9d79a","426a65"],"secret":["556a83","243448"]}
 var data: Dictionary={}
 var highlight_left:=0.0
-func setup(value: Dictionary) -> void:
+var environment
+var active:=false
+func setup(value: Dictionary,living_model=null) -> void:
 	data=value
 	position=Vector2(data.rect[0],data.rect[1])
 	size=Vector2(data.rect[2],data.rect[3])
 	mouse_filter=Control.MOUSE_FILTER_IGNORE
 	z_index=2 # Tall rooms remain above the backgrounds of every floor they span.
 	set_process(false)
-	if data.preview_accessible and data.has("species_id"):
+	if living_model!=null and data.preview_accessible:
+		environment=EnvView.new()
+		environment.setup(living_model,Vector2(size.x-14,size.y-61))
+		environment.position=Vector2(7,35)
+		add_child(environment)
+	elif data.preview_accessible and data.has("species_id"):
 		var art:=Art.new()
 		art.setup_form({"species_id":data.species_id,"evolution_stage":1})
 		art.position=Vector2(size.x*0.5,size.y*0.63)
@@ -19,15 +27,19 @@ func setup(value: Dictionary) -> void:
 		add_child(art)
 func highlight() -> void:
 	highlight_left=1.4
-	set_process(true)
+	set_process(active)
 	queue_redraw()
+func set_active(value: bool) -> void:
+	active=value
+	if is_instance_valid(environment): environment.set_active(value)
+	set_process(value and highlight_left>0)
 func object_area() -> Rect2:
 	var area: Array=data.get("interaction_rect",[8,35,size.x-16,size.y-61])
 	return Rect2(area[0],area[1],area[2],area[3])
 func _process(delta: float) -> void:
 	highlight_left=maxf(0,highlight_left-delta)
 	queue_redraw()
-	if highlight_left==0: set_process(false)
+	if highlight_left==0 or not active: set_process(false)
 func _draw() -> void:
 	if data.is_empty(): return
 	var palette: Array=PALETTES.get(data.theme_id,PALETTES.stone)

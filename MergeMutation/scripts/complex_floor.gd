@@ -4,7 +4,7 @@ const Habitat=preload("res://scripts/habitat_view.gd")
 var data: Dictionary={}
 var rooms: Dictionary={}
 var phase:=0.0
-func setup(value: Dictionary,registry) -> void:
+func setup(value: Dictionary,registry,living_models: Dictionary={}) -> void:
 	data=value
 	position=Vector2(0,data.top)
 	size=Vector2(360,data.height)
@@ -13,10 +13,16 @@ func setup(value: Dictionary,registry) -> void:
 		var room:=Habitat.new()
 		var room_data: Dictionary=registry.get_habitat(id)
 		if not data.preview_accessible: room_data.preview_accessible=false
-		room.setup(room_data)
+		room.setup(room_data,living_models.get(id))
 		add_child(room)
 		rooms[id]=room
 	set_process(false)
+func set_active(value: bool,visible_area: Rect2=Rect2()) -> void:
+	var unrestricted:=visible_area.size==Vector2.ZERO
+	set_process(value and (unrestricted or Rect2(position,size).intersects(visible_area)))
+	for room in rooms.values():
+		var bounds:=Rect2(room.position+position,room.size)
+		room.set_active(value and (unrestricted or bounds.intersects(visible_area)))
 func _process(delta: float) -> void:
 	phase+=delta
 	queue_redraw()

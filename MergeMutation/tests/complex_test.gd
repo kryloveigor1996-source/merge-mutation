@@ -12,11 +12,11 @@ func _initialize() -> void: call_deferred("run")
 func run() -> void:
 	var model:=Registry.new()
 	check(model.load_files(),"load complex configs")
-	check(model.floors.size()==4 and model.habitats.size()==6 and model.extent==1180,"four variable height floors and six rooms")
+	check(model.floors.size()==5 and model.habitats.size()==7 and model.extent==1860,"five resized floors and seven rooms")
 	var first: Dictionary=JSON.parse_string(FileAccess.get_file_as_string("res://data/complex/floors.json"))
 	var second: Dictionary=JSON.parse_string(FileAccess.get_file_as_string("res://data/complex/habitats.json"))
-	check(model.get_floor("floor_01").habitats.size()==3,"three small rooms")
-	check(model.get_floor("floor_02").habitats.size()==2,"two unequal medium rooms")
+	check(model.get_floor("floor_01").habitats.size()==2,"two larger small rooms")
+	check(model.get_floor("floor_02").habitats.size()==1 and model.get_floor("floor_04").habitats.size()==3,"one medium room and flexible three-room reserve")
 	check(model.get_floor("floor_03").height>400 and model.get_habitat("habitat_secret").rect[2]>300,"tall full-width secret chamber")
 	check(not model.get_habitat("habitat_secret").has("species_id"),"secret has no permanent species")
 	for id in model.habitats:
@@ -59,13 +59,15 @@ func run() -> void:
 	# A tall room anchored above can occupy several sections; global intersections matter.
 	var spanning:=first.duplicate(true)
 	var spanning_rooms:=second.duplicate(true)
-	spanning_rooms.habitats[0].rect=[32,48,98,400]
-	spanning_rooms.habitats[3].rect=[138,48,44,232]
-	spanning_rooms.habitats[4].rect=[190,48,150,244]
+	spanning_rooms.habitats[0].rect=[32,48,98,600]
+	spanning_rooms.habitats[0].interaction_rect=[8,38,82,110]
+	spanning_rooms.habitats[2].rect=[138,48,202,350]
+	spanning_rooms.habitats[2].interaction_rect=[8,38,186,286]
+
 	var large:=Registry.new()
 	check(large.configure(spanning,spanning_rooms),"room spans multiple floor heights without overlap")
-	check("floor_01" in large.visible_floors(450,80),"spanning room keeps its anchor floor loaded")
-	spanning_rooms.habitats[3].rect[0]=32
+	check("floor_01" in large.visible_floors(550,80),"spanning room keeps its anchor floor loaded")
+	spanning_rooms.habitats[2].rect[0]=32
 	check(not large.configure(spanning,spanning_rooms),"reject intersection across different anchor floors")
 	var stress: Dictionary=JSON.parse_string(FileAccess.get_file_as_string("res://tests/fixtures/complex_50.json"))
 	var fifty:=Registry.new()

@@ -1,0 +1,40 @@
+{
+  "profiles": [
+    {
+      "profile_id": "horn_ground",
+      "species_id": "horn",
+      "movement_type": "ground_horizontal",
+      "allowed_behaviors": [
+        "idle",
+        "walk",
+        "sleep",
+        "inspect",
+        "react",
+        "ram"
+      ],
+      "movement_speed": 30,
+      "idle_duration_range": [
+        1.8,
+        4.6
+      ],
+      "sleep_duration_range": [
+        4.0,
+        7.0
+      ],
+      "interaction_cooldown": 0.9,
+      "preferred_objects": [
+        "monitor",
+        "fern",
+        "training_rock"
+      ],
+      "walk_range": [
+        42,
+        298
+      ],
+      "ground_y": 354,
+      "body_radius": 40,
+      "body_height": 80,
+      "start_x": 165
+    }
+  ]
+}
