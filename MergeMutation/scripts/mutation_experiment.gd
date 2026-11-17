@@ -2,6 +2,9 @@ extends Control
 const Session = preload("res://scripts/mutation_session.gd")
 const Art = preload("res://scripts/mutant_art.gd")
 const W = preload("res://scripts/journey_widgets.gd")
+const History = preload("res://scripts/mutation_history.gd")
+var history := History.new()
+var completed_before_attempt := false
 var game: Control
 var session
 var number := 0
@@ -38,6 +41,7 @@ func setup(value: Control) -> void:
 	show_list()
 func clear() -> void:
 	if animation: animation.kill()
+	history.reset()
 	busy=false
 	selected=-1
 	pressed=-1
@@ -80,12 +84,14 @@ func start_trial(index: int) -> bool:
 	clear()
 	session=attempt
 	number=index
+	completed_before_attempt=completed.has(index)
 	W.label(self,"%d · %s" % [index,session.config.name],Rect2(18,15,324,52),19,W.INK,true)
 	counters=W.label(self,"",Rect2(16,72,328,24),14,W.INK,true)
 	var show_tip: bool=index>5 or session.config.required.any(func(id): return not learned.has(id))
 	message=W.label(self,session.config.tip if show_tip else "Доставьте формы II на отмеченные клетки. Спланируйте порядок действий.",Rect2(22,102,316,62),14,W.INK,true)
 	W.label(self,"Цели: Р — Рогач · С — Слизик · К — Крылатик",Rect2(16,516,328,22),12,W.INK,true)
-	W.button(self,"ExperimentSpawn","СОЗДАТЬ",Rect2(24,545,312,44),create_creature)
+	W.button(self,"ExperimentSpawn","СОЗДАТЬ",Rect2(24,545,148,44),create_creature)
+	W.button(self,"ExperimentUndo","↶ ОТМЕНИТЬ (2)",Rect2(184,545,152,44),undo_action,Color("b5e9ee"))
 	W.button(self,"ExperimentRestart","ЗАНОВО",Rect2(24,601,148,48),func(): start_trial(number),Color("ffd7b6"))
 	W.button(self,"ExperimentList","ИСПЫТАНИЯ",Rect2(184,601,152,48),show_list,Color("b5e9ee"))
 	W.button(self,"ExperimentExit","В ЛАБОРАТОРИЮ",Rect2(24,661,312,46),exit_experiment,Color("ded2fb"))
@@ -96,6 +102,7 @@ func start_trial(index: int) -> bool:
 	return true
 func exit_experiment() -> void:
 	if is_queued_for_deletion(): return
+	history.reset()
 	if animation: animation.kill()
 	if get_parent()!=null: get_parent().remove_child(self)
 	queue_free()
@@ -119,7 +126,12 @@ func refresh() -> void:
 	counters.text="Ходы: %d / %d · Доставьте формы II к меткам" % [session.moves_used,session.config.move_limit]
 	var spawn: Button=get_node("ExperimentSpawn")
 	spawn.disabled=busy or session.status!="active" or session.creations_left()==0
-	spawn.text="СОЗДАТЬ РОГАЧА · %d" % session.creations_left() if session.creations_left()>0 else "СОЗДАНИЯ НЕ НУЖНЫ"
+	spawn.text="РОГАЧ +%d" % session.creations_left() if session.creations_left()>0 else "НЕТ СОЗДАНИЙ"
+	spawn.size=Vector2(148,44)
+	var undo: Button=get_node("ExperimentUndo")
+	undo.text="↶ ОТМЕНИТЬ (%d)" % history.remaining
+	undo.disabled=busy or not history.can_undo()
+	undo.size=Vector2(152,44)
 	if session.status=="won":
 		completed[number]=true
 		message.text="Успех! Все формы доставлены. Наград кампании нет."
@@ -127,14 +139,33 @@ func refresh() -> void:
 	queue_redraw()
 func create_creature() -> void:
 	if busy or session==null: return
-	finish_action(session.spawn())
+	finish_action(history.execute(session,{"kind":"spawn"}))
+func undo_action() -> void:
+	if busy or session==null or not history.undo(session): return
+	selected=-1
+	pressed=-1
+	if not completed_before_attempt and session.status!="won": completed.erase(number)
+	busy=true
+	effect_time=0.35
+	effect_kind="undo"
+	effect_index=-1
+	refresh()
+	message.text="Действие отменено. Осталось отмен: %d" % history.remaining
+	animation=create_tween()
+	animation.tween_interval(0.18)
+	animation.tween_callback(func():
+		busy=false
+		refresh()
+	)
 func act(destination: int,explicit_tap: bool=true) -> void:
 	if busy or session==null or selected<0 or destination<0 or session.status!="active": return
 	if destination==selected: return
 	if session.ground(destination)=="rock" and not explicit_tap:
 		message.text="Для разрушения нажмите на камень после выбора Рогача."
 		return
-	finish_action(session.break_rock(selected,destination) if session.ground(destination)=="rock" else session.transfer(selected,destination))
+	var kind := "break" if session.ground(destination)=="rock" else "move"
+	if kind=="move" and not session.adjacent(selected,destination) and not session.can_transfer(selected,destination): kind="corridor"
+	finish_action(history.execute(session,{"kind":kind,"source":selected,"index":destination}))
 func finish_action(result: Dictionary) -> void:
 	if not result.ok:
 		message.text=result.get("reason","Действие недоступно")
@@ -151,7 +182,7 @@ func finish_action(result: Dictionary) -> void:
 		message.text={"ram":"Камень разрушен за один ход!","flight":"Один разрыв, свободное приземление — один ход!","acid":"Слизик безопасно проходит кислоту."}[ability_id]
 	refresh()
 	animation=create_tween()
-	if result.kind in ["move","merge","jump"]:
+	if result.kind in ["move","merge","jump","corridor"]:
 		var sprite: Node2D=sprites[int(result.index)]
 		var from := center(int(result.source))
 		var to := center(int(result.index))
@@ -188,6 +219,7 @@ func _gui_input(event: InputEvent) -> void:
 				selected=pressed
 				var id := Session.ability(session.cells[pressed])
 				message.text={"ram":"Таран: нажмите на соседний камень.","acid":"Слизик: кислота безопасна.","flight":"Летун: один разрыв, свободная клетка за ним."}.get(id,"") if not learned.has(id) else "Выберите подсвеченное действие."
+				if not session.corridor_actions(pressed).is_empty(): message.text+=" Цифра — цена пути."
 				queue_redraw()
 	if up:
 		if pressed>=0 and point.distance_to(pointer_start)>12: act(cell_at(point),false)
@@ -244,13 +276,14 @@ func _process(delta: float) -> void:
 func draw_action_marks() -> void:
 	if session==null: return
 	if selected>=0:
-		var colors := {"move":Color("4ba8e8"),"merge":Color("ecc12c"),"break":Color("f37835"),"jump":Color("ae6ce1")}
-		for action in session.legal_actions():
+		var colors := {"move":Color("4ba8e8"),"merge":Color("ecc12c"),"break":Color("f37835"),"jump":Color("ae6ce1"),"corridor":Color("39aa9c")}
+		for action in session.legal_actions()+session.corridor_actions(selected):
 			if action.get("source",-1)!=selected: continue
 			var p := center(int(action.index))
 			action_layer.draw_rect(Rect2(p-Vector2(25,25),Vector2(50,50)),colors[action.kind],false,3)
 			action_layer.draw_circle(p+Vector2(17,-17),9,colors[action.kind])
-			action_layer.draw_string(ThemeDB.fallback_font,p+Vector2(12,-12),{"move":"→","merge":"+","break":"!","jump":"↑"}[action.kind],HORIZONTAL_ALIGNMENT_LEFT,-1,15,W.INK)
+			var glyph: String=str(action.cost) if action.kind=="corridor" else {"move":"→","merge":"+","break":"!","jump":"↑"}[action.kind]
+			action_layer.draw_string(ThemeDB.fallback_font,p+Vector2(12,-12),glyph,HORIZONTAL_ALIGNMENT_LEFT,-1,15,W.INK)
 	for target in session.config.destinations:
 		var p := center(int(target.cell))
 		var tag: String={"horn":"Р","slime":"С","wing":"К"}.get(target.species_id,"?")+" II"
@@ -259,6 +292,8 @@ func draw_action_marks() -> void:
 func _draw() -> void:
 	draw_rect(Rect2(0,0,360,720),Color("e3f3eb"))
 	if session==null: return
+	if effect_kind=="undo" and effect_time>0:
+		draw_rect(Rect2(38,175,284,340),Color(0.2,0.8,0.9,effect_time*0.5))
 	for index in range(30):
 		if index in session.config.blocked_cells: continue
 		var p := center(index)

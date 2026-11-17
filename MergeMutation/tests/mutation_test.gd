@@ -23,6 +23,7 @@ func run() -> void:
 		check(session.start(data),"start %d" % number)
 		var proof := Search.solve(session)
 		check(proof.won and proof.optimal and not proof.cutoff,"optimal proof %d" % number)
+		check(proof.get("moves",-1)==[4,3,2,9,8,9,10,13,13,21][number-1],"PR13 minimum unchanged %d" % number)
 		print("Trial ",number,": ",proof)
 		if not proof.won: continue
 		if number<=5:

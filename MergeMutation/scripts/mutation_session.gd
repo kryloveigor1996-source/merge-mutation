@@ -81,9 +81,49 @@ func legal_actions(_include_boosters: bool=false) -> Array:
 			elif can_transfer(source,destination): actions.append({"kind":"jump" if can_jump(source,destination) else ("merge" if cells[destination]!=null else "move"),"source":source,"index":destination})
 	return actions
 func apply_action(action: Dictionary,assess: bool=true) -> Dictionary:
+	if action.kind=="corridor": return corridor(int(action.source),int(action.index),assess)
 	if action.kind=="break": return break_rock(int(action.source),int(action.index),assess)
 	if action.kind=="jump": return transfer(int(action.source),int(action.index),assess)
 	return super.apply_action(action,assess)
+func corridor_route(source: int,destination: int) -> Array[int]:
+	var route: Array[int]=[]
+	if source<0 or source>=30 or destination<0 or destination>=30 or source==destination or status!="active" or cells[source]==null or blocked(source): return route
+	var dx := destination%5-source%5
+	var dy := floori(float(destination)/5)-floori(float(source)/5)
+	if dx!=0 and dy!=0: return route
+	var distance := absi(dx)+absi(dy)
+	if moves_left()>=0 and distance>moves_left(): return route
+	var step := signi(dx) if dy==0 else signi(dy)*5
+	for offset in range(1,distance+1):
+		var index := source+step*offset
+		if cells[index]!=null or not can_land(source,index): return []
+		route.append(index)
+	return route
+func corridor(source: int,destination: int,assess: bool=true) -> Dictionary:
+	var route := corridor_route(source,destination)
+	if route.is_empty(): return {"ok":false,"reason":"Нужен свободный прямой путь и ход на каждую клетку. Камни, разрывы и занятые клетки не пересекаются."}
+	# Simulate the exact ordinary steps first, including intermediate terminal states.
+	# Commit only the complete command; never alter the original on rejection.
+	var trial = fork()
+	var previous := source
+	for index in route:
+		if not trial.transfer(previous,index,true).ok:
+			return {"ok":false,"reason":"Маршрут нельзя завершить обычными шагами."}
+		previous=index
+	if not assess:
+		trial.status="active"
+		trial.reason=""
+	restore_from(trial)
+	return {"ok":true,"kind":"corridor","source":source,"index":destination,"form":cells[destination],"route":route,"cost":route.size()}
+func corridor_actions(source: int) -> Array:
+	var actions: Array=[]
+	for destination in range(30):
+		var route := corridor_route(source,destination)
+		if route.size()>1:
+			# A target reached midway terminates an ordinary sequence as well.
+			var trial = fork()
+			if trial.corridor(source,destination).ok: actions.append({"kind":"corridor","source":source,"index":destination,"cost":route.size()})
+	return actions
 func won() -> bool:
 	if not goals.all_met(config.goals): return false
 	for target in config.destinations:
@@ -98,7 +138,22 @@ func fork():
 	copy.terrain=terrain.duplicate(true)
 	copy.disabled_abilities=disabled_abilities.duplicate()
 	copy.used=used.duplicate()
+	copy.status=status
+	copy.reason=reason
 	return copy
+func restore_from(snapshot) -> void:
+	config=snapshot.config.duplicate(true)
+	cells=snapshot.cells.duplicate(true)
+	goals.produced=snapshot.goals.produced.duplicate(true)
+	goals.merges=snapshot.goals.merges
+	boosters.charges=snapshot.boosters.charges.duplicate(true)
+	creations_used=snapshot.creations_used
+	moves_used=snapshot.moves_used
+	status=snapshot.status
+	reason=snapshot.reason
+	terrain=snapshot.terrain.duplicate(true)
+	disabled_abilities=snapshot.disabled_abilities.duplicate(true)
+	used=snapshot.used.duplicate(true)
 func signature() -> String:
 	return super.signature()+JSON.stringify(terrain,"",true)
 func search_key() -> String:
