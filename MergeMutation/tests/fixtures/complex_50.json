@@ -1,0 +1,1306 @@
+{
+  "floors": [
+    {
+      "depth": 0,
+      "name": "Тестовый этаж",
+      "floor_id": "stress_floor_00",
+      "habitats": [
+        "stress_room_00"
+      ],
+      "height": 200,
+      "preview_accessible": true,
+      "theme_id": "industrial"
+    },
+    {
+      "depth": 1,
+      "name": "Тестовый этаж",
+      "floor_id": "stress_floor_01",
+      "habitats": [
+        "stress_room_01"
+      ],
+      "height": 240,
+      "preview_accessible": true,
+      "theme_id": "industrial"
+    },
+    {
+      "depth": 2,
+      "name": "Тестовый этаж",
+      "floor_id": "stress_floor_02",
+      "habitats": [
+        "stress_room_02"
+      ],
+      "height": 280,
+      "preview_accessible": true,
+      "theme_id": "industrial"
+    },
+    {
+      "depth": 3,
+      "name": "Тестовый этаж",
+      "floor_id": "stress_floor_03",
+      "habitats": [
+        "stress_room_03"
+      ],
+      "height": 200,
+      "preview_accessible": true,
+      "theme_id": "industrial"
+    },
+    {
+      "depth": 4,
+      "name": "Тестовый этаж",
+      "floor_id": "stress_floor_04",
+      "habitats": [
+        "stress_room_04"
+      ],
+      "height": 240,
+      "preview_accessible": true,
+      "theme_id": "industrial"
+    },
+    {
+      "depth": 5,
+      "name": "Тестовый этаж",
+      "floor_id": "stress_floor_05",
+      "habitats": [
+        "stress_room_05"
+      ],
+      "height": 280,
+      "preview_accessible": true,
+      "theme_id": "industrial"
+    },
+    {
+      "depth": 6,
+      "name": "Тестовый этаж",
+      "floor_id": "stress_floor_06",
+      "habitats": [
+        "stress_room_06"
+      ],
+      "height": 200,
+      "preview_accessible": true,
+      "theme_id": "industrial"
+    },
+    {
+      "depth": 7,
+      "name": "Тестовый этаж",
+      "floor_id": "stress_floor_07",
+      "habitats": [
+        "stress_room_07"
+      ],
+      "height": 240,
+      "preview_accessible": true,
+      "theme_id": "industrial"
+    },
+    {
+      "depth": 8,
+      "name": "Тестовый этаж",
+      "floor_id": "stress_floor_08",
+      "habitats": [
+        "stress_room_08"
+      ],
+      "height": 280,
+      "preview_accessible": true,
+      "theme_id": "industrial"
+    },
+    {
+      "depth": 9,
+      "name": "Тестовый этаж",
+      "floor_id": "stress_floor_09",
+      "habitats": [
+        "stress_room_09"
+      ],
+      "height": 200,
+      "preview_accessible": true,
+      "theme_id": "industrial"
+    },
+    {
+      "depth": 10,
+      "name": "Тестовый этаж",
+      "floor_id": "stress_floor_10",
+      "habitats": [
+        "stress_room_10"
+      ],
+      "height": 240,
+      "preview_accessible": true,
+      "theme_id": "industrial"
+    },
+    {
+      "depth": 11,
+      "name": "Тестовый этаж",
+      "floor_id": "stress_floor_11",
+      "habitats": [
+        "stress_room_11"
+      ],
+      "height": 280,
+      "preview_accessible": true,
+      "theme_id": "industrial"
+    },
+    {
+      "depth": 12,
+      "name": "Тестовый этаж",
+      "floor_id": "stress_floor_12",
+      "habitats": [
+        "stress_room_12"
+      ],
+      "height": 200,
+      "preview_accessible": true,
+      "theme_id": "industrial"
+    },
+    {
+      "depth": 13,
+      "name": "Тестовый этаж",
+      "floor_id": "stress_floor_13",
+      "habitats": [
+        "stress_room_13"
+      ],
+      "height": 240,
+      "preview_accessible": true,
+      "theme_id": "industrial"
+    },
+    {
+      "depth": 14,
+      "name": "Тестовый этаж",
+      "floor_id": "stress_floor_14",
+      "habitats": [
+        "stress_room_14"
+      ],
+      "height": 280,
+      "preview_accessible": true,
+      "theme_id": "industrial"
+    },
+    {
+      "depth": 15,
+      "name": "Тестовый этаж",
+      "floor_id": "stress_floor_15",
+      "habitats": [
+        "stress_room_15"
+      ],
+      "height": 200,
+      "preview_accessible": true,
+      "theme_id": "industrial"
+    },
+    {
+      "depth": 16,
+      "name": "Тестовый этаж",
+      "floor_id": "stress_floor_16",
+      "habitats": [
+        "stress_room_16"
+      ],
+      "height": 240,
+      "preview_accessible": true,
+      "theme_id": "industrial"
+    },
+    {
+      "depth": 17,
+      "name": "Тестовый этаж",
+      "floor_id": "stress_floor_17",
+      "habitats": [
+        "stress_room_17"
+      ],
+      "height": 280,
+      "preview_accessible": true,
+      "theme_id": "industrial"
+    },
+    {
+      "depth": 18,
+      "name": "Тестовый этаж",
+      "floor_id": "stress_floor_18",
+      "habitats": [
+        "stress_room_18"
+      ],
+      "height": 200,
+      "preview_accessible": true,
+      "theme_id": "industrial"
+    },
+    {
+      "depth": 19,
+      "name": "Тестовый этаж",
+      "floor_id": "stress_floor_19",
+      "habitats": [
+        "stress_room_19"
+      ],
+      "height": 240,
+      "preview_accessible": true,
+      "theme_id": "industrial"
+    },
+    {
+      "depth": 20,
+      "name": "Тестовый этаж",
+      "floor_id": "stress_floor_20",
+      "habitats": [
+        "stress_room_20"
+      ],
+      "height": 280,
+      "preview_accessible": true,
+      "theme_id": "industrial"
+    },
+    {
+      "depth": 21,
+      "name": "Тестовый этаж",
+      "floor_id": "stress_floor_21",
+      "habitats": [
+        "stress_room_21"
+      ],
+      "height": 200,
+      "preview_accessible": true,
+      "theme_id": "industrial"
+    },
+    {
+      "depth": 22,
+      "name": "Тестовый этаж",
+      "floor_id": "stress_floor_22",
+      "habitats": [
+        "stress_room_22"
+      ],
+      "height": 240,
+      "preview_accessible": true,
+      "theme_id": "industrial"
+    },
+    {
+      "depth": 23,
+      "name": "Тестовый этаж",
+      "floor_id": "stress_floor_23",
+      "habitats": [
+        "stress_room_23"
+      ],
+      "height": 280,
+      "preview_accessible": true,
+      "theme_id": "industrial"
+    },
+    {
+      "depth": 24,
+      "name": "Тестовый этаж",
+      "floor_id": "stress_floor_24",
+      "habitats": [
+        "stress_room_24"
+      ],
+      "height": 200,
+      "preview_accessible": true,
+      "theme_id": "industrial"
+    },
+    {
+      "depth": 25,
+      "name": "Тестовый этаж",
+      "floor_id": "stress_floor_25",
+      "habitats": [
+        "stress_room_25"
+      ],
+      "height": 240,
+      "preview_accessible": true,
+      "theme_id": "industrial"
+    },
+    {
+      "depth": 26,
+      "name": "Тестовый этаж",
+      "floor_id": "stress_floor_26",
+      "habitats": [
+        "stress_room_26"
+      ],
+      "height": 280,
+      "preview_accessible": true,
+      "theme_id": "industrial"
+    },
+    {
+      "depth": 27,
+      "name": "Тестовый этаж",
+      "floor_id": "stress_floor_27",
+      "habitats": [
+        "stress_room_27"
+      ],
+      "height": 200,
+      "preview_accessible": true,
+      "theme_id": "industrial"
+    },
+    {
+      "depth": 28,
+      "name": "Тестовый этаж",
+      "floor_id": "stress_floor_28",
+      "habitats": [
+        "stress_room_28"
+      ],
+      "height": 240,
+      "preview_accessible": true,
+      "theme_id": "industrial"
+    },
+    {
+      "depth": 29,
+      "name": "Тестовый этаж",
+      "floor_id": "stress_floor_29",
+      "habitats": [
+        "stress_room_29"
+      ],
+      "height": 280,
+      "preview_accessible": true,
+      "theme_id": "industrial"
+    },
+    {
+      "depth": 30,
+      "name": "Тестовый этаж",
+      "floor_id": "stress_floor_30",
+      "habitats": [
+        "stress_room_30"
+      ],
+      "height": 200,
+      "preview_accessible": true,
+      "theme_id": "industrial"
+    },
+    {
+      "depth": 31,
+      "name": "Тестовый этаж",
+      "floor_id": "stress_floor_31",
+      "habitats": [
+        "stress_room_31"
+      ],
+      "height": 240,
+      "preview_accessible": true,
+      "theme_id": "industrial"
+    },
+    {
+      "depth": 32,
+      "name": "Тестовый этаж",
+      "floor_id": "stress_floor_32",
+      "habitats": [
+        "stress_room_32"
+      ],
+      "height": 280,
+      "preview_accessible": true,
+      "theme_id": "industrial"
+    },
+    {
+      "depth": 33,
+      "name": "Тестовый этаж",
+      "floor_id": "stress_floor_33",
+      "habitats": [
+        "stress_room_33"
+      ],
+      "height": 200,
+      "preview_accessible": true,
+      "theme_id": "industrial"
+    },
+    {
+      "depth": 34,
+      "name": "Тестовый этаж",
+      "floor_id": "stress_floor_34",
+      "habitats": [
+        "stress_room_34"
+      ],
+      "height": 240,
+      "preview_accessible": true,
+      "theme_id": "industrial"
+    },
+    {
+      "depth": 35,
+      "name": "Тестовый этаж",
+      "floor_id": "stress_floor_35",
+      "habitats": [
+        "stress_room_35"
+      ],
+      "height": 280,
+      "preview_accessible": true,
+      "theme_id": "industrial"
+    },
+    {
+      "depth": 36,
+      "name": "Тестовый этаж",
+      "floor_id": "stress_floor_36",
+      "habitats": [
+        "stress_room_36"
+      ],
+      "height": 200,
+      "preview_accessible": true,
+      "theme_id": "industrial"
+    },
+    {
+      "depth": 37,
+      "name": "Тестовый этаж",
+      "floor_id": "stress_floor_37",
+      "habitats": [
+        "stress_room_37"
+      ],
+      "height": 240,
+      "preview_accessible": true,
+      "theme_id": "industrial"
+    },
+    {
+      "depth": 38,
+      "name": "Тестовый этаж",
+      "floor_id": "stress_floor_38",
+      "habitats": [
+        "stress_room_38"
+      ],
+      "height": 280,
+      "preview_accessible": true,
+      "theme_id": "industrial"
+    },
+    {
+      "depth": 39,
+      "name": "Тестовый этаж",
+      "floor_id": "stress_floor_39",
+      "habitats": [
+        "stress_room_39"
+      ],
+      "height": 200,
+      "preview_accessible": true,
+      "theme_id": "industrial"
+    },
+    {
+      "depth": 40,
+      "name": "Тестовый этаж",
+      "floor_id": "stress_floor_40",
+      "habitats": [
+        "stress_room_40"
+      ],
+      "height": 240,
+      "preview_accessible": true,
+      "theme_id": "industrial"
+    },
+    {
+      "depth": 41,
+      "name": "Тестовый этаж",
+      "floor_id": "stress_floor_41",
+      "habitats": [
+        "stress_room_41"
+      ],
+      "height": 280,
+      "preview_accessible": true,
+      "theme_id": "industrial"
+    },
+    {
+      "depth": 42,
+      "name": "Тестовый этаж",
+      "floor_id": "stress_floor_42",
+      "habitats": [
+        "stress_room_42"
+      ],
+      "height": 200,
+      "preview_accessible": true,
+      "theme_id": "industrial"
+    },
+    {
+      "depth": 43,
+      "name": "Тестовый этаж",
+      "floor_id": "stress_floor_43",
+      "habitats": [
+        "stress_room_43"
+      ],
+      "height": 240,
+      "preview_accessible": true,
+      "theme_id": "industrial"
+    },
+    {
+      "depth": 44,
+      "name": "Тестовый этаж",
+      "floor_id": "stress_floor_44",
+      "habitats": [
+        "stress_room_44"
+      ],
+      "height": 280,
+      "preview_accessible": true,
+      "theme_id": "industrial"
+    },
+    {
+      "depth": 45,
+      "name": "Тестовый этаж",
+      "floor_id": "stress_floor_45",
+      "habitats": [
+        "stress_room_45"
+      ],
+      "height": 200,
+      "preview_accessible": true,
+      "theme_id": "industrial"
+    },
+    {
+      "depth": 46,
+      "name": "Тестовый этаж",
+      "floor_id": "stress_floor_46",
+      "habitats": [
+        "stress_room_46"
+      ],
+      "height": 240,
+      "preview_accessible": true,
+      "theme_id": "industrial"
+    },
+    {
+      "depth": 47,
+      "name": "Тестовый этаж",
+      "floor_id": "stress_floor_47",
+      "habitats": [
+        "stress_room_47"
+      ],
+      "height": 280,
+      "preview_accessible": true,
+      "theme_id": "industrial"
+    },
+    {
+      "depth": 48,
+      "name": "Тестовый этаж",
+      "floor_id": "stress_floor_48",
+      "habitats": [
+        "stress_room_48"
+      ],
+      "height": 200,
+      "preview_accessible": true,
+      "theme_id": "industrial"
+    },
+    {
+      "depth": 49,
+      "name": "Тестовый этаж",
+      "floor_id": "stress_floor_49",
+      "habitats": [
+        "stress_room_49"
+      ],
+      "height": 240,
+      "preview_accessible": true,
+      "theme_id": "industrial"
+    }
+  ],
+  "habitats": [
+    {
+      "preview_accessible": false,
+      "size_class": "medium",
+      "description": "Только тест",
+      "habitat_id": "stress_room_00",
+      "rect": [
+        32,
+        42,
+        308,
+        142
+      ],
+      "name": "Тестовая камера",
+      "floor_id": "stress_floor_00",
+      "theme_id": "crystal"
+    },
+    {
+      "preview_accessible": false,
+      "size_class": "medium",
+      "description": "Только тест",
+      "habitat_id": "stress_room_01",
+      "rect": [
+        32,
+        42,
+        308,
+        182
+      ],
+      "name": "Тестовая камера",
+      "floor_id": "stress_floor_01",
+      "theme_id": "crystal"
+    },
+    {
+      "preview_accessible": false,
+      "size_class": "medium",
+      "description": "Только тест",
+      "habitat_id": "stress_room_02",
+      "rect": [
+        32,
+        42,
+        308,
+        222
+      ],
+      "name": "Тестовая камера",
+      "floor_id": "stress_floor_02",
+      "theme_id": "crystal"
+    },
+    {
+      "preview_accessible": false,
+      "size_class": "medium",
+      "description": "Только тест",
+      "habitat_id": "stress_room_03",
+      "rect": [
+        32,
+        42,
+        308,
+        142
+      ],
+      "name": "Тестовая камера",
+      "floor_id": "stress_floor_03",
+      "theme_id": "crystal"
+    },
+    {
+      "preview_accessible": false,
+      "size_class": "medium",
+      "description": "Только тест",
+      "habitat_id": "stress_room_04",
+      "rect": [
+        32,
+        42,
+        308,
+        182
+      ],
+      "name": "Тестовая камера",
+      "floor_id": "stress_floor_04",
+      "theme_id": "crystal"
+    },
+    {
+      "preview_accessible": false,
+      "size_class": "medium",
+      "description": "Только тест",
+      "habitat_id": "stress_room_05",
+      "rect": [
+        32,
+        42,
+        308,
+        222
+      ],
+      "name": "Тестовая камера",
+      "floor_id": "stress_floor_05",
+      "theme_id": "crystal"
+    },
+    {
+      "preview_accessible": false,
+      "size_class": "medium",
+      "description": "Только тест",
+      "habitat_id": "stress_room_06",
+      "rect": [
+        32,
+        42,
+        308,
+        142
+      ],
+      "name": "Тестовая камера",
+      "floor_id": "stress_floor_06",
+      "theme_id": "crystal"
+    },
+    {
+      "preview_accessible": false,
+      "size_class": "medium",
+      "description": "Только тест",
+      "habitat_id": "stress_room_07",
+      "rect": [
+        32,
+        42,
+        308,
+        182
+      ],
+      "name": "Тестовая камера",
+      "floor_id": "stress_floor_07",
+      "theme_id": "crystal"
+    },
+    {
+      "preview_accessible": false,
+      "size_class": "medium",
+      "description": "Только тест",
+      "habitat_id": "stress_room_08",
+      "rect": [
+        32,
+        42,
+        308,
+        222
+      ],
+      "name": "Тестовая камера",
+      "floor_id": "stress_floor_08",
+      "theme_id": "crystal"
+    },
+    {
+      "preview_accessible": false,
+      "size_class": "medium",
+      "description": "Только тест",
+      "habitat_id": "stress_room_09",
+      "rect": [
+        32,
+        42,
+        308,
+        142
+      ],
+      "name": "Тестовая камера",
+      "floor_id": "stress_floor_09",
+      "theme_id": "crystal"
+    },
+    {
+      "preview_accessible": false,
+      "size_class": "medium",
+      "description": "Только тест",
+      "habitat_id": "stress_room_10",
+      "rect": [
+        32,
+        42,
+        308,
+        182
+      ],
+      "name": "Тестовая камера",
+      "floor_id": "stress_floor_10",
+      "theme_id": "crystal"
+    },
+    {
+      "preview_accessible": false,
+      "size_class": "medium",
+      "description": "Только тест",
+      "habitat_id": "stress_room_11",
+      "rect": [
+        32,
+        42,
+        308,
+        222
+      ],
+      "name": "Тестовая камера",
+      "floor_id": "stress_floor_11",
+      "theme_id": "crystal"
+    },
+    {
+      "preview_accessible": false,
+      "size_class": "medium",
+      "description": "Только тест",
+      "habitat_id": "stress_room_12",
+      "rect": [
+        32,
+        42,
+        308,
+        142
+      ],
+      "name": "Тестовая камера",
+      "floor_id": "stress_floor_12",
+      "theme_id": "crystal"
+    },
+    {
+      "preview_accessible": false,
+      "size_class": "medium",
+      "description": "Только тест",
+      "habitat_id": "stress_room_13",
+      "rect": [
+        32,
+        42,
+        308,
+        182
+      ],
+      "name": "Тестовая камера",
+      "floor_id": "stress_floor_13",
+      "theme_id": "crystal"
+    },
+    {
+      "preview_accessible": false,
+      "size_class": "medium",
+      "description": "Только тест",
+      "habitat_id": "stress_room_14",
+      "rect": [
+        32,
+        42,
+        308,
+        222
+      ],
+      "name": "Тестовая камера",
+      "floor_id": "stress_floor_14",
+      "theme_id": "crystal"
+    },
+    {
+      "preview_accessible": false,
+      "size_class": "medium",
+      "description": "Только тест",
+      "habitat_id": "stress_room_15",
+      "rect": [
+        32,
+        42,
+        308,
+        142
+      ],
+      "name": "Тестовая камера",
+      "floor_id": "stress_floor_15",
+      "theme_id": "crystal"
+    },
+    {
+      "preview_accessible": false,
+      "size_class": "medium",
+      "description": "Только тест",
+      "habitat_id": "stress_room_16",
+      "rect": [
+        32,
+        42,
+        308,
+        182
+      ],
+      "name": "Тестовая камера",
+      "floor_id": "stress_floor_16",
+      "theme_id": "crystal"
+    },
+    {
+      "preview_accessible": false,
+      "size_class": "medium",
+      "description": "Только тест",
+      "habitat_id": "stress_room_17",
+      "rect": [
+        32,
+        42,
+        308,
+        222
+      ],
+      "name": "Тестовая камера",
+      "floor_id": "stress_floor_17",
+      "theme_id": "crystal"
+    },
+    {
+      "preview_accessible": false,
+      "size_class": "medium",
+      "description": "Только тест",
+      "habitat_id": "stress_room_18",
+      "rect": [
+        32,
+        42,
+        308,
+        142
+      ],
+      "name": "Тестовая камера",
+      "floor_id": "stress_floor_18",
+      "theme_id": "crystal"
+    },
+    {
+      "preview_accessible": false,
+      "size_class": "medium",
+      "description": "Только тест",
+      "habitat_id": "stress_room_19",
+      "rect": [
+        32,
+        42,
+        308,
+        182
+      ],
+      "name": "Тестовая камера",
+      "floor_id": "stress_floor_19",
+      "theme_id": "crystal"
+    },
+    {
+      "preview_accessible": false,
+      "size_class": "medium",
+      "description": "Только тест",
+      "habitat_id": "stress_room_20",
+      "rect": [
+        32,
+        42,
+        308,
+        222
+      ],
+      "name": "Тестовая камера",
+      "floor_id": "stress_floor_20",
+      "theme_id": "crystal"
+    },
+    {
+      "preview_accessible": false,
+      "size_class": "medium",
+      "description": "Только тест",
+      "habitat_id": "stress_room_21",
+      "rect": [
+        32,
+        42,
+        308,
+        142
+      ],
+      "name": "Тестовая камера",
+      "floor_id": "stress_floor_21",
+      "theme_id": "crystal"
+    },
+    {
+      "preview_accessible": false,
+      "size_class": "medium",
+      "description": "Только тест",
+      "habitat_id": "stress_room_22",
+      "rect": [
+        32,
+        42,
+        308,
+        182
+      ],
+      "name": "Тестовая камера",
+      "floor_id": "stress_floor_22",
+      "theme_id": "crystal"
+    },
+    {
+      "preview_accessible": false,
+      "size_class": "medium",
+      "description": "Только тест",
+      "habitat_id": "stress_room_23",
+      "rect": [
+        32,
+        42,
+        308,
+        222
+      ],
+      "name": "Тестовая камера",
+      "floor_id": "stress_floor_23",
+      "theme_id": "crystal"
+    },
+    {
+      "preview_accessible": false,
+      "size_class": "medium",
+      "description": "Только тест",
+      "habitat_id": "stress_room_24",
+      "rect": [
+        32,
+        42,
+        308,
+        142
+      ],
+      "name": "Тестовая камера",
+      "floor_id": "stress_floor_24",
+      "theme_id": "crystal"
+    },
+    {
+      "preview_accessible": false,
+      "size_class": "medium",
+      "description": "Только тест",
+      "habitat_id": "stress_room_25",
+      "rect": [
+        32,
+        42,
+        308,
+        182
+      ],
+      "name": "Тестовая камера",
+      "floor_id": "stress_floor_25",
+      "theme_id": "crystal"
+    },
+    {
+      "preview_accessible": false,
+      "size_class": "medium",
+      "description": "Только тест",
+      "habitat_id": "stress_room_26",
+      "rect": [
+        32,
+        42,
+        308,
+        222
+      ],
+      "name": "Тестовая камера",
+      "floor_id": "stress_floor_26",
+      "theme_id": "crystal"
+    },
+    {
+      "preview_accessible": false,
+      "size_class": "medium",
+      "description": "Только тест",
+      "habitat_id": "stress_room_27",
+      "rect": [
+        32,
+        42,
+        308,
+        142
+      ],
+      "name": "Тестовая камера",
+      "floor_id": "stress_floor_27",
+      "theme_id": "crystal"
+    },
+    {
+      "preview_accessible": false,
+      "size_class": "medium",
+      "description": "Только тест",
+      "habitat_id": "stress_room_28",
+      "rect": [
+        32,
+        42,
+        308,
+        182
+      ],
+      "name": "Тестовая камера",
+      "floor_id": "stress_floor_28",
+      "theme_id": "crystal"
+    },
+    {
+      "preview_accessible": false,
+      "size_class": "medium",
+      "description": "Только тест",
+      "habitat_id": "stress_room_29",
+      "rect": [
+        32,
+        42,
+        308,
+        222
+      ],
+      "name": "Тестовая камера",
+      "floor_id": "stress_floor_29",
+      "theme_id": "crystal"
+    },
+    {
+      "preview_accessible": false,
+      "size_class": "medium",
+      "description": "Только тест",
+      "habitat_id": "stress_room_30",
+      "rect": [
+        32,
+        42,
+        308,
+        142
+      ],
+      "name": "Тестовая камера",
+      "floor_id": "stress_floor_30",
+      "theme_id": "crystal"
+    },
+    {
+      "preview_accessible": false,
+      "size_class": "medium",
+      "description": "Только тест",
+      "habitat_id": "stress_room_31",
+      "rect": [
+        32,
+        42,
+        308,
+        182
+      ],
+      "name": "Тестовая камера",
+      "floor_id": "stress_floor_31",
+      "theme_id": "crystal"
+    },
+    {
+      "preview_accessible": false,
+      "size_class": "medium",
+      "description": "Только тест",
+      "habitat_id": "stress_room_32",
+      "rect": [
+        32,
+        42,
+        308,
+        222
+      ],
+      "name": "Тестовая камера",
+      "floor_id": "stress_floor_32",
+      "theme_id": "crystal"
+    },
+    {
+      "preview_accessible": false,
+      "size_class": "medium",
+      "description": "Только тест",
+      "habitat_id": "stress_room_33",
+      "rect": [
+        32,
+        42,
+        308,
+        142
+      ],
+      "name": "Тестовая камера",
+      "floor_id": "stress_floor_33",
+      "theme_id": "crystal"
+    },
+    {
+      "preview_accessible": false,
+      "size_class": "medium",
+      "description": "Только тест",
+      "habitat_id": "stress_room_34",
+      "rect": [
+        32,
+        42,
+        308,
+        182
+      ],
+      "name": "Тестовая камера",
+      "floor_id": "stress_floor_34",
+      "theme_id": "crystal"
+    },
+    {
+      "preview_accessible": false,
+      "size_class": "medium",
+      "description": "Только тест",
+      "habitat_id": "stress_room_35",
+      "rect": [
+        32,
+        42,
+        308,
+        222
+      ],
+      "name": "Тестовая камера",
+      "floor_id": "stress_floor_35",
+      "theme_id": "crystal"
+    },
+    {
+      "preview_accessible": false,
+      "size_class": "medium",
+      "description": "Только тест",
+      "habitat_id": "stress_room_36",
+      "rect": [
+        32,
+        42,
+        308,
+        142
+      ],
+      "name": "Тестовая камера",
+      "floor_id": "stress_floor_36",
+      "theme_id": "crystal"
+    },
+    {
+      "preview_accessible": false,
+      "size_class": "medium",
+      "description": "Только тест",
+      "habitat_id": "stress_room_37",
+      "rect": [
+        32,
+        42,
+        308,
+        182
+      ],
+      "name": "Тестовая камера",
+      "floor_id": "stress_floor_37",
+      "theme_id": "crystal"
+    },
+    {
+      "preview_accessible": false,
+      "size_class": "medium",
+      "description": "Только тест",
+      "habitat_id": "stress_room_38",
+      "rect": [
+        32,
+        42,
+        308,
+        222
+      ],
+      "name": "Тестовая камера",
+      "floor_id": "stress_floor_38",
+      "theme_id": "crystal"
+    },
+    {
+      "preview_accessible": false,
+      "size_class": "medium",
+      "description": "Только тест",
+      "habitat_id": "stress_room_39",
+      "rect": [
+        32,
+        42,
+        308,
+        142
+      ],
+      "name": "Тестовая камера",
+      "floor_id": "stress_floor_39",
+      "theme_id": "crystal"
+    },
+    {
+      "preview_accessible": false,
+      "size_class": "medium",
+      "description": "Только тест",
+      "habitat_id": "stress_room_40",
+      "rect": [
+        32,
+        42,
+        308,
+        182
+      ],
+      "name": "Тестовая камера",
+      "floor_id": "stress_floor_40",
+      "theme_id": "crystal"
+    },
+    {
+      "preview_accessible": false,
+      "size_class": "medium",
+      "description": "Только тест",
+      "habitat_id": "stress_room_41",
+      "rect": [
+        32,
+        42,
+        308,
+        222
+      ],
+      "name": "Тестовая камера",
+      "floor_id": "stress_floor_41",
+      "theme_id": "crystal"
+    },
+    {
+      "preview_accessible": false,
+      "size_class": "medium",
+      "description": "Только тест",
+      "habitat_id": "stress_room_42",
+      "rect": [
+        32,
+        42,
+        308,
+        142
+      ],
+      "name": "Тестовая камера",
+      "floor_id": "stress_floor_42",
+      "theme_id": "crystal"
+    },
+    {
+      "preview_accessible": false,
+      "size_class": "medium",
+      "description": "Только тест",
+      "habitat_id": "stress_room_43",
+      "rect": [
+        32,
+        42,
+        308,
+        182
+      ],
+      "name": "Тестовая камера",
+      "floor_id": "stress_floor_43",
+      "theme_id": "crystal"
+    },
+    {
+      "preview_accessible": false,
+      "size_class": "medium",
+      "description": "Только тест",
+      "habitat_id": "stress_room_44",
+      "rect": [
+        32,
+        42,
+        308,
+        222
+      ],
+      "name": "Тестовая камера",
+      "floor_id": "stress_floor_44",
+      "theme_id": "crystal"
+    },
+    {
+      "preview_accessible": false,
+      "size_class": "medium",
+      "description": "Только тест",
+      "habitat_id": "stress_room_45",
+      "rect": [
+        32,
+        42,
+        308,
+        142
+      ],
+      "name": "Тестовая камера",
+      "floor_id": "stress_floor_45",
+      "theme_id": "crystal"
+    },
+    {
+      "preview_accessible": false,
+      "size_class": "medium",
+      "description": "Только тест",
+      "habitat_id": "stress_room_46",
+      "rect": [
+        32,
+        42,
+        308,
+        182
+      ],
+      "name": "Тестовая камера",
+      "floor_id": "stress_floor_46",
+      "theme_id": "crystal"
+    },
+    {
+      "preview_accessible": false,
+      "size_class": "medium",
+      "description": "Только тест",
+      "habitat_id": "stress_room_47",
+      "rect": [
+        32,
+        42,
+        308,
+        222
+      ],
+      "name": "Тестовая камера",
+      "floor_id": "stress_floor_47",
+      "theme_id": "crystal"
+    },
+    {
+      "preview_accessible": false,
+      "size_class": "medium",
+      "description": "Только тест",
+      "habitat_id": "stress_room_48",
+      "rect": [
+        32,
+        42,
+        308,
+        142
+      ],
+      "name": "Тестовая камера",
+      "floor_id": "stress_floor_48",
+      "theme_id": "crystal"
+    },
+    {
+      "preview_accessible": false,
+      "size_class": "medium",
+      "description": "Только тест",
+      "habitat_id": "stress_room_49",
+      "rect": [
+        32,
+        42,
+        308,
+        182
+      ],
+      "name": "Тестовая камера",
+      "floor_id": "stress_floor_49",
+      "theme_id": "crystal"
+    }
+  ]
+}

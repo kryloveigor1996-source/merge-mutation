@@ -8,6 +8,7 @@ const Sizes = preload("res://scripts/mutant_sizes.gd")
 const PortalHub = preload("res://scripts/portal_hub.gd")
 const StoryScreen = preload("res://scripts/story_screen.gd")
 const MutationExperiment = preload("res://scripts/mutation_experiment.gd")
+const UndergroundComplex = preload("res://scripts/underground_complex.gd")
 const DESIGN := Vector2(360,720)
 const INK := Color("25465a")
 const CREAM := Color("fff8de")
@@ -46,6 +47,8 @@ var portal_ui: PortalHub
 var story_screen: StoryScreen
 var experiment_ui: Control
 var experiment_button: Button
+var complex_ui: Control
+var complex_button: Button
 
 static func fitted_rect(available: Rect2) -> Rect2:
 	var factor := minf(available.size.x/DESIGN.x,available.size.y/DESIGN.y)
@@ -114,6 +117,8 @@ func _ready() -> void:
 	nav_right=button("НАСТРОЙКИ",Rect2(268,638,82,54),Color("ffd7b6"),right_nav)
 	# Theme text can grow Button before its font override is applied. Restore final width.
 	for navigation in [nav_left,portal_button,experiment_button,nav_right]: navigation.size=Vector2(82,54)
+	complex_button=button("КОМПЛЕКС",Rect2(228,15,114,44),Color("b5e9ee"),open_complex)
+	complex_button.size=Vector2(114,44)
 	layout()
 	rebuild()
 	portal_ui=PortalHub.new()
@@ -309,9 +314,10 @@ func _draw() -> void:
 	draw_line(Vector2(351,83),Vector2(351,599),INK,7)
 	draw_line(Vector2(351,83),Vector2(351,599),Color("81bac6"),4)
 	plate(Rect2(18,15,324,44),Color("4c9fba"))
-	label("УРОВЕНЬ %d" % game.campaign.config.number if game.in_campaign() else "MERGE MUTATION",Vector2(180,43),23,CREAM,true)
+	label("УРОВЕНЬ %d" % game.campaign.config.number if game.in_campaign() else "MERGE MUTATION",Vector2(180,43) if game.in_campaign() else Vector2(128,43),23 if game.in_campaign() else 17,CREAM,true)
 	# Original miniature flasks make the laboratory theme visible at a glance.
 	for x in [35,325]:
+		if x==325 and not game.in_campaign(): continue
 		draw_circle(Vector2(x,38),8,INK)
 		draw_circle(Vector2(x,38),6,Color("9ff0bc"))
 		draw_rect(Rect2(x-3,24,6,10),CREAM)
@@ -319,6 +325,7 @@ func _draw() -> void:
 		draw_circle(Vector2(x-2,36),2,Color.WHITE)
 	plate(Rect2(20,72,178,51),CREAM)
 	var playing: bool=game.in_campaign()
+	complex_button.visible=not playing
 	nav_left.text="ПОВТОРИТЬ" if playing else "КОЛЛЕКЦИЯ"
 	nav_right.text="ПЕСОЧНИЦА" if playing else "НАСТРОЙКИ"
 	species_button.disabled=playing
@@ -607,6 +614,8 @@ func close_story() -> void:
 	story_screen=null
 
 func close_navigation() -> void:
+	if is_instance_valid(complex_ui): complex_ui.exit_complex()
+	complex_ui=null
 	if is_instance_valid(experiment_ui): experiment_ui.exit_experiment()
 	experiment_ui=null
 	close_story()
@@ -622,6 +631,14 @@ func open_experiment() -> void:
 	experiment_ui=MutationExperiment.new()
 	experiment_ui.setup(game)
 	add_child(experiment_ui)
+
+func open_complex() -> void:
+	if game.in_campaign(): return
+	close_navigation()
+	game._cancel_drag()
+	complex_ui=UndergroundComplex.new()
+	complex_ui.setup(game)
+	add_child(complex_ui)
 
 func show_story(id: String) -> void:
 	close_story()
