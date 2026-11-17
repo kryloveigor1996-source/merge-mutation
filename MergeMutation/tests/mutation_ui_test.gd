@@ -70,7 +70,7 @@ func run() -> void:
 		check(proof.won,"UI solution exists")
 		await screenshot("level-%02d" % number)
 		for action in proof.actions:
-			if action.kind=="spawn": tap(Vector2(180,568),number%2==0)
+			if action.kind=="spawn": tap(Vector2(98,568),number%2==0)
 			else:
 				tap(ui.center(int(action.source)),number%2==0)
 				await process_frame
