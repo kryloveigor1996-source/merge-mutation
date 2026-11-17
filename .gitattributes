@@ -30,6 +30,7 @@
 *.wav binary
 *.ogg binary
 *.mp3 binary
+*.avi binary
 *.ttf binary
 *.otf binary
 *.res binary

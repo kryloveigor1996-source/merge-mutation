@@ -4,6 +4,9 @@ const Floor=preload("res://scripts/complex_floor.gd")
 const Art=preload("res://scripts/mutant_art.gd")
 const Catalog=preload("res://scripts/mutant_catalog.gd")
 const W=preload("res://scripts/journey_widgets.gd")
+const LivingRegistry=preload("res://scripts/living_registry.gd")
+const HabitatState=preload("res://scripts/habitat_state.gd")
+const LivingScene=preload("res://scenes/living_habitat.tscn")
 const VIEW:=Rect2(0,102,360,538)
 signal habitat_inspect_requested(habitat_id: String)
 var game: Control
@@ -33,6 +36,11 @@ var menu_last:=Vector2.ZERO
 var menu_start:=Vector2.ZERO
 var menu_travel:=0.0
 var pending_highlight:=""
+var living_registry:=LivingRegistry.new()
+var living_models: Dictionary={}
+var detail: Control
+var detail_offset:=0.0
+var exiting:=false
 func setup(value: Control,model=null) -> void:
 	game=value
 	size=Vector2(360,720)
@@ -43,6 +51,12 @@ func setup(value: Control,model=null) -> void:
 		W.label(self,"Комплекс недоступен\n"+registry.error,Rect2(22,180,316,160),18)
 		W.button(self,"ComplexBack","НАЗАД",Rect2(24,644,312,54),back)
 		return
+	# Stress/custom registries may contain no supported living assignment at all.
+	if registry.habitats.has("habitat_horn") and living_registry.load_files(registry):
+		for id in living_registry.assignments:
+			var state:=HabitatState.new()
+			state.setup(id,living_registry)
+			living_models[id]=state
 	W.label(self,"ПОДЗЕМНЫЙ КОМПЛЕКС",Rect2(16,16,328,36),22,Color("ecf7ee"),true)
 	indicator=W.label(self,"",Rect2(16,57,328,32),14,Color("b8e9db"),true)
 	scroll=ScrollContainer.new()
@@ -89,14 +103,13 @@ func update_visible() -> void:
 	for id in ids:
 		if not active_floors.has(id):
 			var floor:=Floor.new()
-			floor.setup(registry.get_floor(id),registry)
+			floor.setup(registry.get_floor(id),registry,living_models)
 			canvas.add_child(floor)
 			active_floors[id]=floor
-		var bounds:=Rect2(0,registry.floor_by_id[id].top,360,registry.floor_by_id[id].height)
-		active_floors[id].set_process(bounds.intersects(Rect2(0,offset,360,VIEW.size.y)))
+		active_floors[id].set_active(not exiting and detail==null and modal==null,Rect2(0,offset,360,VIEW.size.y))
 	if not pending_highlight.is_empty():
 		var room=room_view(pending_highlight)
-		if room!=null:
+		if room!=null and room.active:
 			room.highlight()
 			pending_highlight=""
 func room_view(id: String):
@@ -109,6 +122,7 @@ func stop_motion() -> void:
 	navigation_target=offset
 	velocity=0
 func move_to(value: float,animate: bool=true) -> void:
+	if is_instance_valid(detail): close_living(false)
 	stop_motion()
 	pressed=false
 	close_modal()
@@ -165,9 +179,36 @@ func open_room(id: String) -> bool:
 	if not allowed_room(id):
 		notify("Камера пока недоступна")
 		return false
-	show_room_info(id)
+	if living_models.has(id): open_living(id)
+	else: show_room_info(id)
 	habitat_inspect_requested.emit(id)
 	return true
+func open_living(id: String) -> bool:
+	if not allowed_room(id) or not living_models.has(id): return false
+	if is_instance_valid(detail): return detail.model.habitat_id==id
+	close_modal()
+	stop_motion()
+	detail_offset=offset
+	detail=LivingScene.instantiate()
+	detail.setup(self,living_models[id],registry.get_habitat(id),registry.get_floor_for_habitat(id))
+	detail.closed.connect(close_living)
+	add_child(detail)
+	refresh_activity()
+	return true
+func close_living(highlight: bool=true) -> void:
+	if not is_instance_valid(detail): return
+	var id: String=detail.model.habitat_id
+	detail.set_active(false)
+	remove_child(detail)
+	detail.queue_free()
+	detail=null
+	if not exiting:
+		set_scroll_position(detail_offset)
+		if highlight: highlight_habitat(id)
+	refresh_activity()
+func refresh_activity() -> void:
+	if is_instance_valid(detail): detail.set_active(not exiting and modal==null)
+	if is_instance_valid(scroll): update_visible()
 func new_modal(kind: String) -> Control:
 	close_modal()
 	stop_motion()
@@ -176,7 +217,7 @@ func new_modal(kind: String) -> Control:
 	modal.name="Complex"+kind
 	modal.size=size
 	modal.mouse_filter=Control.MOUSE_FILTER_STOP
-	modal.z_index=10
+	modal.z_index=40
 	modal_kind=kind
 	var panel:=modal
 	panel.draw.connect(func():
@@ -184,6 +225,7 @@ func new_modal(kind: String) -> Control:
 		panel.draw_style_box(W.box(Color("eef2d9"),18),Rect2(18,90,324,536))
 	)
 	add_child(modal)
+	refresh_activity()
 	return modal
 func show_room_info(id: String) -> bool:
 	if not allowed_room(id): return false
@@ -236,11 +278,15 @@ func close_modal() -> void:
 	details_habitat_id=""
 	menu_scroll=null
 	menu_pressed=false
+	refresh_activity()
 func back() -> void:
 	if is_instance_valid(modal): close_modal()
+	elif is_instance_valid(detail): close_living()
 	else: exit_complex()
 func exit_complex() -> void:
 	if is_queued_for_deletion(): return
+	exiting=true
+	close_living(false)
 	stop_motion()
 	close_modal()
 	if get_parent()!=null: get_parent().remove_child(self)

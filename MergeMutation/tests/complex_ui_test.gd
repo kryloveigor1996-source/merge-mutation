@@ -61,7 +61,7 @@ func run() -> void:
 	ui=game.view.complex_ui
 	check(is_instance_valid(ui) and not game.in_campaign(),"native touch entry into separate screen")
 	check(profile(game)==before,"opening leaves sandbox intact")
-	for id in ["floor_surface","floor_01","floor_02","floor_03"]:
+	for id in ["floor_surface","floor_01","floor_02","floor_03","floor_04"]:
 		check(ui.navigate_to_floor(id,false),"floor navigation "+id)
 		await process_frame
 		check(ui.current_floor_id==id,"current floor indicator "+id)
@@ -76,7 +76,7 @@ func run() -> void:
 	check(ui.current_floor_id=="floor_surface" and ui.offset==0,"native top button animates to surface")
 	tap(Vector2(136,680),true)
 	await create_timer(0.3).timeout
-	check(ui.current_floor_id=="floor_03","mouse bottom button reaches deepest demo floor")
+	check(ui.current_floor_id=="floor_04","mouse bottom button reaches deepest demo floor")
 	tap(Vector2(224,680))
 	await process_frame
 	check(ui.modal_kind=="LiftMenu" and ui.modal.find_child("Lift_floor_03",true,false)!=null,"lift lists all floors")
@@ -90,7 +90,9 @@ func run() -> void:
 	check(ui.modal==null and ui.toast.text=="Камера пока недоступна","locked room explains without opening")
 	check(ui.room_view("habitat_slime").get_child_count()==0 and ui.room_view("habitat_wing").get_child_count()==0,"locked rooms do not load species graphics")
 	tap(room_point("habitat_horn"),true)
-	check(ui.modal_kind=="RoomInfo" and ui.details_habitat_id=="habitat_horn","mouse opens horn information")
+	check(is_instance_valid(ui.detail) and ui.detail.model.habitat_id=="habitat_horn","mouse opens living horn habitat")
+	ui.detail.complex_screen.show_room_info("habitat_horn")
+	check(ui.modal_kind=="RoomInfo","information remains available inside habitat")
 	var known_sprite:=false
 	for child in ui.modal.get_children():
 		if child.get_script()==Art: known_sprite=child.species_id=="horn" and child.texture!=null
@@ -99,6 +101,8 @@ func run() -> void:
 	check(profile(game)==before and FileAccess.get_file_as_string(game.save_path)==file,"demo room never unlocks real species or writes profile")
 	tap(Vector2(180,579))
 	check(ui.modal==null,"info closes by native button")
+	ui.back()
+	check(ui.detail==null and ui.current_floor_id=="floor_01","living return preserves floor")
 	ui.show_lift()
 	ui.back()
 	check(ui.modal==null and ui.is_inside_tree(),"back from nested menu stays in complex")
@@ -175,7 +179,7 @@ func run() -> void:
 	ui.navigate_to_floor("floor_01",false)
 	await process_frame
 	tap(room_point("habitat_horn"))
-	check(ui.modal_kind=="RoomInfo","touch coordinates remain correct in scaled portrait layout")
+	check(is_instance_valid(ui.detail),"touch coordinates remain correct in scaled portrait layout")
 	ui.exit_complex()
 	root.size=Vector2i(360,720)
 	game.view.layout()

@@ -1,0 +1,59 @@
+{
+  "stages": [
+    {
+      "stage": 1,
+      "name": "Пустая камера",
+      "resident": false,
+      "objects": [
+        "monitor"
+      ],
+      "mountains": false,
+      "warm_light": false
+    },
+    {
+      "stage": 2,
+      "name": "Заселённая камера",
+      "resident": true,
+      "objects": [
+        "monitor",
+        "bench",
+        "fern"
+      ],
+      "mountains": false,
+      "warm_light": false
+    },
+    {
+      "stage": 3,
+      "name": "Развитый вольер",
+      "resident": true,
+      "objects": [
+        "monitor",
+        "bench",
+        "fern",
+        "grass",
+        "training_rock",
+        "boulder"
+      ],
+      "mountains": false,
+      "warm_light": false
+    },
+    {
+      "stage": 4,
+      "name": "Каменный биом",
+      "resident": true,
+      "objects": [
+        "ridge",
+        "monitor",
+        "bench",
+        "boulder",
+        "fern",
+        "grass",
+        "training_rock",
+        "vine",
+        "lamp"
+      ],
+      "mountains": true,
+      "warm_light": true
+    }
+  ]
+}

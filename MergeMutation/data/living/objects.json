@@ -1,0 +1,11 @@
+{"objects":[
+{"object_id":"monitor","type":"monitor","layer":"far","rect":[265,76,48,70],"solid":false},
+{"object_id":"bench","type":"bench","layer":"far","rect":[30,212,90,35],"solid":false},
+{"object_id":"fern","type":"plant","layer":"front","rect":[22,312,42,74],"solid":false},
+{"object_id":"grass","type":"plant","layer":"front","rect":[143,365,35,35],"solid":false},
+{"object_id":"training_rock","type":"training","layer":"objects","rect":[250,292,56,64],"solid":true},
+{"object_id":"ridge","type":"ridge","layer":"far","rect":[30,80,290,180],"solid":false},
+{"object_id":"boulder","type":"boulder","layer":"far","rect":[140,226,60,52],"solid":false},
+{"object_id":"vine","type":"vine","layer":"front","rect":[305,24,25,190],"solid":false},
+{"object_id":"lamp","type":"lamp","layer":"light","rect":[145,16,54,25],"solid":false}
+]}

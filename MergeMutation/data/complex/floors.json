@@ -15,22 +15,20 @@
       "floor_id": "floor_01",
       "habitats": [
         "habitat_horn",
-        "habitat_slime",
-        "habitat_wing"
+        "habitat_slime"
       ],
-      "height": 240,
+      "height": 320,
       "preview_accessible": true,
       "theme_id": "laboratory"
     },
     {
       "depth": 2,
-      "name": "Средние вольеры",
+      "name": "Воздушный вольер",
       "floor_id": "floor_02",
       "habitats": [
-        "habitat_mineral",
-        "habitat_forest"
+        "habitat_wing"
       ],
-      "height": 300,
+      "height": 420,
       "preview_accessible": true,
       "theme_id": "industrial"
     },
@@ -41,9 +39,22 @@
       "habitats": [
         "habitat_secret"
       ],
-      "height": 440,
+      "height": 640,
       "preview_accessible": true,
       "theme_id": "secret"
+    },
+    {
+      "theme_id": "industrial",
+      "depth": 4,
+      "preview_accessible": true,
+      "floor_id": "floor_04",
+      "height": 280,
+      "name": "Демонстрационный резерв",
+      "habitats": [
+        "habitat_mineral",
+        "habitat_forest",
+        "habitat_technical"
+      ]
     }
   ]
 }
