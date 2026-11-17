@@ -1,0 +1,78 @@
+{
+  "terrain": {
+    "6": "acid",
+    "7": "acid"
+  },
+  "spawn_points": [],
+  "available_species": [
+    "horn",
+    "slime",
+    "wing"
+  ],
+  "required": [
+    "acid"
+  ],
+  "name": "Кислотная ванна",
+  "destinations": [
+    {
+      "species_id": "slime",
+      "cell": 8,
+      "evolution_stage": 2
+    }
+  ],
+  "id": "mutation_02",
+  "number": 2,
+  "initial": [
+    {
+      "species_id": "slime",
+      "cell": 5,
+      "evolution_stage": 1
+    },
+    {
+      "species_id": "slime",
+      "cell": 8,
+      "evolution_stage": 1
+    }
+  ],
+  "creation_limit": 0,
+  "reward_coins": 0,
+  "tip": "Только Слизик устойчив к кислоте. Проведите его по светящимся клеткам.",
+  "reward_stars": 0,
+  "move_limit": 5,
+  "goals": [
+    {
+      "species_id": "slime",
+      "evolution_stage": 2,
+      "type": "reach_stage"
+    }
+  ],
+  "blocked_cells": [
+    0,
+    1,
+    2,
+    3,
+    4,
+    9,
+    10,
+    11,
+    12,
+    13,
+    14,
+    15,
+    16,
+    17,
+    18,
+    19,
+    20,
+    21,
+    22,
+    23,
+    24,
+    25,
+    26,
+    27,
+    28,
+    29
+  ],
+  "sequence": []
+}
