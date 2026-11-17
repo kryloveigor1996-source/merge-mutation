@@ -26,9 +26,10 @@
 				"source": 12
 			}
 		],
+		"config_hash": "41d032a1e059c5fb743c32588a0fbce0376b8eb03a2ac39b15d0e0fccde3952b",
 		"moves": 4,
 		"number": 1,
-		"visited": 21
+		"visited": 14
 	},
 	{
 		"actions": [
@@ -48,9 +49,10 @@
 				"source": 7
 			}
 		],
+		"config_hash": "8454025931e0e09f61317f58fea7e2e9e88e6d998da6da253cecf4ff89d196f0",
 		"moves": 3,
 		"number": 2,
-		"visited": 10
+		"visited": 7
 	},
 	{
 		"actions": [
@@ -65,9 +67,10 @@
 				"source": 12
 			}
 		],
+		"config_hash": "1794d82dea87fc36ecf177eb7271f37d6eef101c0be6467ec46ef9b26db2c61f",
 		"moves": 2,
 		"number": 3,
-		"visited": 5
+		"visited": 4
 	},
 	{
 		"actions": [
@@ -117,9 +120,10 @@
 				"source": 11
 			}
 		],
+		"config_hash": "a8b6296e875406f42e7d03f2c27e91ffa11ae58b69d23a8aae64aa5b1f66ce40",
 		"moves": 9,
 		"number": 4,
-		"visited": 503
+		"visited": 143
 	},
 	{
 		"actions": [
@@ -164,8 +168,379 @@
 				"source": 7
 			}
 		],
+		"config_hash": "40686d4cc57a1ef2f4c1e355a4ab9c8d5245093b1dd1554f2ae75e246d40bef0",
 		"moves": 8,
 		"number": 5,
-		"visited": 2436
+		"visited": 914
+	},
+	{
+		"actions": [
+			{
+				"index": 14,
+				"kind": "merge",
+				"source": 9
+			},
+			{
+				"index": 11,
+				"kind": "break",
+				"source": 10
+			},
+			{
+				"index": 11,
+				"kind": "move",
+				"source": 12
+			},
+			{
+				"index": 10,
+				"kind": "merge",
+				"source": 11
+			},
+			{
+				"index": 15,
+				"kind": "move",
+				"source": 10
+			},
+			{
+				"index": 13,
+				"kind": "move",
+				"source": 14
+			},
+			{
+				"index": 12,
+				"kind": "move",
+				"source": 13
+			},
+			{
+				"index": 7,
+				"kind": "move",
+				"source": 12
+			},
+			{
+				"index": 20,
+				"kind": "move",
+				"source": 15
+			}
+		],
+		"config_hash": "75f8c2000cbbc0e685ff617a1aa2ec35724b19006806ea13ac6e6fcd13881797",
+		"moves": 9,
+		"number": 6,
+		"visited": 324
+	},
+	{
+		"actions": [
+			{
+				"index": 1,
+				"kind": "break",
+				"source": 0
+			},
+			{
+				"index": 1,
+				"kind": "move",
+				"source": 0
+			},
+			{
+				"index": 2,
+				"kind": "move",
+				"source": 1
+			},
+			{
+				"index": 3,
+				"kind": "break",
+				"source": 2
+			},
+			{
+				"index": 7,
+				"kind": "break",
+				"source": 2
+			},
+			{
+				"index": 3,
+				"kind": "move",
+				"source": 4
+			},
+			{
+				"index": 2,
+				"kind": "merge",
+				"source": 3
+			},
+			{
+				"index": 7,
+				"kind": "move",
+				"source": 2
+			},
+			{
+				"index": 12,
+				"kind": "move",
+				"source": 7
+			},
+			{
+				"index": 17,
+				"kind": "move",
+				"source": 12
+			}
+		],
+		"config_hash": "46f8168fdf37137a23f03985c241f0906a07ba09a8ac5b330ed71e69e1af625c",
+		"moves": 10,
+		"number": 7,
+		"visited": 415
+	},
+	{
+		"actions": [
+			{
+				"index": 5,
+				"kind": "move",
+				"source": 0
+			},
+			{
+				"index": 3,
+				"kind": "move",
+				"source": 4
+			},
+			{
+				"index": 2,
+				"kind": "merge",
+				"source": 3
+			},
+			{
+				"index": 1,
+				"kind": "move",
+				"source": 2
+			},
+			{
+				"index": 0,
+				"kind": "move",
+				"source": 1
+			},
+			{
+				"index": 10,
+				"kind": "move",
+				"source": 5
+			},
+			{
+				"index": 8,
+				"kind": "move",
+				"source": 9
+			},
+			{
+				"index": 13,
+				"kind": "move",
+				"source": 8
+			},
+			{
+				"index": 18,
+				"kind": "move",
+				"source": 13
+			},
+			{
+				"index": 17,
+				"kind": "move",
+				"source": 18
+			},
+			{
+				"index": 16,
+				"kind": "move",
+				"source": 17
+			},
+			{
+				"index": 11,
+				"kind": "move",
+				"source": 16
+			},
+			{
+				"index": 10,
+				"kind": "merge",
+				"source": 11
+			}
+		],
+		"config_hash": "ab5fa3bc3c3b035c6a27190504fc442e7fb9e19a8cd586c6c632f4b583b917aa",
+		"moves": 13,
+		"number": 8,
+		"visited": 15813
+	},
+	{
+		"actions": [
+			{
+				"index": 1,
+				"kind": "break",
+				"source": 0
+			},
+			{
+				"index": 1,
+				"kind": "move",
+				"source": 0
+			},
+			{
+				"index": 2,
+				"kind": "merge",
+				"source": 1
+			},
+			{
+				"index": 13,
+				"kind": "jump",
+				"source": 3
+			},
+			{
+				"index": 3,
+				"kind": "move",
+				"source": 2
+			},
+			{
+				"index": 4,
+				"kind": "move",
+				"source": 3
+			},
+			{
+				"index": 13,
+				"kind": "merge",
+				"source": 14
+			},
+			{
+				"index": 3,
+				"kind": "jump",
+				"source": 13
+			},
+			{
+				"index": 2,
+				"kind": "move",
+				"source": 3
+			},
+			{
+				"index": 1,
+				"kind": "move",
+				"source": 2
+			},
+			{
+				"index": 0,
+				"kind": "move",
+				"source": 1
+			},
+			{
+				"index": 5,
+				"kind": "move",
+				"source": 0
+			},
+			{
+				"index": 3,
+				"kind": "move",
+				"source": 4
+			}
+		],
+		"config_hash": "37c11e76eddcc373a35649727723f9f65ead0b13782e3eed2d5479a3e1589728",
+		"moves": 13,
+		"number": 9,
+		"visited": 375
+	},
+	{
+		"actions": [
+			{
+				"index": 1,
+				"kind": "break",
+				"source": 0
+			},
+			{
+				"index": 1,
+				"kind": "move",
+				"source": 0
+			},
+			{
+				"index": 2,
+				"kind": "merge",
+				"source": 1
+			},
+			{
+				"index": 13,
+				"kind": "jump",
+				"source": 3
+			},
+			{
+				"index": 3,
+				"kind": "move",
+				"source": 2
+			},
+			{
+				"index": 4,
+				"kind": "move",
+				"source": 3
+			},
+			{
+				"index": 13,
+				"kind": "merge",
+				"source": 14
+			},
+			{
+				"index": 3,
+				"kind": "jump",
+				"source": 13
+			},
+			{
+				"index": 2,
+				"kind": "move",
+				"source": 3
+			},
+			{
+				"index": 1,
+				"kind": "move",
+				"source": 2
+			},
+			{
+				"index": 0,
+				"kind": "move",
+				"source": 1
+			},
+			{
+				"index": 5,
+				"kind": "move",
+				"source": 0
+			},
+			{
+				"index": 3,
+				"kind": "move",
+				"source": 4
+			},
+			{
+				"index": 23,
+				"kind": "merge",
+				"source": 22
+			},
+			{
+				"index": 18,
+				"kind": "move",
+				"source": 23
+			},
+			{
+				"index": 13,
+				"kind": "move",
+				"source": 18
+			},
+			{
+				"index": 12,
+				"kind": "move",
+				"source": 13
+			},
+			{
+				"index": 7,
+				"kind": "move",
+				"source": 12
+			},
+			{
+				"index": 2,
+				"kind": "move",
+				"source": 7
+			},
+			{
+				"index": 1,
+				"kind": "move",
+				"source": 2
+			},
+			{
+				"index": 0,
+				"kind": "move",
+				"source": 1
+			}
+		],
+		"config_hash": "c8a1d4eed1cdf7ae54157fc66cfe3e9057cfe22bd288a543d8d5c1198cad480d",
+		"moves": 21,
+		"number": 10,
+		"visited": 28051
 	}
 ]

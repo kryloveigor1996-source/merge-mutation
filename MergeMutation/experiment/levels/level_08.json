@@ -1,0 +1,87 @@
+{
+  "blocked_cells": [
+    15,
+    20,
+    21,
+    22,
+    23,
+    24,
+    25,
+    26,
+    27,
+    28,
+    29
+  ],
+  "habitat_id": "laboratory_planned",
+  "id": "mutation_08",
+  "terrain": {
+    "12": "acid",
+    "7": "acid",
+    "3": "acid"
+  },
+  "discovery_type": "observation",
+  "discovery_id": "tactical_observation_08",
+  "reward_coins": 0,
+  "creation_limit": 0,
+  "available_species": [
+    "horn",
+    "slime",
+    "wing"
+  ],
+  "move_limit": 15,
+  "number": 8,
+  "spawn_points": [],
+  "sequence": [],
+  "name": "Кислотный лабиринт",
+  "destinations": [
+    {
+      "species_id": "horn",
+      "cell": 10,
+      "evolution_stage": 2
+    },
+    {
+      "species_id": "slime",
+      "cell": 0,
+      "evolution_stage": 2
+    }
+  ],
+  "reward_stars": 0,
+  "initial": [
+    {
+      "species_id": "horn",
+      "cell": 0,
+      "evolution_stage": 1
+    },
+    {
+      "species_id": "horn",
+      "cell": 9,
+      "evolution_stage": 1
+    },
+    {
+      "species_id": "slime",
+      "cell": 2,
+      "evolution_stage": 1
+    },
+    {
+      "species_id": "slime",
+      "cell": 4,
+      "evolution_stage": 1
+    }
+  ],
+  "required": [
+    "acid"
+  ],
+  "tip": "Кислота сокращает путь только Слизику. Рогачам нужен обычный маршрут.",
+  "goals": [
+    {
+      "species_id": "horn",
+      "evolution_stage": 2,
+      "type": "reach_stage"
+    },
+    {
+      "species_id": "slime",
+      "evolution_stage": 2,
+      "type": "reach_stage"
+    }
+  ]
+}

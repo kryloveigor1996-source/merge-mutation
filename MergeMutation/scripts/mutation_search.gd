@@ -7,7 +7,7 @@ static func solve(initial,limit: int=150000) -> Dictionary:
 	var parents: Array[int]=[-1]
 	var incoming: Array=[{}]
 	var buckets: Dictionary={0:[0]}
-	var best := {first.signature():0}
+	var best := {key_for(first):0}
 	var visited := 0
 	for cost in range(initial.moves_left()+1):
 		var queue: Array=buckets.get(cost,[])
@@ -16,6 +16,7 @@ static func solve(initial,limit: int=150000) -> Dictionary:
 			var cursor: int=queue[head]
 			head+=1
 			var state = states[cursor]
+			if cost>int(best.get(key_for(state),cost)): continue
 			visited+=1
 			if state.won():
 				var actions: Array=[]
@@ -27,7 +28,7 @@ static func solve(initial,limit: int=150000) -> Dictionary:
 				var next = state.fork()
 				if not next.apply_action(action,false).ok: continue
 				var distance: int=next.moves_used-initial.moves_used
-				var key: String=next.signature()
+				var key := key_for(next)
 				if best.has(key) and best[key]<=distance: continue
 				if states.size()>=limit: return {"won":false,"optimal":false,"cutoff":true,"visited":visited,"actions":[]}
 				best[key]=distance
@@ -39,3 +40,5 @@ static func solve(initial,limit: int=150000) -> Dictionary:
 					if not buckets.has(distance): buckets[distance]=[]
 					buckets[distance].append(states.size()-1)
 	return {"won":false,"optimal":false,"cutoff":false,"visited":visited,"actions":[]}
+static func key_for(state) -> String:
+	return state.search_key() if state.has_method("search_key") else state.signature()

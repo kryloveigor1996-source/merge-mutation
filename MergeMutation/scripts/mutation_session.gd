@@ -18,6 +18,8 @@ static func valid_experiment(data: Dictionary) -> bool:
 	if not data.get("tip") is String or not data.get("required") is Array or data.required.is_empty(): return false
 	for id in data.required:
 		if id not in ["ram","acid","flight"]: return false
+	for field in ["discovery_id","discovery_type","habitat_id"]:
+		if data.has(field) and (not data[field] is String or not Catalog.valid_id(data[field])): return false
 	if data.reward_coins!=0 or data.reward_stars!=0 or data.move_limit<1: return false
 	var absent: Array=data.blocked_cells.map(func(index): return int(index))
 	for key in data.terrain:
@@ -99,3 +101,7 @@ func fork():
 	return copy
 func signature() -> String:
 	return super.signature()+JSON.stringify(terrain,"",true)
+func search_key() -> String:
+	# Dijkstra dominates a later arrival at the identical state with fewer moves left.
+	# Keep all goal counters and terrain; only the spent-move budget is excluded.
+	return JSON.stringify([cells,creations_used,goals.produced,goals.merges,boosters.charges,terrain],"",true)
