@@ -6,13 +6,18 @@ var world: Node2D
 var actor
 var layers: Dictionary={}
 var active:=false
-func setup(value,area_size: Vector2) -> void:
+var camera_x:=0.0
+var visible_width:=340.0
+var overview_camera:=true
+func setup(value,area_size: Vector2,view_width: float=0) -> void:
 	model=value
+	overview_camera=view_width<=0
 	size=area_size
 	clip_contents=true
 	mouse_filter=Control.MOUSE_FILTER_IGNORE
 	world=Node2D.new()
-	world.scale=area_size/Vector2(340,420)
+	visible_width=view_width if view_width>0 else minf(model.registry.world_width,940)
+	world.scale=area_size/Vector2(visible_width,420)
 	add_child(world)
 	for id in ["back","far","ground","objects","mutant","front","light"]:
 		var layer:=Node2D.new()
@@ -26,7 +31,11 @@ func setup(value,area_size: Vector2) -> void:
 	model.stage_changed.connect(refresh)
 	refresh()
 	set_active(false)
+func set_camera(value: float) -> void:
+	camera_x=clampf(value,0,maxf(0,model.registry.world_width-visible_width))
+	world.position.x=-camera_x*world.scale.x
 func refresh() -> void:
+	set_camera(model.position.x-visible_width*0.5 if overview_camera else camera_x)
 	actor.pose(0,world.scale)
 	for id in layers:
 		if id!="mutant": layers[id].queue_redraw()
@@ -35,6 +44,7 @@ func set_active(value: bool) -> void:
 	set_process(value)
 func _process(delta: float) -> void:
 	model.tick(delta)
+	if overview_camera: set_camera(model.position.x-visible_width*0.5)
 	actor.pose(delta,world.scale)
 	layers.objects.queue_redraw()
 	layers.light.queue_redraw()
@@ -42,14 +52,14 @@ func draw_layer(id: String) -> void:
 	var node: Node2D=layers[id]
 	var stage: Dictionary=model.registry.stages[model.stage]
 	if id=="back":
-		node.draw_rect(Rect2(0,0,340,420),Color("8eaca6") if stage.mountains else Color("7c9296"))
-		for y in range(25,310,48): node.draw_line(Vector2(0,y),Vector2(340,y),Color("6e858a"),2)
+		node.draw_rect(Rect2(0,0,model.registry.world_width,420),Color("8eaca6") if stage.mountains else Color("7c9296"))
+		for y in range(25,310,48): node.draw_line(Vector2(0,y),Vector2(model.registry.world_width,y),Color("6e858a"),2)
 		node.draw_line(Vector2(12,8),Vector2(12,290),Color("d2b985"),7)
 		node.draw_line(Vector2(24,8),Vector2(24,130),Color("536b76"),4)
 	elif id=="ground":
-		node.draw_rect(Rect2(0,315,340,105),Color("a58c70"))
-		node.draw_line(Vector2(0,315),Vector2(340,315),Color("c6b49a"),6)
-		for i in range(16): node.draw_circle(Vector2(13+i*23,336+(i%3)*24),3+i%3,Color("85735e"))
+		node.draw_rect(Rect2(0,315,model.registry.world_width,105),Color("a58c70"))
+		node.draw_line(Vector2(0,315),Vector2(model.registry.world_width,315),Color("c6b49a"),6)
+		for i in range(int(model.registry.world_width/23)+1): node.draw_circle(Vector2(13+i*23,336+(i%3)*24),3+i%3,Color("85735e"))
 	for object in model.objects():
 		if object.layer!=id: continue
 		var a: Array=object.rect
@@ -71,8 +81,8 @@ func draw_layer(id: String) -> void:
 			"boulder": node.draw_style_box(W.box(Color("77817f"),15),r)
 			"ridge":
 				for i in range(3):
-					var p:=r.position+Vector2(i*86,0)
-					node.draw_colored_polygon(PackedVector2Array([p+Vector2(-20,180),p+Vector2(48,0+i*22),p+Vector2(110,180)]),Color("647b7c"))
+					var p:=r.position+Vector2(i*r.size.x/3,0)
+					node.draw_colored_polygon(PackedVector2Array([p+Vector2(0,r.size.y),p+Vector2(r.size.x/6,i*22),p+Vector2(r.size.x/3,r.size.y)]),Color("647b7c"))
 			"vine":
 				node.draw_line(r.position,r.end,Color("5b8b65"),5)
 				for i in range(6): node.draw_circle(r.position+Vector2(i*4,i*30),8,Color("9dbb6c"))
@@ -89,6 +99,6 @@ func draw_layer(id: String) -> void:
 					for i in range(4): node.draw_circle(Vector2(r.position.x+5+i*14,r.end.y-8),7,Color("9ba19a"))
 			_: node.draw_style_box(W.box(Color("8b9695"),6),r) # Unknown visuals stay visible, especially when solid.
 	if id=="light":
-		node.draw_line(Vector2(0,0),Vector2(340,0),Color("d7e8d4"),4)
+		node.draw_line(Vector2(0,0),Vector2(model.registry.world_width,0),Color("d7e8d4"),4)
 		if model.behavior=="ram" and model.elapsed>=0.55 and model.elapsed<0.8:
-			for i in range(7): node.draw_circle(Vector2(265,315)+Vector2.from_angle(i*TAU/7)*(model.elapsed-0.5)*130,3,Color("ffe6a0"))
+			for i in range(7): node.draw_circle(Vector2(model.training_object().rect[0]+15,315)+Vector2.from_angle(i*TAU/7)*(model.elapsed-0.5)*130,3,Color("ffe6a0"))

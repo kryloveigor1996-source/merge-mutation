@@ -12,7 +12,7 @@ var node_buckets: Dictionary={}
 var route_buckets: Dictionary={}
 var long_routes: Array[int]=[]
 var extent := Vector2(336,200)
-func setup(id: String,done: Array) -> bool:
+func setup(id: String,done: Array,display_width: float=336) -> bool:
 	entry=Worlds.world(id)
 	if entry.is_empty(): return false
 	world_id=id
@@ -32,10 +32,10 @@ func setup(id: String,done: Array) -> bool:
 	current=mini(current,maxi(0,nodes.size()-1))
 	var layout: Dictionary=entry.map.get("layout",{})
 	var canvas: Array=layout.get("canvas_size",[336,200])
-	extent=Vector2(maxf(336,canvas[0]),maxf(200,canvas[1]))
+	extent=Vector2(maxf(display_width,canvas[0]),maxf(200,canvas[1]))
 	var index_by_id := {}
 	for index in range(nodes.size()):
-		var fallback := Vector2(168+82*sin(float(index)*1.15),100+index*float(entry.map.get("spacing",112)))
+		var fallback := Vector2(display_width*0.5+82*(display_width/336.0)*sin(float(index)*1.15),100+index*float(entry.map.get("spacing",112)))
 		var authored: Array=layout.get("nodes",{}).get(nodes[index].id,[fallback.x,fallback.y])
 		var position := Vector2(authored[0],authored[1])
 		positions.append(position)

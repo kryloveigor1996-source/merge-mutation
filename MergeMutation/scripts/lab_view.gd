@@ -121,7 +121,7 @@ func _ready() -> void:
 	complex_button.size=Vector2(114,44)
 	layout()
 	rebuild()
-	portal_ui=PortalHub.new()
+	portal_ui=make_portal()
 	portal_ui.setup(game,self)
 	add_child(portal_ui)
 
@@ -140,6 +140,10 @@ func style(color: Color,radius: int=13) -> StyleBoxFlat:
 	if color.a==1.0:
 		style_cache[key] = box
 	return box
+func make_portal(): return PortalHub.new()
+func make_experiment(): return MutationExperiment.new()
+func make_complex(): return UndergroundComplex.new()
+func make_story(): return StoryScreen.new()
 
 func button(title: String,rect: Rect2,color: Color,callback: Callable,parent: Node = self) -> Button:
 	var control := Button.new()
@@ -628,7 +632,7 @@ func open_experiment() -> void:
 	if game.in_campaign(): return
 	close_navigation()
 	game._cancel_drag()
-	experiment_ui=MutationExperiment.new()
+	experiment_ui=make_experiment()
 	experiment_ui.setup(game)
 	add_child(experiment_ui)
 
@@ -636,13 +640,13 @@ func open_complex() -> void:
 	if game.in_campaign(): return
 	close_navigation()
 	game._cancel_drag()
-	complex_ui=UndergroundComplex.new()
+	complex_ui=make_complex()
 	complex_ui.setup(game)
 	add_child(complex_ui)
 
 func show_story(id: String) -> void:
 	close_story()
-	story_screen=StoryScreen.new()
+	story_screen=make_story()
 	story_screen.z_index=25
 	if not story_screen.setup(id,func(completed_id: String):
 		game.story_seen(completed_id)

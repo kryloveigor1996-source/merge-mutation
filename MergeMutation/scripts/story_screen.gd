@@ -48,6 +48,8 @@ func _draw() -> void:
 	for x in range(0,361,45): draw_line(Vector2(x,0),Vector2(x,720),Color("b5d8d7"),1)
 	for y in range(0,721,45): draw_line(Vector2(0,y),Vector2(360,y),Color("b5d8d7"),1)
 	draw_style_box(W.box(Color("fff8de"),18),Rect2(22,344,316,246))
+	draw_cast()
+func draw_cast() -> void:
 	var speaker: String=data.lines[index].speaker
 	if speaker=="scientist":
 		draw_style_box(W.box(Color("f8fbf0"),20),Rect2(108,245,144,91))
