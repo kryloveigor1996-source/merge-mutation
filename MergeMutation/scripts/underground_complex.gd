@@ -52,23 +52,19 @@ func setup(value: Control,model=null) -> void:
 		W.button(self,"ComplexBack","НАЗАД",Rect2(24,644,312,54),back)
 		return
 	# Stress/custom registries may contain no supported living assignment at all.
-	if registry.habitats.has("habitat_horn") and living_registry.load_files(registry):
-		for id in living_registry.assignments:
-			var state:=HabitatState.new()
-			state.setup(id,living_registry)
-			living_models[id]=state
+	create_living_models()
 	W.label(self,"ПОДЗЕМНЫЙ КОМПЛЕКС",Rect2(16,16,328,36),22,Color("ecf7ee"),true)
 	indicator=W.label(self,"",Rect2(16,57,328,32),14,Color("b8e9db"),true)
 	scroll=ScrollContainer.new()
 	scroll.name="ComplexScroll"
-	scroll.position=VIEW.position
-	scroll.size=VIEW.size
+	scroll.position=viewport_rect().position
+	scroll.size=viewport_rect().size
 	scroll.horizontal_scroll_mode=ScrollContainer.SCROLL_MODE_DISABLED
 	scroll.vertical_scroll_mode=ScrollContainer.SCROLL_MODE_SHOW_NEVER
 	scroll.mouse_filter=Control.MOUSE_FILTER_IGNORE
 	add_child(scroll)
 	canvas=Control.new()
-	canvas.custom_minimum_size=Vector2(360,VIEW.size.y+max_offset())
+	canvas.custom_minimum_size=Vector2(registry.width,viewport_rect().size.y+max_offset())
 	canvas.mouse_filter=Control.MOUSE_FILTER_IGNORE
 	canvas.draw.connect(func():
 		canvas.draw_rect(Rect2(Vector2.ZERO,canvas.size),Color("504d55"))
@@ -83,9 +79,19 @@ func setup(value: Control,model=null) -> void:
 	toast.add_theme_stylebox_override("normal",W.box(Color("304c62"),8))
 	toast.hide()
 	set_scroll_position(0)
+func viewport_rect() -> Rect2: return VIEW
+func lift_rect() -> Rect2: return Rect2(30,202,300,320)
+func make_floor(): return Floor.new()
+func make_living_detail(): return LivingScene.instantiate()
+func create_living_models() -> void:
+	if registry.habitats.has("habitat_horn") and living_registry.load_files(registry):
+		for id in living_registry.assignments:
+			var state:=HabitatState.new()
+			state.setup(id,living_registry)
+			living_models[id]=state
 func max_offset() -> float:
 	if registry.floors.is_empty(): return 0
-	return maxf(registry.floors.back().top,registry.extent-VIEW.size.y)
+	return maxf(registry.floors.back().top,registry.extent-viewport_rect().size.y)
 func set_scroll_position(value: float) -> void:
 	offset=clampf(value,0,max_offset())
 	scroll.scroll_vertical=int(offset)
@@ -94,7 +100,7 @@ func set_scroll_position(value: float) -> void:
 	current_floor_id=current.get("floor_id","")
 	indicator.text=("Этаж 0" if current.get("depth",0)==0 else "Этаж −%d" % current.depth)+" · "+current.get("name","")
 func update_visible() -> void:
-	var ids: Array=registry.visible_floors(offset,VIEW.size.y)
+	var ids: Array=registry.visible_floors(offset,viewport_rect().size.y)
 	for id in active_floors.keys():
 		if id not in ids:
 			canvas.remove_child(active_floors[id])
@@ -102,11 +108,11 @@ func update_visible() -> void:
 			active_floors.erase(id)
 	for id in ids:
 		if not active_floors.has(id):
-			var floor:=Floor.new()
+			var floor=make_floor()
 			floor.setup(registry.get_floor(id),registry,living_models)
 			canvas.add_child(floor)
 			active_floors[id]=floor
-		active_floors[id].set_active(not exiting and detail==null and modal==null,Rect2(0,offset,360,VIEW.size.y))
+		active_floors[id].set_active(not exiting and detail==null and modal==null,Rect2(0,offset,registry.width,viewport_rect().size.y))
 	if not pending_highlight.is_empty():
 		var room=room_view(pending_highlight)
 		if room!=null and room.active:
@@ -128,7 +134,7 @@ func move_to(value: float,animate: bool=true) -> void:
 	close_modal()
 	var target:=clampf(value,0,max_offset())
 	navigation_target=target
-	if not animate or absf(target-offset)>VIEW.size.y*6:
+	if not animate or absf(target-offset)>viewport_rect().size.y*6:
 		set_scroll_position(target)
 		return
 	navigation=create_tween()
@@ -168,8 +174,8 @@ func notify(message: String) -> void:
 	toast_left=2.2
 	toast.show()
 func room_at(point: Vector2) -> String:
-	if not VIEW.has_point(point): return ""
-	var world:=point-VIEW.position+Vector2(0,scroll.scroll_vertical)
+	if not viewport_rect().has_point(point): return ""
+	var world:=point-viewport_rect().position+Vector2(0,scroll.scroll_vertical)
 	for id in registry.room_rects:
 		if registry.room_rects[id].has_point(world): return id
 	return ""
@@ -189,7 +195,7 @@ func open_living(id: String) -> bool:
 	close_modal()
 	stop_motion()
 	detail_offset=offset
-	detail=LivingScene.instantiate()
+	detail=make_living_detail()
 	detail.setup(self,living_models[id],registry.get_habitat(id),registry.get_floor_for_habitat(id))
 	detail.closed.connect(close_living)
 	add_child(detail)
@@ -251,8 +257,8 @@ func show_lift() -> void:
 	W.label(panel,"ЛИФТ",Rect2(30,108,300,36),24,W.INK,true)
 	W.label(panel,"Выберите этаж · демо-просмотр",Rect2(30,156,300,34),13,W.INK,true)
 	menu_scroll=ScrollContainer.new()
-	menu_scroll.position=Vector2(30,202)
-	menu_scroll.size=Vector2(300,320)
+	menu_scroll.position=lift_rect().position
+	menu_scroll.size=lift_rect().size
 	menu_scroll.horizontal_scroll_mode=ScrollContainer.SCROLL_MODE_DISABLED
 	menu_scroll.vertical_scroll_mode=ScrollContainer.SCROLL_MODE_SHOW_NEVER
 	menu_scroll.mouse_filter=Control.MOUSE_FILTER_IGNORE
@@ -304,7 +310,7 @@ func pointer_event(event: InputEvent) -> Dictionary:
 	return {}
 func _gui_input(event: InputEvent) -> void:
 	if not is_instance_valid(scroll): return
-	if event is InputEventMouseButton and event.pressed and VIEW.has_point(event.position) and event.button_index in [MOUSE_BUTTON_WHEEL_DOWN,MOUSE_BUTTON_WHEEL_UP]:
+	if event is InputEventMouseButton and event.pressed and viewport_rect().has_point(event.position) and event.button_index in [MOUSE_BUTTON_WHEEL_DOWN,MOUSE_BUTTON_WHEEL_UP]:
 		var origin: float=navigation_target if navigation!=null and navigation.is_running() else offset
 		move_to(origin+(90 if event.button_index==MOUSE_BUTTON_WHEEL_DOWN else -90))
 		accept_event()
@@ -318,7 +324,7 @@ func _gui_input(event: InputEvent) -> void:
 	elif info.down:
 		pending_highlight=""
 		stop_motion()
-		pressed=VIEW.has_point(point)
+		pressed=viewport_rect().has_point(point)
 		start_point=point
 		last_point=point
 		travel=0
@@ -333,14 +339,14 @@ func _gui_input(event: InputEvent) -> void:
 		last_motion=now
 	elif info.up and pressed:
 		pressed=false
-		if maxf(travel,point.distance_to(start_point))<=12 and VIEW.has_point(point):
+		if maxf(travel,point.distance_to(start_point))<=12 and viewport_rect().has_point(point):
 			velocity=0
 			var id:=room_at(point)
 			if not id.is_empty(): open_room(id)
 	accept_event()
 func menu_input(event: InputEvent) -> void:
 	if not is_instance_valid(menu_scroll): return
-	var area:=Rect2(30,202,300,320)
+	var area:=lift_rect()
 	if event is InputEventMouseButton and event.pressed and area.has_point(event.position) and event.button_index in [MOUSE_BUTTON_WHEEL_DOWN,MOUSE_BUTTON_WHEEL_UP]:
 		menu_scroll.scroll_vertical+=68 if event.button_index==MOUSE_BUTTON_WHEEL_DOWN else -68
 		return
@@ -360,8 +366,8 @@ func menu_input(event: InputEvent) -> void:
 	elif info.up and menu_pressed:
 		menu_pressed=false
 		if maxf(menu_travel,point.distance_to(menu_start))<=12 and area.has_point(point):
-			var row:=int((point.y-202+menu_scroll.scroll_vertical)/68)
-			if row>=0 and row<registry.floors.size() and fmod(point.y-202+menu_scroll.scroll_vertical,68)<60: navigate_to_floor(registry.floors[row].floor_id)
+			var row:=int((point.y-lift_rect().position.y+menu_scroll.scroll_vertical)/68)
+			if row>=0 and row<registry.floors.size() and fmod(point.y-lift_rect().position.y+menu_scroll.scroll_vertical,68)<60: navigate_to_floor(registry.floors[row].floor_id)
 func _process(delta: float) -> void:
 	if not is_instance_valid(scroll): return
 	if not pressed and not is_instance_valid(modal) and absf(velocity)>1:

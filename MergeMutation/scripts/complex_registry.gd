@@ -6,6 +6,7 @@ var habitats: Dictionary={}
 var floor_by_id: Dictionary={}
 var room_rects: Dictionary={}
 var extent:=0.0
+var width:=360.0
 var error:=""
 func load_files(floor_path: String="res://data/complex/floors.json",habitat_path: String="res://data/complex/habitats.json") -> bool:
 	if not FileAccess.file_exists(floor_path) or not FileAccess.file_exists(habitat_path): return fail("Конфигурация комплекса отсутствует")
@@ -27,8 +28,10 @@ static func rectangle(value: Variant) -> bool:
 	for part in value:
 		if not number(part,0,1000000): return false
 	return value[2]>=44 and value[3]>=44
-func configure(floor_data: Variant,room_data: Variant) -> bool:
+func configure(floor_data: Variant,room_data: Variant,display_width: float=360) -> bool:
 	fail("")
+	if not number(display_width,360,4000): return fail("Неверная ширина обзора")
+	width=display_width
 	if not floor_data is Dictionary or not room_data is Dictionary or not floor_data.get("floors") is Array or not room_data.get("habitats") is Array: return fail("Некорректные данные комплекса")
 	if floor_data.floors.is_empty() or floor_data.floors.size()>200: return fail("Неверное количество этажей")
 	var depths: Dictionary={}
@@ -49,7 +52,7 @@ func configure(floor_data: Variant,room_data: Variant) -> bool:
 		if item.has("species_id") and (not item.species_id is String or not Catalog.available(item.species_id)): return fail("Неизвестный вид")
 		var floor: Dictionary=floor_by_id[item.floor_id]
 		var local:=Rect2(item.rect[0],item.rect[1],item.rect[2],item.rect[3])
-		if local.position.x<28 or local.end.x>348 or local.position.y<36 or local.position.y>=floor.height or local.end.y+floor.top>extent: return fail("Комната выходит за границы комплекса")
+		if local.position.x<28 or local.end.x>width-12 or local.position.y<36 or local.position.y>=floor.height or local.end.y+floor.top>extent: return fail("Комната выходит за границы комплекса")
 		if item.has("interaction_rect"):
 			if not rectangle(item.interaction_rect): return fail("Неверная интерактивная область")
 			var area: Array=item.interaction_rect
@@ -83,9 +86,9 @@ func floor_at(y: float) -> Dictionary:
 func visible_floors(top: float,height: float) -> Array:
 	var result: Array=[]
 	for floor in floors:
-		var bounds:=Rect2(0,floor.top,360,floor.height)
-		if bounds.intersects(Rect2(0,top,360,height)): result.append(floor.floor_id)
+		var bounds:=Rect2(0,floor.top,width,floor.height)
+		if bounds.intersects(Rect2(0,top,width,height)): result.append(floor.floor_id)
 	# Tall rooms can overlap a visible floor while anchored on an earlier floor.
 	for id in room_rects:
-		if room_rects[id].intersects(Rect2(0,top,360,height)) and habitats[id].floor_id not in result: result.append(habitats[id].floor_id)
+		if room_rects[id].intersects(Rect2(0,top,width,height)) and habitats[id].floor_id not in result: result.append(habitats[id].floor_id)
 	return result

@@ -2,6 +2,8 @@ extends Control
 ## Merge Mutation: gameplay state, rules and backwards-compatible saves.
 ## No external assets or addons required.
 const LabView = preload("res://scripts/lab_view.gd")
+const LandscapeView = preload("res://scripts/landscape_lab.gd")
+const Layout = preload("res://scripts/landscape_layout.gd")
 const Catalog = preload("res://scripts/mutant_catalog.gd")
 const SaveCodec = preload("res://scripts/save_codec.gd")
 const CampaignSession = preload("res://scripts/campaign_session.gd")
@@ -163,6 +165,7 @@ func settle_campaign_action() -> void:
 				view.show_story("swamp_activation")
 
 func _ready() -> void:
+	if Layout.portrait_regression(): get_window().content_scale_size=Vector2i(360,720)
 	rng.randomize()
 	if not _load_game():
 		_start_fresh(not write_blocked)
@@ -170,7 +173,7 @@ func _ready() -> void:
 	reset_dialog.dialog_text = "Начать заново?\nПоле, монеты и коллекция будут сброшены."
 	reset_dialog.confirmed.connect(_new_game)
 	add_child(reset_dialog)
-	view = LabView.new()
+	view = LabView.new() if Layout.portrait_regression() else LandscapeView.new()
 	view.game = self
 	add_child(view)
 	resized.connect(view.layout)
@@ -287,6 +290,7 @@ func _gui_input(event: InputEvent) -> void:
 		accept_event()
 
 func _press(pos: Vector2) -> void:
+	if not Layout.portrait_regression() and not Rect2(Vector2.ZERO,Layout.DESIGN).has_point(pos): return
 	if dragging or (in_campaign() and campaign.status!="active"):
 		return
 	if in_campaign() and Rect2(266,558,72,58).has_point(pos):
@@ -343,6 +347,9 @@ func _release(pos: Vector2) -> void:
 	_cancel_drag()
 
 func _cell_at(pos: Vector2) -> int:
+	if is_instance_valid(view) and not Layout.portrait_regression():
+		var value: int=view.cell_index(pos)
+		return -1 if in_campaign() and campaign.blocked(value) else value
 	var x := int(floor((pos.x - BOARD_X) / CELL))
 	var y := int(floor((pos.y - BOARD_Y) / CELL))
 	if x < 0 or x >= COLS or y < 0 or y >= ROWS:

@@ -225,6 +225,7 @@ func _gui_input(event: InputEvent) -> void:
 		if pressed>=0 and point.distance_to(pointer_start)>12: act(cell_at(point),false)
 		pressed=-1
 	accept_event()
+func list_rect() -> Rect2: return LIST_RECT
 func list_input(event: InputEvent) -> void:
 	var point := Vector2.ZERO
 	var down := false
@@ -237,7 +238,7 @@ func list_input(event: InputEvent) -> void:
 		up=not down
 	elif event is InputEventMouseButton:
 		point=event.position
-		if event.button_index in [MOUSE_BUTTON_WHEEL_DOWN,MOUSE_BUTTON_WHEEL_UP] and event.pressed and LIST_RECT.has_point(point):
+		if event.button_index in [MOUSE_BUTTON_WHEEL_DOWN,MOUSE_BUTTON_WHEEL_UP] and event.pressed and list_rect().has_point(point):
 			trial_scroll.scroll_vertical+=82 if event.button_index==MOUSE_BUTTON_WHEEL_DOWN else -82
 			accept_event()
 			return
@@ -253,7 +254,7 @@ func list_input(event: InputEvent) -> void:
 		motion=true
 	else: return
 	if down:
-		list_pressed=LIST_RECT.has_point(point)
+		list_pressed=list_rect().has_point(point)
 		list_start=point
 		list_last=point
 		list_travel=0
@@ -263,9 +264,9 @@ func list_input(event: InputEvent) -> void:
 		list_last=point
 	elif up and list_pressed:
 		list_pressed=false
-		if maxf(list_travel,point.distance_to(list_start))<12 and LIST_RECT.has_point(point):
-			var index := int((point.y-LIST_RECT.position.y+trial_scroll.scroll_vertical)/82)
-			var offset := fmod(point.y-LIST_RECT.position.y+trial_scroll.scroll_vertical,82)
+		if maxf(list_travel,point.distance_to(list_start))<12 and list_rect().has_point(point):
+			var index := int((point.y-list_rect().position.y+trial_scroll.scroll_vertical)/82)
+			var offset := fmod(point.y-list_rect().position.y+trial_scroll.scroll_vertical,82)
 			if offset<68 and index>=0 and index<TRIAL_COUNT: start_trial(index+1)
 	accept_event()
 func _process(delta: float) -> void:
