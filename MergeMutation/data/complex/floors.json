@@ -1,0 +1,49 @@
+{
+  "floors": [
+    {
+      "depth": 0,
+      "name": "Поверхность",
+      "floor_id": "floor_surface",
+      "habitats": [],
+      "height": 200,
+      "preview_accessible": true,
+      "theme_id": "surface"
+    },
+    {
+      "depth": 1,
+      "name": "Малые вольеры",
+      "floor_id": "floor_01",
+      "habitats": [
+        "habitat_horn",
+        "habitat_slime",
+        "habitat_wing"
+      ],
+      "height": 240,
+      "preview_accessible": true,
+      "theme_id": "laboratory"
+    },
+    {
+      "depth": 2,
+      "name": "Средние вольеры",
+      "floor_id": "floor_02",
+      "habitats": [
+        "habitat_mineral",
+        "habitat_forest"
+      ],
+      "height": 300,
+      "preview_accessible": true,
+      "theme_id": "industrial"
+    },
+    {
+      "depth": 3,
+      "name": "Секретная камера",
+      "floor_id": "floor_03",
+      "habitats": [
+        "habitat_secret"
+      ],
+      "height": 440,
+      "preview_accessible": true,
+      "theme_id": "secret"
+    }
+  ]
+}

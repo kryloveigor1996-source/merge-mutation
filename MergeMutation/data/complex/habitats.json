@@ -1,0 +1,115 @@
+{
+  "habitats": [
+    {
+      "size_class": "small",
+      "species_id": "horn",
+      "preview_accessible": true,
+      "theme_id": "stone",
+      "description": "Камни прошли технику безопасности. Рогач — пока нет. Демо-комната не открывает вид в профиле.",
+      "floor_id": "floor_01",
+      "interaction_rect": [
+        8,
+        38,
+        82,
+        110
+      ],
+      "habitat_id": "habitat_horn",
+      "rect": [
+        32,
+        48,
+        98,
+        174
+      ],
+      "name": "Рогач"
+    },
+    {
+      "size_class": "small",
+      "species_id": "slime",
+      "preview_accessible": false,
+      "theme_id": "acid",
+      "description": "Демонстрационная закрытая комната.",
+      "floor_id": "floor_01",
+      "interaction_rect": [
+        8,
+        38,
+        82,
+        110
+      ],
+      "habitat_id": "habitat_slime",
+      "rect": [
+        138,
+        48,
+        98,
+        174
+      ],
+      "name": "Кислотный отсек"
+    },
+    {
+      "size_class": "small",
+      "species_id": "wing",
+      "preview_accessible": false,
+      "theme_id": "air",
+      "description": "Демонстрационная закрытая комната.",
+      "floor_id": "floor_01",
+      "interaction_rect": [
+        8,
+        38,
+        82,
+        110
+      ],
+      "habitat_id": "habitat_wing",
+      "rect": [
+        244,
+        48,
+        98,
+        174
+      ],
+      "name": "Воздушный отсек"
+    },
+    {
+      "preview_accessible": false,
+      "size_class": "medium",
+      "description": "Средняя камера переменной геометрии.",
+      "habitat_id": "habitat_mineral",
+      "rect": [
+        32,
+        48,
+        130,
+        232
+      ],
+      "name": "Минеральный сектор",
+      "floor_id": "floor_02",
+      "theme_id": "crystal"
+    },
+    {
+      "preview_accessible": false,
+      "size_class": "medium",
+      "description": "Резерв будущего биома.",
+      "habitat_id": "habitat_forest",
+      "rect": [
+        170,
+        48,
+        170,
+        244
+      ],
+      "name": "Зелёный сектор",
+      "floor_id": "floor_02",
+      "theme_id": "forest"
+    },
+    {
+      "preview_accessible": false,
+      "size_class": "giant",
+      "description": "Декоративная заглушка без назначенного вида.",
+      "habitat_id": "habitat_secret",
+      "rect": [
+        32,
+        48,
+        308,
+        372
+      ],
+      "name": "СЕКРЕТНЫЙ ЭКСПЕРИМЕНТ",
+      "floor_id": "floor_03",
+      "theme_id": "secret"
+    }
+  ]
+}
