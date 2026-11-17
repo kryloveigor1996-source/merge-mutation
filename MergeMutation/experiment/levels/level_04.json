@@ -1,0 +1,96 @@
+{
+  "terrain": {
+    "13": "acid",
+    "11": "rock"
+  },
+  "spawn_points": [],
+  "available_species": [
+    "horn",
+    "slime",
+    "wing"
+  ],
+  "required": [
+    "ram",
+    "acid"
+  ],
+  "name": "Неправильная мутация",
+  "destinations": [
+    {
+      "species_id": "horn",
+      "cell": 7,
+      "evolution_stage": 2
+    },
+    {
+      "species_id": "slime",
+      "cell": 10,
+      "evolution_stage": 2
+    }
+  ],
+  "id": "mutation_04",
+  "number": 4,
+  "initial": [
+    {
+      "species_id": "horn",
+      "cell": 10,
+      "evolution_stage": 1
+    },
+    {
+      "species_id": "horn",
+      "cell": 12,
+      "evolution_stage": 1
+    },
+    {
+      "species_id": "slime",
+      "cell": 9,
+      "evolution_stage": 1
+    },
+    {
+      "species_id": "slime",
+      "cell": 14,
+      "evolution_stage": 1
+    }
+  ],
+  "creation_limit": 0,
+  "reward_coins": 0,
+  "tip": "Разбейте камень, объедините пары и освободите проход. Цели — на клетках со значками видов.",
+  "reward_stars": 0,
+  "move_limit": 11,
+  "goals": [
+    {
+      "species_id": "horn",
+      "evolution_stage": 2,
+      "type": "reach_stage"
+    },
+    {
+      "species_id": "slime",
+      "evolution_stage": 2,
+      "type": "reach_stage"
+    }
+  ],
+  "blocked_cells": [
+    0,
+    1,
+    2,
+    3,
+    4,
+    5,
+    6,
+    8,
+    15,
+    16,
+    17,
+    18,
+    19,
+    20,
+    21,
+    22,
+    23,
+    24,
+    25,
+    26,
+    27,
+    28,
+    29
+  ],
+  "sequence": []
+}

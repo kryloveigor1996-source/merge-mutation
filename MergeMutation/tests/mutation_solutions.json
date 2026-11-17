@@ -1,0 +1,171 @@
+[
+	{
+		"actions": [
+			{
+				"index": 13,
+				"kind": "spawn"
+			},
+			{
+				"index": 11,
+				"kind": "break",
+				"source": 10
+			},
+			{
+				"index": 11,
+				"kind": "move",
+				"source": 10
+			},
+			{
+				"index": 12,
+				"kind": "move",
+				"source": 11
+			},
+			{
+				"index": 13,
+				"kind": "merge",
+				"source": 12
+			}
+		],
+		"moves": 4,
+		"number": 1,
+		"visited": 21
+	},
+	{
+		"actions": [
+			{
+				"index": 6,
+				"kind": "move",
+				"source": 5
+			},
+			{
+				"index": 7,
+				"kind": "move",
+				"source": 6
+			},
+			{
+				"index": 8,
+				"kind": "merge",
+				"source": 7
+			}
+		],
+		"moves": 3,
+		"number": 2,
+		"visited": 10
+	},
+	{
+		"actions": [
+			{
+				"index": 12,
+				"kind": "jump",
+				"source": 10
+			},
+			{
+				"index": 13,
+				"kind": "merge",
+				"source": 12
+			}
+		],
+		"moves": 2,
+		"number": 3,
+		"visited": 5
+	},
+	{
+		"actions": [
+			{
+				"index": 14,
+				"kind": "merge",
+				"source": 9
+			},
+			{
+				"index": 11,
+				"kind": "break",
+				"source": 10
+			},
+			{
+				"index": 11,
+				"kind": "move",
+				"source": 10
+			},
+			{
+				"index": 12,
+				"kind": "merge",
+				"source": 11
+			},
+			{
+				"index": 7,
+				"kind": "move",
+				"source": 12
+			},
+			{
+				"index": 13,
+				"kind": "move",
+				"source": 14
+			},
+			{
+				"index": 12,
+				"kind": "move",
+				"source": 13
+			},
+			{
+				"index": 11,
+				"kind": "move",
+				"source": 12
+			},
+			{
+				"index": 10,
+				"kind": "move",
+				"source": 11
+			}
+		],
+		"moves": 9,
+		"number": 4,
+		"visited": 503
+	},
+	{
+		"actions": [
+			{
+				"index": 1,
+				"kind": "break",
+				"source": 0
+			},
+			{
+				"index": 1,
+				"kind": "move",
+				"source": 2
+			},
+			{
+				"index": 0,
+				"kind": "merge",
+				"source": 1
+			},
+			{
+				"index": 13,
+				"kind": "jump",
+				"source": 3
+			},
+			{
+				"index": 14,
+				"kind": "merge",
+				"source": 13
+			},
+			{
+				"index": 12,
+				"kind": "merge",
+				"source": 17
+			},
+			{
+				"index": 7,
+				"kind": "move",
+				"source": 12
+			},
+			{
+				"index": 2,
+				"kind": "move",
+				"source": 7
+			}
+		],
+		"moves": 8,
+		"number": 5,
+		"visited": 2436
+	}
+]

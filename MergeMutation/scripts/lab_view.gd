@@ -7,6 +7,7 @@ const Audio = preload("res://scripts/lab_audio.gd")
 const Sizes = preload("res://scripts/mutant_sizes.gd")
 const PortalHub = preload("res://scripts/portal_hub.gd")
 const StoryScreen = preload("res://scripts/story_screen.gd")
+const MutationExperiment = preload("res://scripts/mutation_experiment.gd")
 const DESIGN := Vector2(360,720)
 const INK := Color("25465a")
 const CREAM := Color("fff8de")
@@ -43,6 +44,8 @@ var effects: Node2D
 var style_cache: Dictionary = {}
 var portal_ui: PortalHub
 var story_screen: StoryScreen
+var experiment_ui: Control
+var experiment_button: Button
 
 static func fitted_rect(available: Rect2) -> Rect2:
 	var factor := minf(available.size.x/DESIGN.x,available.size.y/DESIGN.y)
@@ -104,9 +107,13 @@ func _ready() -> void:
 	create_button.add_theme_stylebox_override("disabled",style(Color("d5dedb")))
 	create_button.add_theme_color_override("font_disabled_color",Color("627f8c"))
 	teleport_button.hide()
-	nav_left=button("КОЛЛЕКЦИЯ",Rect2(18,638,104,54),Color("b5e9ee"),left_nav)
-	button("ПОРТАЛЫ",Rect2(128,638,104,54),Color("ded2fb"),game.open_portals)
-	nav_right=button("НАСТРОЙКИ",Rect2(238,638,104,54),Color("ffd7b6"),right_nav)
+	nav_left=button("КОЛЛЕКЦИЯ",Rect2(10,638,82,54),Color("b5e9ee"),left_nav)
+	var portal_button := button("ПОРТАЛЫ",Rect2(96,638,82,54),Color("ded2fb"),game.open_portals)
+	experiment_button=button("ЭКСПЕРИМЕНТ",Rect2(182,638,82,54),Color("ffda69"),open_experiment)
+	experiment_button.add_theme_font_size_override("font_size",9)
+	nav_right=button("НАСТРОЙКИ",Rect2(268,638,82,54),Color("ffd7b6"),right_nav)
+	# Theme text can grow Button before its font override is applied. Restore final width.
+	for navigation in [nav_left,portal_button,experiment_button,nav_right]: navigation.size=Vector2(82,54)
 	layout()
 	rebuild()
 	portal_ui=PortalHub.new()
@@ -320,6 +327,7 @@ func _draw() -> void:
 	create_button.custom_minimum_size=Vector2(233,58) if playing else Vector2(286,58)
 	create_button.size=create_button.custom_minimum_size
 	teleport_button.visible=playing
+	experiment_button.disabled=playing
 	if playing:
 		teleport_button.text="ТЕЛЕПОРТ\nТЕСТ · %d%s" % [game.campaign.boosters.remaining("teleporter")," ✓" if game.teleport_mode else ""]
 		teleport_button.disabled=game.campaign.status!="active" or game.campaign.boosters.remaining("teleporter")==0
@@ -599,11 +607,21 @@ func close_story() -> void:
 	story_screen=null
 
 func close_navigation() -> void:
+	if is_instance_valid(experiment_ui): experiment_ui.exit_experiment()
+	experiment_ui=null
 	close_story()
 	if is_instance_valid(portal_ui):
 		portal_ui.collection_return=false
 		portal_ui.close_preview()
 		portal_ui.hide()
+
+func open_experiment() -> void:
+	if game.in_campaign(): return
+	close_navigation()
+	game._cancel_drag()
+	experiment_ui=MutationExperiment.new()
+	experiment_ui.setup(game)
+	add_child(experiment_ui)
 
 func show_story(id: String) -> void:
 	close_story()
