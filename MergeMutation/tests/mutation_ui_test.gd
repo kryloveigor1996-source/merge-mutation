@@ -52,11 +52,21 @@ func run() -> void:
 	ui=game.view.experiment_ui
 	await process_frame
 	await screenshot("list")
-	check(ui.get_node("Trial5")!=null,"five trial entries")
-	for number in range(1,6):
+	ui.trial_scroll.scroll_vertical=10000
+	await process_frame
+	await screenshot("list-bottom")
+	ui.trial_scroll.scroll_vertical=0
+	check(ui.find_child("Trial10",true,false)!=null,"ten trial entries")
+	for number in range(1,11):
 		check(ui.start_trial(number),"UI start")
 		await process_frame
-		var proof := Search.solve(ui.session)
+		var proof: Dictionary={}
+		if FileAccess.file_exists("res://.godot/mutation-solutions.json"):
+			var witnesses: Variant=JSON.parse_string(FileAccess.get_file_as_string("res://.godot/mutation-solutions.json"))
+			for witness in witnesses:
+				if int(witness.number)==number and witness.get("config_hash")==JSON.stringify(UI.config(number),"",true).sha256_text():
+					proof={"won":true,"actions":witness.actions}
+		if proof.is_empty(): proof=Search.solve(ui.session)
 		check(proof.won,"UI solution exists")
 		await screenshot("level-%02d" % number)
 		for action in proof.actions:

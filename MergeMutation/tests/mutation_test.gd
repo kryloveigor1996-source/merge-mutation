@@ -2,6 +2,8 @@ extends SceneTree
 const Session = preload("res://scripts/mutation_session.gd")
 const Search = preload("res://scripts/mutation_search.gd")
 const UI = preload("res://scripts/mutation_experiment.gd")
+class ReferenceSession extends "res://scripts/mutation_session.gd":
+	func search_key() -> String: return signature()
 var checks := 0
 var failures := 0
 func check(value: bool,label: String) -> void:
@@ -14,7 +16,7 @@ func _initialize() -> void:
 func run() -> void:
 	edges()
 	var report: Array=[]
-	for number in range(1,6):
+	for number in range(1,11):
 		var data := UI.config(number)
 		check(not data.is_empty(),"valid JSON %d" % number)
 		var session := Session.new()
@@ -23,6 +25,11 @@ func run() -> void:
 		check(proof.won and proof.optimal and not proof.cutoff,"optimal proof %d" % number)
 		print("Trial ",number,": ",proof)
 		if not proof.won: continue
+		if number<=5:
+			var reference:=ReferenceSession.new()
+			reference.start(data)
+			var baseline:=Search.solve(reference)
+			check(baseline.won and not baseline.cutoff and baseline.moves==proof.moves,"dominance preserves original search optimum")
 		var witness := Session.new()
 		witness.start(data)
 		for action in proof.actions: check(witness.apply_action(action).ok,"engine replay %d %s" % [number,action.kind])
@@ -41,7 +48,7 @@ func run() -> void:
 		var lower := Search.solve(shorter)
 		check(not lower.won and not lower.cutoff,"one fewer move is impossible")
 		check(session.moves_used==0 and session.terrain==data.terrain,"search does not mutate original")
-		report.append({"number":number,"moves":proof.moves,"visited":proof.visited,"actions":proof.actions})
+		report.append({"number":number,"moves":proof.moves,"visited":proof.visited,"actions":proof.actions,"config_hash":JSON.stringify(data,"",true).sha256_text()})
 	var file := FileAccess.open("res://.godot/mutation-solutions.json",FileAccess.WRITE)
 	file.store_string(JSON.stringify(report,"\t"))
 	print("Mutation checks: %d; failures: %d" % [checks,failures])

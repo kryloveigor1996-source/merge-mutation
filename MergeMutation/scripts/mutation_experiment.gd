@@ -20,8 +20,15 @@ var learned: Dictionary={}
 var sprites: Dictionary={}
 var animation: Tween
 var action_layer: Node2D
+const TRIAL_COUNT := 10
+const LIST_RECT := Rect2(20,153,320,466)
+var trial_scroll: ScrollContainer
+var list_pressed := false
+var list_start := Vector2.ZERO
+var list_last := Vector2.ZERO
+var list_travel := 0.0
 static func config(index: int) -> Dictionary:
-	var data: Variant=JSON.parse_string(FileAccess.get_file_as_string("res://experiment/levels/level_%02d.json" % index)) if index>=1 and index<=5 else null
+	var data: Variant=JSON.parse_string(FileAccess.get_file_as_string("res://experiment/levels/level_%02d.json" % index)) if index>=1 and index<=10 else null
 	return data if data is Dictionary and Session.valid_experiment(data) else {}
 func setup(value: Control) -> void:
 	game=value
@@ -44,11 +51,27 @@ func show_list() -> void:
 	session=null
 	number=0
 	W.label(self,"ТАКТИЧЕСКИЕ МУТАЦИИ",Rect2(18,30,324,44),22,W.INK,true)
-	W.label(self,"5 испытаний · без постоянных наград\nПрогресс только до закрытия режима",Rect2(22,88,316,55),14,W.INK,true)
-	for index in range(1,6):
+	W.label(self,"10 испытаний · без постоянных наград\nПрогресс только до закрытия режима",Rect2(22,88,316,55),14,W.INK,true)
+	trial_scroll=ScrollContainer.new()
+	trial_scroll.name="TrialScroll"
+	trial_scroll.position=LIST_RECT.position
+	trial_scroll.size=LIST_RECT.size
+	trial_scroll.horizontal_scroll_mode=ScrollContainer.SCROLL_MODE_DISABLED
+	trial_scroll.vertical_scroll_mode=ScrollContainer.SCROLL_MODE_SHOW_NEVER
+	trial_scroll.mouse_filter=Control.MOUSE_FILTER_IGNORE
+	add_child(trial_scroll)
+	var content := VBoxContainer.new()
+	content.name="Trials"
+	content.size_flags_horizontal=Control.SIZE_EXPAND_FILL
+	content.mouse_filter=Control.MOUSE_FILTER_IGNORE
+	content.add_theme_constant_override("separation",14)
+	trial_scroll.add_child(content)
+	for index in range(1,TRIAL_COUNT+1):
 		var data := config(index)
-		var entry := W.button(self,"Trial%d" % index,"%d. %s%s" % [index,data.get("name","Ошибка конфигурации")," ✓" if completed.has(index) else ""],Rect2(20,157+(index-1)*82,320,68),func(): start_trial(index))
+		var entry := W.button(content,"Trial%d" % index,"%d. %s%s" % [index,data.get("name","Ошибка конфигурации")," ✓" if completed.has(index) else ""],Rect2(0,0,320,68),func(): start_trial(index))
 		entry.add_theme_font_size_override("font_size",13)
+		entry.clip_text=true
+		entry.mouse_filter=Control.MOUSE_FILTER_IGNORE
 	W.button(self,"ExperimentExit","В ЛАБОРАТОРИЮ",Rect2(24,644,312,54),exit_experiment,Color("b5e9ee"))
 	queue_redraw()
 func start_trial(index: int) -> bool:
@@ -59,7 +82,7 @@ func start_trial(index: int) -> bool:
 	number=index
 	W.label(self,"%d · %s" % [index,session.config.name],Rect2(18,15,324,52),19,W.INK,true)
 	counters=W.label(self,"",Rect2(16,72,328,24),14,W.INK,true)
-	var show_tip: bool=session.config.required.any(func(id): return not learned.has(id))
+	var show_tip: bool=index>5 or session.config.required.any(func(id): return not learned.has(id))
 	message=W.label(self,session.config.tip if show_tip else "Доставьте формы II на отмеченные клетки. Спланируйте порядок действий.",Rect2(22,102,316,62),14,W.INK,true)
 	W.label(self,"Цели: Р — Рогач · С — Слизик · К — Крылатик",Rect2(16,516,328,22),12,W.INK,true)
 	W.button(self,"ExperimentSpawn","СОЗДАТЬ",Rect2(24,545,312,44),create_creature)
@@ -139,7 +162,10 @@ func finish_action(result: Dictionary) -> void:
 		refresh()
 	)
 func _gui_input(event: InputEvent) -> void:
-	if session==null or busy: return
+	if session==null:
+		list_input(event)
+		return
+	if busy: return
 	var point := Vector2.ZERO
 	var down := false
 	var up := false
@@ -166,6 +192,49 @@ func _gui_input(event: InputEvent) -> void:
 	if up:
 		if pressed>=0 and point.distance_to(pointer_start)>12: act(cell_at(point),false)
 		pressed=-1
+	accept_event()
+func list_input(event: InputEvent) -> void:
+	var point := Vector2.ZERO
+	var down := false
+	var up := false
+	var motion := false
+	if event is InputEventScreenTouch:
+		if event.index!=0: return
+		point=event.position
+		down=event.pressed
+		up=not down
+	elif event is InputEventMouseButton:
+		point=event.position
+		if event.button_index in [MOUSE_BUTTON_WHEEL_DOWN,MOUSE_BUTTON_WHEEL_UP] and event.pressed and LIST_RECT.has_point(point):
+			trial_scroll.scroll_vertical+=82 if event.button_index==MOUSE_BUTTON_WHEEL_DOWN else -82
+			accept_event()
+			return
+		if event.button_index!=MOUSE_BUTTON_LEFT: return
+		down=event.pressed
+		up=not down
+	elif event is InputEventScreenDrag:
+		if event.index!=0: return
+		point=event.position
+		motion=true
+	elif event is InputEventMouseMotion:
+		point=event.position
+		motion=true
+	else: return
+	if down:
+		list_pressed=LIST_RECT.has_point(point)
+		list_start=point
+		list_last=point
+		list_travel=0
+	elif motion and list_pressed:
+		list_travel+=point.distance_to(list_last)
+		trial_scroll.scroll_vertical-=int(point.y-list_last.y)
+		list_last=point
+	elif up and list_pressed:
+		list_pressed=false
+		if maxf(list_travel,point.distance_to(list_start))<12 and LIST_RECT.has_point(point):
+			var index := int((point.y-LIST_RECT.position.y+trial_scroll.scroll_vertical)/82)
+			var offset := fmod(point.y-LIST_RECT.position.y+trial_scroll.scroll_vertical,82)
+			if offset<68 and index>=0 and index<TRIAL_COUNT: start_trial(index+1)
 	accept_event()
 func _process(delta: float) -> void:
 	elapsed+=delta

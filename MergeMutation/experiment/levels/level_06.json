@@ -1,0 +1,97 @@
+{
+  "blocked_cells": [
+    0,
+    1,
+    2,
+    3,
+    4,
+    5,
+    6,
+    8,
+    16,
+    17,
+    18,
+    19,
+    21,
+    22,
+    23,
+    24,
+    25,
+    26,
+    27,
+    28,
+    29
+  ],
+  "habitat_id": "laboratory_planned",
+  "id": "mutation_06",
+  "terrain": {
+    "13": "acid",
+    "11": "rock"
+  },
+  "discovery_type": "observation",
+  "discovery_id": "tactical_observation_06",
+  "reward_coins": 0,
+  "creation_limit": 0,
+  "available_species": [
+    "horn",
+    "slime",
+    "wing"
+  ],
+  "move_limit": 11,
+  "number": 6,
+  "spawn_points": [],
+  "sequence": [],
+  "name": "Узкий проход",
+  "destinations": [
+    {
+      "species_id": "horn",
+      "cell": 20,
+      "evolution_stage": 2
+    },
+    {
+      "species_id": "slime",
+      "cell": 7,
+      "evolution_stage": 2
+    }
+  ],
+  "reward_stars": 0,
+  "initial": [
+    {
+      "species_id": "horn",
+      "cell": 10,
+      "evolution_stage": 1
+    },
+    {
+      "species_id": "horn",
+      "cell": 12,
+      "evolution_stage": 1
+    },
+    {
+      "species_id": "slime",
+      "cell": 9,
+      "evolution_stage": 1
+    },
+    {
+      "species_id": "slime",
+      "cell": 14,
+      "evolution_stage": 1
+    }
+  ],
+  "required": [
+    "ram",
+    "acid"
+  ],
+  "tip": "Результат слияния тоже занимает клетку. Освободите проход для Слизика.",
+  "goals": [
+    {
+      "species_id": "horn",
+      "evolution_stage": 2,
+      "type": "reach_stage"
+    },
+    {
+      "species_id": "slime",
+      "evolution_stage": 2,
+      "type": "reach_stage"
+    }
+  ]
+}

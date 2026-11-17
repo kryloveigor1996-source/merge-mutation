@@ -1,0 +1,116 @@
+{
+  "blocked_cells": [
+    6,
+    9,
+    10,
+    11,
+    15,
+    16,
+    17,
+    19,
+    20,
+    21,
+    24,
+    25,
+    26,
+    27,
+    28,
+    29
+  ],
+  "habitat_id": "laboratory_planned",
+  "id": "mutation_10",
+  "terrain": {
+    "22": "acid",
+    "8": "gap",
+    "1": "rock",
+    "7": "acid",
+    "12": "acid"
+  },
+  "discovery_type": "observation",
+  "discovery_id": "tactical_observation_10",
+  "reward_coins": 0,
+  "creation_limit": 0,
+  "available_species": [
+    "horn",
+    "slime",
+    "wing"
+  ],
+  "move_limit": 22,
+  "number": 10,
+  "spawn_points": [],
+  "sequence": [],
+  "name": "Большой эксперимент",
+  "destinations": [
+    {
+      "species_id": "horn",
+      "cell": 3,
+      "evolution_stage": 2
+    },
+    {
+      "species_id": "wing",
+      "cell": 5,
+      "evolution_stage": 2
+    },
+    {
+      "species_id": "slime",
+      "cell": 0,
+      "evolution_stage": 2
+    }
+  ],
+  "reward_stars": 0,
+  "initial": [
+    {
+      "species_id": "horn",
+      "cell": 0,
+      "evolution_stage": 1
+    },
+    {
+      "species_id": "horn",
+      "cell": 2,
+      "evolution_stage": 1
+    },
+    {
+      "species_id": "wing",
+      "cell": 3,
+      "evolution_stage": 1
+    },
+    {
+      "species_id": "wing",
+      "cell": 14,
+      "evolution_stage": 1
+    },
+    {
+      "species_id": "slime",
+      "cell": 22,
+      "evolution_stage": 1
+    },
+    {
+      "species_id": "slime",
+      "cell": 23,
+      "evolution_stage": 1
+    }
+  ],
+  "required": [
+    "ram",
+    "acid",
+    "flight"
+  ],
+  "tip": "Общий перекрёсток и место приземления: решите, кто проходит первым.",
+  "goals": [
+    {
+      "species_id": "horn",
+      "evolution_stage": 2,
+      "type": "reach_stage"
+    },
+    {
+      "species_id": "wing",
+      "evolution_stage": 2,
+      "type": "reach_stage"
+    },
+    {
+      "species_id": "slime",
+      "evolution_stage": 2,
+      "type": "reach_stage"
+    }
+  ]
+}
