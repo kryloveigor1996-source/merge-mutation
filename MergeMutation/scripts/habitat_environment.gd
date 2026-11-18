@@ -1,6 +1,7 @@
 extends Control
 const Actor=preload("res://scripts/habitat_actor.gd")
 const W=preload("res://scripts/journey_widgets.gd")
+const RenovationArt=preload("res://scripts/renovation_art.gd")
 var model
 var world: Node2D
 var actor
@@ -32,8 +33,11 @@ func setup(value,area_size: Vector2,view_width: float=0) -> void:
 	refresh()
 	set_active(false)
 func set_camera(value: float) -> void:
+	var previous:=camera_x
 	camera_x=clampf(value,0,maxf(0,model.registry.world_width-visible_width))
 	world.position.x=-camera_x*world.scale.x
+	if previous!=camera_x and model.has_method("renovation_objects"):
+		for layer in layers.values(): layer.queue_redraw()
 func refresh() -> void:
 	set_camera(model.position.x-visible_width*0.5 if overview_camera else camera_x)
 	actor.pose(0,world.scale)
@@ -49,6 +53,9 @@ func _process(delta: float) -> void:
 	layers.objects.queue_redraw()
 	layers.light.queue_redraw()
 func draw_layer(id: String) -> void:
+	if model.has_method("renovation_objects"):
+		RenovationArt.draw_layer(self,id)
+		return
 	var node: Node2D=layers[id]
 	var stage: Dictionary=model.registry.stages[model.stage]
 	if id=="back":

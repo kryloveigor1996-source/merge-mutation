@@ -1,0 +1,507 @@
+{
+  "version": 1,
+  "habitat_id": "habitat_horn",
+  "world_size": [
+    2350,
+    420
+  ],
+  "zones": [
+    {
+      "zone_id": "west",
+      "name": "Отдых",
+      "rect": [
+        0,
+        0,
+        780,
+        420
+      ]
+    },
+    {
+      "zone_id": "central",
+      "name": "Тренировка и игры",
+      "rect": [
+        780,
+        0,
+        790,
+        420
+      ]
+    },
+    {
+      "zone_id": "east",
+      "name": "Кормление и оборудование",
+      "rect": [
+        1570,
+        0,
+        780,
+        420
+      ]
+    }
+  ],
+  "slots": [
+    {
+      "slot_id": "walls",
+      "habitat_id": "habitat_horn",
+      "zone_id": "central",
+      "name": "Стены",
+      "description": "Оформление бетонных стен.",
+      "rect": [
+        0,
+        0,
+        2350,
+        315
+      ],
+      "anchor": [
+        1000,
+        80
+      ],
+      "layer": "back",
+      "cost": 1,
+      "requires": [],
+      "interaction": "none",
+      "touch": [
+        970,
+        50,
+        60,
+        60
+      ],
+      "collision": [],
+      "designs": [
+        {
+          "design_id": "rock_wall",
+          "name": "Скальная порода",
+          "visual": "rock"
+        },
+        {
+          "design_id": "nature_wall",
+          "name": "Природная среда",
+          "visual": "nature"
+        },
+        {
+          "design_id": "future_wall",
+          "name": "Лаборатория",
+          "visual": "future"
+        }
+      ],
+      "kind": "walls"
+    },
+    {
+      "slot_id": "floor",
+      "habitat_id": "habitat_horn",
+      "zone_id": "central",
+      "name": "Пол",
+      "description": "Покрытие свободной дорожки.",
+      "rect": [
+        0,
+        315,
+        2350,
+        105
+      ],
+      "anchor": [
+        1500,
+        387
+      ],
+      "layer": "ground",
+      "cost": 1,
+      "requires": [],
+      "interaction": "none",
+      "touch": [
+        970,
+        357,
+        60,
+        60
+      ],
+      "collision": [],
+      "designs": [
+        {
+          "design_id": "stone_floor",
+          "name": "Каменная плитка",
+          "visual": "stone"
+        },
+        {
+          "design_id": "sand_floor",
+          "name": "Песчаный грунт",
+          "visual": "sand"
+        },
+        {
+          "design_id": "metal_floor",
+          "name": "Металлический пол",
+          "visual": "metal"
+        }
+      ],
+      "kind": "floor"
+    },
+    {
+      "slot_id": "bed",
+      "habitat_id": "habitat_horn",
+      "zone_id": "west",
+      "name": "Спальное место",
+      "description": "Рогач подойдёт и немного поспит.",
+      "rect": [
+        180,
+        248,
+        160,
+        92
+      ],
+      "anchor": [
+        260,
+        290
+      ],
+      "layer": "objects",
+      "cost": 1,
+      "requires": [],
+      "interaction": "sleep",
+      "touch": [
+        180,
+        248,
+        160,
+        92
+      ],
+      "collision": [],
+      "designs": [
+        {
+          "design_id": "stone_cave",
+          "name": "Каменная пещера",
+          "visual": "cave"
+        },
+        {
+          "design_id": "soft_bed",
+          "name": "Мягкая лежанка",
+          "visual": "cushion"
+        },
+        {
+          "design_id": "sleep_pod",
+          "name": "Капсула сна",
+          "visual": "pod"
+        }
+      ],
+      "kind": "bed"
+    },
+    {
+      "slot_id": "feeder",
+      "habitat_id": "habitat_horn",
+      "zone_id": "east",
+      "name": "Кормушка",
+      "description": "Порция угощения для Рогача.",
+      "rect": [
+        1780,
+        280,
+        120,
+        54
+      ],
+      "anchor": [
+        1840,
+        300
+      ],
+      "layer": "objects",
+      "cost": 1,
+      "requires": [],
+      "interaction": "feed",
+      "touch": [
+        1780,
+        274,
+        120,
+        66
+      ],
+      "collision": [],
+      "designs": [
+        {
+          "design_id": "stone_bowl",
+          "name": "Каменная чаша",
+          "visual": "bowl"
+        },
+        {
+          "design_id": "auto_feeder",
+          "name": "Автокормушка",
+          "visual": "auto"
+        },
+        {
+          "design_id": "wood_bowl",
+          "name": "Деревянная миска",
+          "visual": "wood"
+        }
+      ],
+      "kind": "feeder"
+    },
+    {
+      "slot_id": "training",
+      "habitat_id": "habitat_horn",
+      "zone_id": "central",
+      "name": "Тренировочный объект",
+      "description": "Рогач сможет размяться и испытать силу рогов.",
+      "rect": [
+        1100,
+        230,
+        110,
+        96
+      ],
+      "anchor": [
+        1155,
+        278
+      ],
+      "layer": "objects",
+      "cost": 1,
+      "requires": [],
+      "interaction": "training",
+      "touch": [
+        1092,
+        222,
+        126,
+        112
+      ],
+      "collision": [
+        1100,
+        230,
+        110,
+        40
+      ],
+      "designs": [
+        {
+          "design_id": "training_boulder",
+          "name": "Валун",
+          "visual": "boulder"
+        },
+        {
+          "design_id": "training_crystal",
+          "name": "Кристалл",
+          "visual": "crystal"
+        },
+        {
+          "design_id": "training_target",
+          "name": "Механическая мишень",
+          "visual": "target"
+        }
+      ],
+      "kind": "training"
+    },
+    {
+      "slot_id": "cabinets",
+      "habitat_id": "habitat_horn",
+      "zone_id": "east",
+      "name": "Шкафы",
+      "description": "Осмотреть оборудование и припасы.",
+      "rect": [
+        2080,
+        142,
+        126,
+        146
+      ],
+      "anchor": [
+        2143,
+        210
+      ],
+      "layer": "far",
+      "cost": 1,
+      "requires": [],
+      "interaction": "storage",
+      "touch": [
+        2080,
+        142,
+        126,
+        146
+      ],
+      "collision": [],
+      "designs": [
+        {
+          "design_id": "wood_cabinets",
+          "name": "Деревянные",
+          "visual": "wood"
+        },
+        {
+          "design_id": "metal_cabinets",
+          "name": "Металлические",
+          "visual": "metal"
+        },
+        {
+          "design_id": "future_cabinets",
+          "name": "Футуристические",
+          "visual": "future"
+        }
+      ],
+      "kind": "cabinets"
+    },
+    {
+      "slot_id": "plants",
+      "habitat_id": "habitat_horn",
+      "zone_id": "west",
+      "name": "Растительность",
+      "description": "Небольшой зелёный уголок.",
+      "rect": [
+        600,
+        174,
+        106,
+        150
+      ],
+      "anchor": [
+        653,
+        220
+      ],
+      "layer": "far",
+      "cost": 1,
+      "requires": [],
+      "interaction": "none",
+      "touch": [
+        600,
+        174,
+        106,
+        150
+      ],
+      "collision": [],
+      "designs": [
+        {
+          "design_id": "cactus_plants",
+          "name": "Кактусы",
+          "visual": "cactus"
+        },
+        {
+          "design_id": "fern_plants",
+          "name": "Папоротники",
+          "visual": "fern"
+        },
+        {
+          "design_id": "glow_mushrooms",
+          "name": "Светящиеся грибы",
+          "visual": "mushrooms"
+        }
+      ],
+      "kind": "plants"
+    },
+    {
+      "slot_id": "lighting",
+      "habitat_id": "habitat_horn",
+      "zone_id": "central",
+      "name": "Освещение",
+      "description": "Касание включает и выключает свет.",
+      "rect": [
+        1270,
+        18,
+        120,
+        42
+      ],
+      "anchor": [
+        1330,
+        45
+      ],
+      "layer": "light",
+      "cost": 1,
+      "requires": [],
+      "interaction": "light",
+      "touch": [
+        1260,
+        8,
+        140,
+        62
+      ],
+      "collision": [],
+      "designs": [
+        {
+          "design_id": "torch_lights",
+          "name": "Факелы",
+          "visual": "torch"
+        },
+        {
+          "design_id": "lab_lights",
+          "name": "Лабораторные лампы",
+          "visual": "lamp"
+        },
+        {
+          "design_id": "neon_lights",
+          "name": "Неоновое освещение",
+          "visual": "neon"
+        }
+      ],
+      "kind": "lighting"
+    },
+    {
+      "slot_id": "toy",
+      "habitat_id": "habitat_horn",
+      "zone_id": "central",
+      "name": "Игрушка",
+      "description": "Подойти и немного поиграть.",
+      "rect": [
+        1410,
+        304,
+        66,
+        50
+      ],
+      "anchor": [
+        1443,
+        325
+      ],
+      "layer": "objects",
+      "cost": 1,
+      "requires": [],
+      "interaction": "play",
+      "touch": [
+        1399,
+        298,
+        88,
+        64
+      ],
+      "collision": [],
+      "designs": [
+        {
+          "design_id": "toy_ball",
+          "name": "Мяч",
+          "visual": "ball"
+        },
+        {
+          "design_id": "toy_tire",
+          "name": "Покрышка",
+          "visual": "tire"
+        },
+        {
+          "design_id": "toy_robot",
+          "name": "Игрушечный робот",
+          "visual": "robot"
+        }
+      ],
+      "kind": "toy"
+    },
+    {
+      "slot_id": "water",
+      "habitat_id": "habitat_horn",
+      "zone_id": "east",
+      "name": "Водоём",
+      "description": "Небольшой водоём за пределами дорожки.",
+      "rect": [
+        1640,
+        365,
+        120,
+        48
+      ],
+      "anchor": [
+        1700,
+        389
+      ],
+      "layer": "front",
+      "cost": 1,
+      "requires": [],
+      "interaction": "none",
+      "touch": [
+        1640,
+        359,
+        120,
+        60
+      ],
+      "collision": [],
+      "designs": [
+        {
+          "design_id": "stone_pool",
+          "name": "Каменный бассейн",
+          "visual": "pool"
+        },
+        {
+          "design_id": "natural_pond",
+          "name": "Природный пруд",
+          "visual": "pond"
+        },
+        {
+          "design_id": "water_tank",
+          "name": "Резервуар",
+          "visual": "tank"
+        }
+      ],
+      "kind": "water"
+    }
+  ]
+}

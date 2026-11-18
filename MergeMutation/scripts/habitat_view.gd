@@ -19,6 +19,7 @@ func setup(value: Dictionary,living_model=null) -> void:
 		environment.setup(living_model,Vector2(size.x-14,size.y-61))
 		environment.position=Vector2(7,35)
 		add_child(environment)
+		if living_model.has_method("renovation_objects"): living_model.renovation.changed.connect(queue_redraw)
 	elif data.preview_accessible and data.has("species_id"):
 		var art:=Art.new()
 		art.setup_form({"species_id":data.species_id,"evolution_stage":1})
@@ -80,6 +81,9 @@ func _draw() -> void:
 	var title: String={"acid":"КИСЛОТА","air":"ВОЗДУХ","crystal":"МИНЕРАЛЫ","forest":"БИОМ"}.get(data.theme_id,data.name)
 	var ink:=Color("f8efc8") if data.theme_id=="secret" else W.INK
 	draw_string(ThemeDB.fallback_font,Vector2(8,22),title,HORIZONTAL_ALIGNMENT_LEFT,size.x-16,10 if size.x<110 else 13,ink)
-	draw_string(ThemeDB.fallback_font,Vector2(8,size.y-9),"ДЕМО · ОБЗОР" if data.preview_accessible else "ЗАКРЫТО",HORIZONTAL_ALIGNMENT_LEFT,size.x-16,9,ink)
+	var footer: String="ДЕМО · ОБЗОР" if data.preview_accessible else "ЗАКРЫТО"
+	if is_instance_valid(environment) and environment.model.has_method("renovation_objects"):
+		footer="РЕМОНТ · %d%%" % environment.model.renovation.progress()
+	draw_string(ThemeDB.fallback_font,Vector2(8,size.y-9),footer,HORIZONTAL_ALIGNMENT_LEFT,size.x-16,9,ink)
 	if not data.preview_accessible: W.draw_lock(self,Vector2(size.x*0.5,size.y*0.56),Color("f5d77a"))
 	if highlight_left>0: draw_rect(Rect2(2,2,size.x-4,size.y-4),Color(1,0.9,0.35,minf(1,highlight_left)),false,4)
