@@ -3,13 +3,19 @@ const L=preload("res://scripts/landscape_layout.gd")
 const FloorLandscape=preload("res://scripts/landscape_floor.gd")
 const DetailLandscape=preload("res://scripts/landscape_habitat.gd")
 const LivingLayout=preload("res://scripts/landscape_living_config.gd")
+const ModularDetail=preload("res://scripts/modular_habitat.gd")
+const ModularState=preload("res://scripts/modular_habitat_state.gd")
+const RenovationCatalog=preload("res://scripts/renovation_catalog.gd")
+const RenovationState=preload("res://scripts/renovation_state.gd")
+func stage_regression() -> bool: return "--habitat-stage-regression" in OS.get_cmdline_user_args()
 func viewport_rect() -> Rect2: return Rect2(0,70,804,450)
 func lift_rect() -> Rect2: return Rect2(340,96,580,340)
 func back() -> void:
+	if modal==null and is_instance_valid(detail) and detail.has_method("close_front_panel") and detail.close_front_panel(): return
 	if modal==null and is_instance_valid(detail) and is_instance_valid(detail.stage_menu): detail.toggle_stages()
 	else: super.back()
 func make_floor(): return FloorLandscape.new()
-func make_living_detail(): return DetailLandscape.new()
+func make_living_detail(): return DetailLandscape.new() if stage_regression() else ModularDetail.new()
 func create_living_models() -> void:
 	if not registry.habitats.has("habitat_horn"): return
 	var base:=LivingRegistry.new()
@@ -17,14 +23,24 @@ func create_living_models() -> void:
 	living_registry=LivingLayout.build(base,registry,"normal")
 	if living_registry==null: return
 	for id in living_registry.assignments:
-		var state:=HabitatState.new()
+		var state=HabitatState.new() if stage_regression() else ModularState.new()
 		state.setup(id,living_registry)
+		if not stage_regression():
+			var catalog:=RenovationCatalog.new()
+			var config_path: String=RenovationCatalog.path_for_habitat(id)
+			if config_path.is_empty() or not catalog.load_file(config_path) or catalog.habitat_id!=id: continue
+			var renovation:=RenovationState.new()
+			renovation.setup(catalog,game.save_path+".habitat-demo-v1.json")
+			state.attach(renovation)
 		living_models[id]=state
 func setup(value: Control,model=null) -> void:
 	var source=model if model!=null else Registry.new()
 	if model==null: source.load_files()
 	var floors: Array=source.floors.duplicate(true)
 	var rooms: Array=source.habitats.values().duplicate(true)
+	if not stage_regression():
+		for room in rooms:
+			if room.habitat_id!="habitat_horn": room.preview_accessible=false
 	for floor in floors:
 		var ratio: float=1.0 if model!=null else {0:220.0,1:450.0,2:470.0,3:580.0,4:360.0}.get(int(floor.depth),floor.height)/float(floor.height)
 		floor.height*=ratio

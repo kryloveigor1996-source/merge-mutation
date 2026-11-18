@@ -5,7 +5,7 @@ static func segment(x: float,profile: Dictionary,objects: Array) -> Vector2:
 	var high: float=profile.walk_range[1]
 	for object in objects:
 		if not object.solid: continue
-		var r: Array=object.rect
+		var r: Array=object.get("collision_rect",object.rect)
 		if r[1]>=profile.ground_y or r[1]+r[3]<=profile.ground_y-profile.body_height: continue
 		var left: float=r[0]-profile.body_radius
 		var right: float=r[0]+r[2]+profile.body_radius
