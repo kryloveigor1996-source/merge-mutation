@@ -2,6 +2,7 @@ extends Control
 const Actor=preload("res://scripts/habitat_actor.gd")
 const W=preload("res://scripts/journey_widgets.gd")
 const RenovationArt=preload("res://scripts/renovation_art.gd")
+const EcosystemActor=preload("res://scripts/ecosystem_actor.gd")
 var model
 var world: Node2D
 var actor
@@ -16,6 +17,7 @@ func setup(value,area_size: Vector2,view_width: float=0) -> void:
 	size=area_size
 	clip_contents=true
 	mouse_filter=Control.MOUSE_FILTER_IGNORE
+	mouse_force_pass_scroll_events=false
 	world=Node2D.new()
 	visible_width=view_width if view_width>0 else minf(model.registry.world_width,940)
 	world.scale=area_size/Vector2(visible_width,420)
@@ -26,7 +28,7 @@ func setup(value,area_size: Vector2,view_width: float=0) -> void:
 		world.add_child(layer)
 		layers[id]=layer
 		if id!="mutant": layer.draw.connect(func(): draw_layer(id))
-	actor=Actor.new()
+	actor=EcosystemActor.new() if model.has_method("configure_ecology") else Actor.new()
 	actor.setup(model)
 	layers.mutant.add_child(actor)
 	model.stage_changed.connect(refresh)

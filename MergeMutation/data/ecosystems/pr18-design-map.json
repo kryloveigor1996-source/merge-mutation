@@ -1,0 +1,54 @@
+{
+  "habitat_horn": {
+    "walls": {
+      "rock_wall": "canyon_sandstone",
+      "nature_wall": "canyon_basalt",
+      "future_wall": "canyon_rift"
+    },
+    "floor": {
+      "stone_floor": "stony_ground",
+      "sand_floor": "hot_sand",
+      "metal_floor": "obsidian_grit"
+    },
+    "bed": {
+      "stone_cave": "stone_nest",
+      "soft_bed": "thermal_niche",
+      "sleep_pod": "fossil_shelter"
+    },
+    "feeder": {
+      "stone_bowl": "ore_pile",
+      "auto_feeder": "mineral_bowl",
+      "wood_bowl": "mineral_dispenser"
+    },
+    "training": {
+      "training_boulder": "training_boulder",
+      "training_crystal": "training_crystal",
+      "training_target": "training_target"
+    },
+    "cabinets": {
+      "wood_cabinets": "ancestor_stone",
+      "metal_cabinets": "crystal_monument",
+      "future_cabinets": "titanium_totem"
+    },
+    "plants": {
+      "cactus_plants": "fantasy_fossils",
+      "fern_plants": "ancient_antlers",
+      "glow_mushrooms": "battle_banners"
+    },
+    "lighting": {
+      "torch_lights": "thermal_torches",
+      "lab_lights": "glowing_minerals",
+      "neon_lights": "lab_searchlights"
+    },
+    "toy": {
+      "toy_ball": "rolling_boulder",
+      "toy_tire": "bone_ring",
+      "toy_robot": "mechanical_beetle"
+    },
+    "water": {
+      "stone_pool": "seismic_sensor",
+      "natural_pond": "magnetic_mineral_station",
+      "water_tank": "horn_scanner"
+    }
+  }
+}

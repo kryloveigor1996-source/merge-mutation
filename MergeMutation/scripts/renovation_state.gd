@@ -14,6 +14,7 @@ var read_only:=false
 var error:=""
 var preview_slot:=""
 var preview_design:=""
+func storage_version() -> int: return 1
 func setup(config,save_path: String) -> bool:
 	catalog=config
 	path=save_path
@@ -30,7 +31,7 @@ func reload() -> bool:
 	var file:=FileAccess.open(path,FileAccess.READ)
 	if file==null or file.get_length()>1048576: return block("Не удалось прочитать демо-ремонт")
 	var raw: Variant=JSON.parse_string(file.get_as_text())
-	if not raw is Dictionary or raw.get("format")!=FORMAT or raw.get("version")!=1 or not raw.get("habitats") is Dictionary: return block("Неизвестный или повреждённый формат демо-ремонта")
+	if not raw is Dictionary or raw.get("format")!=FORMAT or raw.get("version")!=storage_version() or not raw.get("habitats") is Dictionary: return block("Неизвестный или повреждённый формат демо-ремонта")
 	root_data=raw.duplicate(true)
 	var room: Variant=raw.habitats.get(catalog.habitat_id,{})
 	if not room is Dictionary or room.get("habitat_id",catalog.habitat_id)!=catalog.habitat_id or not C.integer(room.get("points",3),100000) or not room.get("installed",{}) is Dictionary: return block("Повреждённые данные комнаты")
@@ -79,10 +80,10 @@ func commit(next: Dictionary,balance: int,reset: bool=false) -> bool:
 	var data: Dictionary=root_data.duplicate(true)
 	if reset and FileAccess.file_exists(path):
 		var latest: Variant=JSON.parse_string(FileAccess.get_file_as_string(path))
-		if latest is Dictionary and latest.get("format")==FORMAT and latest.get("version")==1 and latest.get("habitats") is Dictionary: data=latest.duplicate(true)
+		if latest is Dictionary and latest.get("format")==FORMAT and latest.get("version")==storage_version() and latest.get("habitats") is Dictionary: data=latest.duplicate(true)
 	if not reset and FileAccess.file_exists(path):
 		var current: Variant=JSON.parse_string(FileAccess.get_file_as_string(path))
-		if not current is Dictionary or current.get("format")!=FORMAT or current.get("version")!=1 or not current.get("habitats") is Dictionary:
+		if not current is Dictionary or current.get("format")!=FORMAT or current.get("version")!=storage_version() or not current.get("habitats") is Dictionary:
 			error="Демо-файл изменился. Закройте и снова откройте вольер."
 			return false
 		var expected: Variant=JSON.parse_string(JSON.stringify(room_data))
@@ -90,7 +91,7 @@ func commit(next: Dictionary,balance: int,reset: bool=false) -> bool:
 			error="Данные комнаты изменились. Закройте и снова откройте вольер."
 			return false
 		data=current.duplicate(true)
-	data.merge({"format":FORMAT,"version":1},true)
+	data.merge({"format":FORMAT,"version":storage_version()},true)
 	if not data.get("habitats") is Dictionary: data["habitats"]={}
 	var room: Dictionary={} if reset else room_data.duplicate(true)
 	# Unknown slots/designs remain inert in the sidecar until explicitly reset.
