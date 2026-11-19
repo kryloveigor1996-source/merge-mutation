@@ -36,6 +36,8 @@ func navigate(id: String) -> void:
 	game.view.arrange()
 func _process(_delta: float) -> void:
 	resources.text="Монеты: %d   ★ %d" % [game.coins,game.campaign_progress.stars]
+	if game.has_method("legacy_mode") and not game.legacy_mode():
+		resources.text="Монеты: %d · Биокапсулы: %d" % [game.coins,game.progression.balance()]
 func _draw() -> void:
 	draw_style_box(W.box(Color("417f93"),12),Rect2(12,8,936,56))
 	draw_style_box(W.box(Color("417f93"),12),Rect2(12,478,936,56))

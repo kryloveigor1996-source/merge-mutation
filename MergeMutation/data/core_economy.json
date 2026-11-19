@@ -1,0 +1,140 @@
+{
+  "version": 1,
+  "resource": {
+    "id": "bio_capsules",
+    "name": "Биокапсулы",
+    "initial": 3,
+    "maximum": 1000000
+  },
+  "rewards": {
+    "lab_01": {
+      "base": 5,
+      "bonus": 0
+    },
+    "lab_02": {
+      "base": 5,
+      "bonus": 0
+    },
+    "lab_03": {
+      "base": 5,
+      "bonus": 0
+    },
+    "lab_04": {
+      "base": 5,
+      "bonus": 0
+    },
+    "lab_05": {
+      "base": 5,
+      "bonus": 5
+    },
+    "lab_06": {
+      "base": 5,
+      "bonus": 0
+    },
+    "lab_07": {
+      "base": 5,
+      "bonus": 0
+    },
+    "lab_08": {
+      "base": 5,
+      "bonus": 0
+    },
+    "lab_09": {
+      "base": 5,
+      "bonus": 0
+    },
+    "lab_10": {
+      "base": 5,
+      "bonus": 5
+    }
+  },
+  "prices": {
+    "habitat_slime": {
+      "bed": 3,
+      "feeder": 3,
+      "reservoir": 3,
+      "plants": 2,
+      "channels": 2,
+      "laboratory": 5
+    },
+    "habitat_horn": {
+      "walls": 2,
+      "floor": 2,
+      "bed": 4,
+      "feeder": 4,
+      "training": 4,
+      "cabinets": 4,
+      "plants": 2,
+      "lighting": 4,
+      "toy": 4,
+      "water": 6
+    }
+  },
+  "observations": [
+    {
+      "id": "slime_acid_sleep",
+      "species_id": "slime",
+      "event": "acid_sleep",
+      "title": "Сон в кислотной купели",
+      "text": "Во время сна тело растворяется, а над купелью остаются только закрытые глаза.",
+      "habitat_id": "habitat_slime"
+    },
+    {
+      "id": "slime_plasma_feed",
+      "species_id": "slime",
+      "event": "plasma_feed",
+      "title": "Плазменный обед",
+      "text": "Поглощение плазмы ненадолго меняет объём полужидкого тела.",
+      "habitat_id": "habitat_slime"
+    },
+    {
+      "id": "slime_lab_scan",
+      "species_id": "slime",
+      "event": "biochemical_scan",
+      "title": "Биохимический анализ",
+      "text": "Лабораторное оборудование вызывает у Слизика живое любопытство.",
+      "habitat_id": "habitat_slime"
+    },
+    {
+      "id": "horn_training",
+      "species_id": "horn",
+      "event": "ram",
+      "title": "Испытание валуна",
+      "text": "После разбега Рогач уверенно раскалывает тренировочную цель.",
+      "habitat_id": "habitat_horn"
+    },
+    {
+      "id": "horn_sleep",
+      "species_id": "horn",
+      "event": "sleep",
+      "title": "Тихий час в ущелье",
+      "text": "Даже самым упрямым рогам иногда нужен отдых.",
+      "habitat_id": "habitat_horn"
+    },
+    {
+      "id": "horn_mineral_feed",
+      "species_id": "horn",
+      "event": "mineral_feed",
+      "title": "Минеральный перекус",
+      "text": "Руда оказалась не образцом для анализа, а обедом.",
+      "habitat_id": "habitat_horn"
+    },
+    {
+      "id": "horn_lab_scan",
+      "species_id": "horn",
+      "event": "lab_scan",
+      "title": "Знакомство с прибором",
+      "text": "Рогач внимательно исследует лабораторное устройство.",
+      "habitat_id": "habitat_horn"
+    },
+    {
+      "id": "horn_proud_ram",
+      "species_id": "horn",
+      "event": "proud_ram",
+      "title": "Заслуженная гордость",
+      "text": "Успешный удар явно улучшил настроение обитателя ущелья.",
+      "habitat_id": "habitat_horn"
+    }
+  ],
+  "developer_grant": 10
+}

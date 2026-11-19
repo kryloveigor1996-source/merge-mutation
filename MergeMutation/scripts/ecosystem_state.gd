@@ -1,4 +1,5 @@
 extends "res://scripts/modular_habitat_state.gd"
+signal action_completed(habitat: String,event: String)
 const Autonomy=preload("res://scripts/ecosystem_autonomy.gd")
 const Behaviors=preload("res://scripts/ecosystem_behaviors.gd")
 var ecology: Dictionary={}
@@ -141,6 +142,7 @@ func advance(delta: float) -> void:
 	if not rare_event.is_empty():
 		rare_elapsed+=delta
 		if rare_elapsed>=rare_duration:
+			action_completed.emit(habitat_id,rare_event)
 			rare_event=""
 			enter("idle",1)
 	if previous=="walk" and behavior!="walk" and not action_slot.is_empty(): species_behavior.arrived(self,action_semantic)
@@ -149,6 +151,7 @@ func advance(delta: float) -> void:
 		action_semantic=semantic
 		if semantic=="ram" and stone_broken: last_successful_ram=simulation_time
 		species_behavior.completed(self,semantic)
+		if semantic!="ram" or stone_broken: action_completed.emit(habitat_id,semantic)
 		if rare_event.is_empty(): action_semantic=""
 	if behavior=="walk" and simulation_time>action_deadline:
 		cancel_action()

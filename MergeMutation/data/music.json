@@ -1,0 +1,84 @@
+{
+  "version": 1,
+  "crossfade_seconds": 1.5,
+  "duck_db": -9,
+  "background_db": -7,
+  "locations": {
+    "complex": "complex_theme",
+    "portals": "portal_theme",
+    "puzzles": "puzzle_theme",
+    "habitat_slime": "slime_theme",
+    "habitat_horn": "horn_theme",
+    "bestiary": "bestiary_theme",
+    "sandbox": "sandbox_theme"
+  },
+  "events": {
+    "victory": "victory_jingle",
+    "discovery": "discovery_jingle"
+  },
+  "tracks": {
+    "complex_theme": {
+      "title": "Home Below",
+      "duration": 120,
+      "bpm": 85,
+      "path": "res://assets/audio/music/complex/home_below.ogg",
+      "loop": true
+    },
+    "portal_theme": {
+      "title": "Beyond the Gate",
+      "duration": 90,
+      "bpm": 70,
+      "path": "res://assets/audio/music/portals/beyond_the_gate.ogg",
+      "loop": true
+    },
+    "puzzle_theme": {
+      "title": "Mutation Protocol",
+      "duration": 120,
+      "bpm": 110,
+      "path": "res://assets/audio/music/puzzles/mutation_protocol.ogg",
+      "loop": true
+    },
+    "slime_theme": {
+      "title": "Something Gooey",
+      "duration": 90,
+      "bpm": 75,
+      "path": "res://assets/audio/music/habitats/something_gooey.ogg",
+      "loop": true
+    },
+    "horn_theme": {
+      "title": "Rock and Horn",
+      "duration": 90,
+      "bpm": 95,
+      "path": "res://assets/audio/music/habitats/rock_and_horn.ogg",
+      "loop": true
+    },
+    "bestiary_theme": {
+      "title": "Classified Creatures",
+      "duration": 90,
+      "bpm": 65,
+      "path": "res://assets/audio/music/bestiary/classified_creatures.ogg",
+      "loop": true
+    },
+    "sandbox_theme": {
+      "title": "Questionable Science",
+      "duration": 90,
+      "bpm": 100,
+      "path": "res://assets/audio/music/sandbox/questionable_science.ogg",
+      "loop": true
+    },
+    "victory_jingle": {
+      "title": "Experiment Successful",
+      "duration": 4,
+      "bpm": 0,
+      "path": "res://assets/audio/jingles/experiment_successful.ogg",
+      "loop": false
+    },
+    "discovery_jingle": {
+      "title": "Unknown Specimen",
+      "duration": 5,
+      "bpm": 0,
+      "path": "res://assets/audio/jingles/unknown_specimen.ogg",
+      "loop": false
+    }
+  }
+}

@@ -81,7 +81,7 @@ func _draw() -> void:
 	var title: String={"acid":"КИСЛОТА","air":"ВОЗДУХ","crystal":"МИНЕРАЛЫ","forest":"БИОМ"}.get(data.theme_id,data.name) if not data.has("archive_name") else data.archive_name
 	var ink:=Color("f8efc8") if data.theme_id=="secret" else W.INK
 	draw_string(ThemeDB.fallback_font,Vector2(8,22),title,HORIZONTAL_ALIGNMENT_LEFT,size.x-16,10 if size.x<110 else 13,ink)
-	var footer: String="ДЕМО · ОБЗОР" if data.preview_accessible else "ЗАКРЫТО"
+	var footer: String=("ОБИТАЕМЫЙ ВОЛЬЕР" if data.preview_accessible else "ЗАКРЫТО") if data.get("permanent_room",false) else ("ДЕМО · ОБЗОР" if data.preview_accessible else "ЗАКРЫТО")
 	if is_instance_valid(environment) and environment.model.has_method("renovation_objects"):
 		footer="РЕМОНТ · %d%%" % environment.model.renovation.progress()
 	draw_string(ThemeDB.fallback_font,Vector2(8,size.y-9),footer,HORIZONTAL_ALIGNMENT_LEFT,size.x-16,9,ink)

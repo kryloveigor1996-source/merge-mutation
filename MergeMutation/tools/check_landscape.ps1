@@ -19,11 +19,12 @@ try {
         if ($Gpu) { $suites = @('portal_navigation_render','mutation_ui','mutation_undo_ui','complex_ui','living_habitat_ui','landscape_ui','landscape_navigation','modular_habitat_ui','wheel_navigation','ecosystem_ui') }
     }
     if ($Gpu) { $suites += @('world_progression_ui') } else { $suites += @('world_progression_model','world_progression_ui') }
+    $suites += if($Gpu){@('core_loop_ui','adaptive_audio')}else{@('core_loop','core_loop_ui','adaptive_audio')}
     $failed = @()
     foreach ($suite in $suites) {
         $log = Join-Path $logRoot ($suite + '-' + $mode + '.log')
         $renderer = if ($Gpu) {'--rendering-method gl_compatibility'} else {'--headless'}
-        $legacy = if ($suite.StartsWith('world_progression_')) {''} elseif ($suite.StartsWith('landscape_')) {' -- --habitat-stage-regression --ecosystem-legacy'} elseif ($suite.StartsWith('modular_')) {' -- --ecosystem-legacy'} elseif ($suite.StartsWith('wheel_') -or $suite.StartsWith('ecosystem_')) {' -- --living-world-legacy'} else {' -- --portrait-regression'}
+        $legacy = if ($suite.StartsWith('core_loop') -or $suite -eq 'adaptive_audio') {''} elseif ($suite.StartsWith('world_progression_')) {' -- --core-loop-legacy'} elseif ($suite.StartsWith('landscape_')) {' -- --habitat-stage-regression --ecosystem-legacy'} elseif ($suite.StartsWith('modular_')) {' -- --ecosystem-legacy'} elseif ($suite.StartsWith('wheel_') -or $suite.StartsWith('ecosystem_')) {' -- --living-world-legacy'} else {' -- --portrait-regression'}
         try {
             $content = Invoke-MMGodot -GodotPath $GodotPath -LogPath $log -EngineArguments ($renderer + ' --script res://tests/' + $suite + '_test.gd' + $legacy)
             Write-Output ($content -split '\r?\n' | Where-Object { $_ -match 'checks:' })

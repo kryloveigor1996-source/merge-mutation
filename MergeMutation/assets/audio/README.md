@@ -15,3 +15,9 @@ To replace a sound, add your own licensed WAV or OGG file:
 the synthesized sound. Each slot has its own AudioStreamPlayer. Settings can mute
 all effects; preference is stored separately in `user://merge_mutation_settings.cfg`.
 Gameplay progress remains in the existing `merge_mutation_save.json` format.
+
+## PR21 soundtrack
+
+Seven original multilayer Vorbis arrangements and two one-shot jingles now live in music/ and jingles/. See [audio-design](../../docs/audio-design.md) for composition provenance, tool licensing, measurements and regeneration. Runtime playback uses music_manager.gd; existing effects remain synthesized in lab_audio.gd on the independent SFX bus.
+
+WAV/MIDI intermediates are generated only under the ignored .godot/audio-generation/source directory; no model weights or third-party samples ship with the game.

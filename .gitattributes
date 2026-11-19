@@ -4,6 +4,7 @@
 .gitignore text eol=lf
 .gdignore text eol=lf
 *.gd text eol=lf
+*.cs text eol=lf
 *.gdshader text eol=lf
 *.gdshaderinc text eol=lf
 *.tscn text eol=lf
@@ -32,6 +33,7 @@
 *.mp3 binary
 *.avi binary
 *.ogv binary
+*.mp4 binary
 *.ttf binary
 *.otf binary
 *.res binary
