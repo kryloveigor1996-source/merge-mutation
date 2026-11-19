@@ -309,6 +309,9 @@ func pointer_event(event: InputEvent) -> Dictionary:
 	if event is InputEventMouseMotion: return {"point":event.position,"down":false,"up":false,"motion":true}
 	return {}
 func _gui_input(event: InputEvent) -> void:
+	if is_instance_valid(detail) or is_instance_valid(modal):
+		accept_event()
+		return
 	if not is_instance_valid(scroll): return
 	if event is InputEventMouseButton and event.pressed and viewport_rect().has_point(event.position) and event.button_index in [MOUSE_BUTTON_WHEEL_DOWN,MOUSE_BUTTON_WHEEL_UP]:
 		var origin: float=navigation_target if navigation!=null and navigation.is_running() else offset

@@ -1,0 +1,540 @@
+{
+  "version": 1,
+  "habitat_id": "habitat_horn",
+  "world_size": [
+    940,
+    420
+  ],
+  "zones": [
+    {
+      "rect": [
+        0,
+        0,
+        315,
+        420
+      ],
+      "name": "Отдых",
+      "zone_id": "west"
+    },
+    {
+      "rect": [
+        315,
+        0,
+        320,
+        420
+      ],
+      "name": "Тренировка и игры",
+      "zone_id": "central"
+    },
+    {
+      "rect": [
+        635,
+        0,
+        305,
+        420
+      ],
+      "name": "Минералы и исследования",
+      "zone_id": "east"
+    }
+  ],
+  "slots": [
+    {
+      "slot_id": "walls",
+      "habitat_id": "habitat_horn",
+      "zone_id": "central",
+      "name": "Скальный фон",
+      "description": "Ущелье, достойное маленького разрушителя.",
+      "rect": [
+        0,
+        0,
+        940,
+        315
+      ],
+      "anchor": [
+        400.0,
+        80
+      ],
+      "layer": "back",
+      "cost": 1,
+      "requires": [],
+      "interaction": "none",
+      "touch": [
+        388.0,
+        50,
+        60,
+        60
+      ],
+      "collision": [],
+      "designs": [
+        {
+          "design_id": "canyon_sandstone",
+          "name": "Песчаниковое ущелье",
+          "visual": "sandstone"
+        },
+        {
+          "design_id": "canyon_basalt",
+          "name": "Базальтовая пещера",
+          "visual": "basalt"
+        },
+        {
+          "design_id": "canyon_rift",
+          "name": "Кристаллический разлом",
+          "visual": "rift"
+        }
+      ],
+      "kind": "canyon_walls",
+      "action": "none",
+      "construction": "covered"
+    },
+    {
+      "slot_id": "floor",
+      "habitat_id": "habitat_horn",
+      "zone_id": "central",
+      "name": "Поверхность",
+      "description": "Поверхность для прогулок и разминки.",
+      "rect": [
+        0,
+        315,
+        940,
+        105
+      ],
+      "anchor": [
+        600.0,
+        387
+      ],
+      "layer": "ground",
+      "cost": 1,
+      "requires": [],
+      "interaction": "none",
+      "touch": [
+        388.0,
+        357,
+        60,
+        60
+      ],
+      "collision": [],
+      "designs": [
+        {
+          "design_id": "stony_ground",
+          "name": "Каменистый грунт",
+          "visual": "stony"
+        },
+        {
+          "design_id": "hot_sand",
+          "name": "Горячий песок",
+          "visual": "hot_sand"
+        },
+        {
+          "design_id": "obsidian_grit",
+          "name": "Обсидиановая крошка",
+          "visual": "obsidian"
+        }
+      ],
+      "kind": "canyon_floor",
+      "action": "none",
+      "construction": "site"
+    },
+    {
+      "slot_id": "bed",
+      "habitat_id": "habitat_horn",
+      "zone_id": "west",
+      "name": "Гнездо",
+      "description": "Уютное место для каменного тихого часа.",
+      "rect": [
+        72,
+        248,
+        160,
+        92
+      ],
+      "anchor": [
+        152,
+        290
+      ],
+      "layer": "objects",
+      "cost": 1,
+      "requires": [],
+      "interaction": "sleep",
+      "touch": [
+        72,
+        248,
+        160,
+        92
+      ],
+      "collision": [],
+      "designs": [
+        {
+          "design_id": "stone_nest",
+          "name": "Каменное гнездо",
+          "visual": "stone_nest"
+        },
+        {
+          "design_id": "thermal_niche",
+          "name": "Термальная ниша",
+          "visual": "thermal"
+        },
+        {
+          "design_id": "fossil_shelter",
+          "name": "Укрытие из окаменелостей",
+          "visual": "fossil_shelter"
+        }
+      ],
+      "kind": "horn_nest",
+      "action": "sleep",
+      "construction": "covered"
+    },
+    {
+      "slot_id": "feeder",
+      "habitat_id": "habitat_horn",
+      "zone_id": "east",
+      "name": "Минеральная кормушка",
+      "description": "Свежая порция минералов.",
+      "rect": [
+        712,
+        280,
+        120,
+        54
+      ],
+      "anchor": [
+        772,
+        300
+      ],
+      "layer": "objects",
+      "cost": 1,
+      "requires": [],
+      "interaction": "feed",
+      "touch": [
+        712,
+        274,
+        120,
+        66
+      ],
+      "collision": [],
+      "designs": [
+        {
+          "design_id": "ore_pile",
+          "name": "Россыпь руды",
+          "visual": "ore"
+        },
+        {
+          "design_id": "mineral_bowl",
+          "name": "Минеральная чаша",
+          "visual": "bowl"
+        },
+        {
+          "design_id": "mineral_dispenser",
+          "name": "Дозатор минералов",
+          "visual": "dispenser"
+        }
+      ],
+      "kind": "mineral_feeder",
+      "action": "mineral_feed",
+      "construction": "crate"
+    },
+    {
+      "slot_id": "training",
+      "habitat_id": "habitat_horn",
+      "zone_id": "central",
+      "name": "Тренировочный объект",
+      "description": "Мишень для сильных рогов.",
+      "rect": [
+        440,
+        230,
+        110,
+        96
+      ],
+      "anchor": [
+        495,
+        278
+      ],
+      "layer": "objects",
+      "cost": 1,
+      "requires": [],
+      "interaction": "training",
+      "touch": [
+        432,
+        222,
+        126,
+        112
+      ],
+      "collision": [
+        440,
+        230,
+        110,
+        40
+      ],
+      "designs": [
+        {
+          "design_id": "training_boulder",
+          "name": "Массивный валун",
+          "visual": "boulder"
+        },
+        {
+          "design_id": "training_crystal",
+          "name": "Растущий кристалл",
+          "visual": "growing"
+        },
+        {
+          "design_id": "training_target",
+          "name": "Усиленная мишень",
+          "visual": "target"
+        }
+      ],
+      "kind": "horn_training",
+      "action": "ram",
+      "construction": "covered"
+    },
+    {
+      "slot_id": "cabinets",
+      "habitat_id": "habitat_horn",
+      "zone_id": "east",
+      "name": "Монумент",
+      "description": "Можно попробовать сдвинуть. Но получится ли?",
+      "rect": [
+        802,
+        142,
+        126,
+        146
+      ],
+      "anchor": [
+        865,
+        210
+      ],
+      "layer": "far",
+      "cost": 1,
+      "requires": [],
+      "interaction": "storage",
+      "touch": [
+        802,
+        142,
+        126,
+        146
+      ],
+      "collision": [],
+      "designs": [
+        {
+          "design_id": "ancestor_stone",
+          "name": "Камень предков",
+          "visual": "ancestor"
+        },
+        {
+          "design_id": "crystal_monument",
+          "name": "Кристаллический монумент",
+          "visual": "crystal"
+        },
+        {
+          "design_id": "titanium_totem",
+          "name": "Титановый тотем",
+          "visual": "titanium"
+        }
+      ],
+      "kind": "horn_monument",
+      "action": "monument",
+      "construction": "covered"
+    },
+    {
+      "slot_id": "plants",
+      "habitat_id": "habitat_horn",
+      "zone_id": "west",
+      "name": "Трофеи",
+      "description": "Трофеи маленького исследователя.",
+      "rect": [
+        240,
+        174,
+        106,
+        150
+      ],
+      "anchor": [
+        293,
+        220
+      ],
+      "layer": "far",
+      "cost": 1,
+      "requires": [],
+      "interaction": "storage",
+      "touch": [
+        240,
+        174,
+        106,
+        150
+      ],
+      "collision": [],
+      "designs": [
+        {
+          "design_id": "fantasy_fossils",
+          "name": "Вымышленные окаменелости",
+          "visual": "fossils"
+        },
+        {
+          "design_id": "ancient_antlers",
+          "name": "Древние рога",
+          "visual": "antlers"
+        },
+        {
+          "design_id": "battle_banners",
+          "name": "Боевые знамёна",
+          "visual": "banners"
+        }
+      ],
+      "kind": "horn_trophies",
+      "action": "inspect_trophy",
+      "construction": "crate"
+    },
+    {
+      "slot_id": "lighting",
+      "habitat_id": "habitat_horn",
+      "zone_id": "central",
+      "name": "Освещение",
+      "description": "Тёплый свет над ущельем.",
+      "rect": [
+        508,
+        18,
+        120,
+        42
+      ],
+      "anchor": [
+        568,
+        45
+      ],
+      "layer": "light",
+      "cost": 1,
+      "requires": [],
+      "interaction": "light",
+      "touch": [
+        498,
+        8,
+        140,
+        62
+      ],
+      "collision": [],
+      "designs": [
+        {
+          "design_id": "thermal_torches",
+          "name": "Термальные факелы",
+          "visual": "thermal"
+        },
+        {
+          "design_id": "glowing_minerals",
+          "name": "Светящиеся минералы",
+          "visual": "minerals"
+        },
+        {
+          "design_id": "lab_searchlights",
+          "name": "Лабораторные прожекторы",
+          "visual": "searchlights"
+        }
+      ],
+      "kind": "horn_lighting",
+      "action": "light",
+      "construction": "crate"
+    },
+    {
+      "slot_id": "toy",
+      "habitat_id": "habitat_horn",
+      "zone_id": "central",
+      "name": "Игровой объект",
+      "description": "Самое время перекатить что-нибудь тяжёлое.",
+      "rect": [
+        564,
+        304,
+        66,
+        50
+      ],
+      "anchor": [
+        597,
+        325
+      ],
+      "layer": "objects",
+      "cost": 1,
+      "requires": [],
+      "interaction": "play",
+      "touch": [
+        553,
+        298,
+        88,
+        64
+      ],
+      "collision": [],
+      "designs": [
+        {
+          "design_id": "rolling_boulder",
+          "name": "Перекатываемый валун",
+          "visual": "rolling_rock"
+        },
+        {
+          "design_id": "bone_ring",
+          "name": "Костяное кольцо",
+          "visual": "bone_ring"
+        },
+        {
+          "design_id": "mechanical_beetle",
+          "name": "Механический жук",
+          "visual": "beetle"
+        }
+      ],
+      "kind": "horn_toy",
+      "action": "play",
+      "construction": "crate"
+    },
+    {
+      "slot_id": "water",
+      "habitat_id": "habitat_horn",
+      "zone_id": "east",
+      "name": "Исследовательская станция",
+      "description": "Учёный наблюдает, Рогач исследует.",
+      "rect": [
+        810,
+        240,
+        118,
+        84
+      ],
+      "anchor": [
+        869,
+        280
+      ],
+      "layer": "objects",
+      "cost": 1,
+      "requires": [],
+      "interaction": "storage",
+      "touch": [
+        810,
+        236,
+        118,
+        88
+      ],
+      "collision": [],
+      "designs": [
+        {
+          "design_id": "seismic_sensor",
+          "name": "Сейсмический датчик",
+          "visual": "seismograph"
+        },
+        {
+          "design_id": "magnetic_mineral_station",
+          "name": "Магнитная минералостанция",
+          "visual": "magnet"
+        },
+        {
+          "design_id": "horn_scanner",
+          "name": "Сканер рогов",
+          "visual": "scanner"
+        }
+      ],
+      "kind": "horn_laboratory",
+      "action": "lab_scan",
+      "construction": "crate"
+    }
+  ],
+  "reveal_order": [
+    "bed",
+    "training",
+    "feeder",
+    "toy",
+    "walls",
+    "floor",
+    "water",
+    "cabinets",
+    "plants",
+    "lighting"
+  ],
+  "offer_limit": 3
+}

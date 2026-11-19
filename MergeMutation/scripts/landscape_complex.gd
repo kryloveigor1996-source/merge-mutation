@@ -16,6 +16,10 @@ func back() -> void:
 	else: super.back()
 func make_floor(): return FloorLandscape.new()
 func make_living_detail(): return DetailLandscape.new() if stage_regression() else ModularDetail.new()
+func decorate_rooms(rooms: Array) -> void:
+	if not stage_regression():
+		for room in rooms:
+			if room.habitat_id!="habitat_horn": room.preview_accessible=false
 func create_living_models() -> void:
 	if not registry.habitats.has("habitat_horn"): return
 	var base:=LivingRegistry.new()
@@ -38,9 +42,7 @@ func setup(value: Control,model=null) -> void:
 	if model==null: source.load_files()
 	var floors: Array=source.floors.duplicate(true)
 	var rooms: Array=source.habitats.values().duplicate(true)
-	if not stage_regression():
-		for room in rooms:
-			if room.habitat_id!="habitat_horn": room.preview_accessible=false
+	decorate_rooms(rooms)
 	for floor in floors:
 		var ratio: float=1.0 if model!=null else {0:220.0,1:450.0,2:470.0,3:580.0,4:360.0}.get(int(floor.depth),floor.height)/float(floor.height)
 		floor.height*=ratio

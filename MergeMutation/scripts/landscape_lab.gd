@@ -4,10 +4,14 @@ const PortalLandscape=preload("res://scripts/landscape_portal.gd")
 const ExperimentLandscape=preload("res://scripts/landscape_experiment.gd")
 const ComplexLandscape=preload("res://scripts/landscape_complex.gd")
 const StoryLandscape=preload("res://scripts/landscape_story.gd")
+const EcoComplex=preload("res://scripts/ecosystem_complex.gd")
+const EcoPortal=preload("res://scripts/ecosystem_portal.gd")
+const AppChrome=preload("res://scripts/app_chrome.gd")
 var landscape_buttons: Dictionary={}
-func make_portal(): return PortalLandscape.new()
+var app_chrome: Control
+func make_portal(): return PortalLandscape.new() if Layout.ecosystem_legacy() else EcoPortal.new()
 func make_experiment(): return ExperimentLandscape.new()
-func make_complex(): return ComplexLandscape.new()
+func make_complex(): return ComplexLandscape.new() if Layout.ecosystem_legacy() else EcoComplex.new()
 func make_story(): return StoryLandscape.new()
 func rebuild() -> void:
 	super.rebuild()
@@ -17,6 +21,10 @@ func _ready() -> void:
 	for control in landscape_buttons.values(): control.add_theme_font_size_override("font_size",16)
 	create_button.add_theme_font_size_override("font_size",20)
 	game.reset_dialog.size=Vector2i(460,200)
+	if not Layout.ecosystem_legacy():
+		app_chrome=AppChrome.new()
+		app_chrome.setup(game,"lab")
+		add_child(app_chrome)
 	arrange()
 func button(title: String,rect: Rect2,color: Color,callback: Callable,parent: Node=self) -> Button:
 	var result:=super.button(title,rect,color,callback,parent)
@@ -66,6 +74,15 @@ func arrange() -> void:
 	nav_right.text="В ПЕСОЧНИЦУ" if playing else "НАСТРОЙКИ"
 	var next: String=game.campaign.next_species() if playing else ""
 	species_button.text=("ДАЛЕЕ: "+Catalog.species(next).name if not next.is_empty() else "НЕТ СОЗДАНИЙ") if playing else "ВИД: "+Catalog.species(game.active_species).name
+	if not Layout.ecosystem_legacy() and not playing:
+		for key in ["КОЛЛЕКЦИЯ","ПОРТАЛЫ","КОМПЛЕКС","НАСТРОЙКИ"]:
+			if landscape_buttons.has(key): landscape_buttons[key].hide()
+		Layout.place(experiment_button,Rect2(710,238,230,60))
+		if is_instance_valid(app_chrome): app_chrome.visible=not is_instance_valid(overlay) and not portal_ui.visible and not is_instance_valid(experiment_ui) and not is_instance_valid(complex_ui) and not is_instance_valid(story_screen)
+	elif is_instance_valid(app_chrome):
+		app_chrome.hide()
+		for key in ["КОЛЛЕКЦИЯ","ПОРТАЛЫ","НАСТРОЙКИ"]:
+			if landscape_buttons.has(key): landscape_buttons[key].show()
 func _process(delta: float) -> void:
 	super._process(delta)
 	arrange()
@@ -114,6 +131,15 @@ func show_panel(kind: String) -> void:
 	var panel: PanelContainer=overlay.get_child(1)
 	panel.position=Vector2(140,20)
 	panel.size=Vector2(680,500)
+	if not Layout.ecosystem_legacy() and kind=="collection":
+		var content: VBoxContainer=panel.get_child(0).get_child(0)
+		content.get_child(content.get_child_count()-1).hide() # Shared navigation provides the return action.
+		panel.position=Vector2(140,76)
+		panel.size=Vector2(680,394)
+		panel.set_deferred("size",Vector2(680,394))
+		var chrome:=AppChrome.new()
+		chrome.setup(game,"bestiary")
+		overlay.add_child(chrome)
 func _draw_discovery_banner() -> void:
 	if banner_alpha<=0: return
 	discovery_layer.draw_set_transform(Vector2(480,68),0,Vector2.ONE*banner_scale)

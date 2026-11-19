@@ -4,6 +4,8 @@ const BOARD:=Rect2(320,82,320,384)
 const CELL:=64.0
 static func portrait_regression() -> bool:
 	return "--portrait-regression" in OS.get_cmdline_user_args()
+static func ecosystem_legacy() -> bool:
+	return portrait_regression() or "--ecosystem-legacy" in OS.get_cmdline_user_args() or "--habitat-stage-regression" in OS.get_cmdline_user_args()
 static func fit(available: Rect2) -> Rect2:
 	var factor:=minf(available.size.x/DESIGN.x,available.size.y/DESIGN.y)
 	return Rect2(available.position+(available.size-DESIGN*factor)*0.5,DESIGN*factor)

@@ -1,6 +1,6 @@
 extends RefCounted
 const Catalog=preload("res://scripts/mutant_catalog.gd")
-const MOTION_DRIVERS={"ground_horizontal":preload("res://scripts/habitat_ground_motion.gd")}
+const MOTION_DRIVERS={"ground_horizontal":preload("res://scripts/habitat_ground_motion.gd"),"slime_crawl":preload("res://scripts/slime_ground_motion.gd")}
 var assignments: Dictionary={}
 var profiles: Dictionary={}
 var stages: Dictionary={}

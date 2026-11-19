@@ -1,6 +1,8 @@
 extends RefCounted
 ## Replace any design with a PNG via its optional texture field. IDs remain unchanged.
 const W=preload("res://scripts/journey_widgets.gd")
+const EcosystemArt=preload("res://scripts/ecosystem_art.gd")
+const EcosystemVisuals=preload("res://scripts/ecosystem_visuals.gd")
 static var textures: Dictionary={}
 static func panel(n: CanvasItem,r: Rect2,color: Color,radius: int=10) -> void: n.draw_style_box(W.box(color,radius),r)
 static func poly(n: CanvasItem,points: Array,color: Color) -> void: n.draw_colored_polygon(PackedVector2Array(points),color)
@@ -12,11 +14,13 @@ static func draw_layer(env,id: String) -> void:
 	var n: Node2D=env.layers[id]
 	var m=env.model
 	var width: float=m.registry.world_width
-	if id=="back":
+	var ecosystem: bool=m.has_method("configure_ecology")
+	if ecosystem: EcosystemArt.base(n,id,m)
+	if id=="back" and not ecosystem:
 		n.draw_rect(Rect2(0,0,width,420),Color("8e9694"))
 		for y in range(0,316,52): n.draw_line(Vector2(0,y),Vector2(width,y),Color("788581"),2)
 		for x in range(0,int(width),160): n.draw_line(Vector2(x,0),Vector2(x,315),Color("7d8986"),2)
-	if id=="ground":
+	if id=="ground" and not ecosystem:
 		n.draw_rect(Rect2(0,315,width,105),Color("93938a"))
 		n.draw_line(Vector2(0,315),Vector2(width,315),Color("697773"),6)
 	var room=m.renovation
@@ -30,6 +34,12 @@ static func draw_layer(env,id: String) -> void:
 		var rect: Rect2=room.catalog.project_rect(slot,width)
 		if not visible.intersects(rect): continue
 		draw_design(n,slot.kind,design,rect,m,key)
+	if ecosystem and id=="objects":
+		for key in room.offered():
+			if room.preview_slot==key: continue
+			var slot: Dictionary=room.catalog.slots[key]
+			var point: Vector2=room.catalog.marker(slot,width)
+			if visible.grow(40).has_point(point): EcosystemArt.construction(n,m,slot)
 	if id=="back":
 		for x in [18.0,width-82]:
 			n.draw_line(Vector2(x,4),Vector2(x,265),Color("455a61"),12)
@@ -57,6 +67,9 @@ static func draw_design(n: CanvasItem,kind: String,d: Dictionary,r: Rect2,m=null
 			n.draw_texture_rect(texture,Rect2(r.get_center()-fitted*0.5,fitted),false)
 			return
 	var v: String=d.visual
+	if EcosystemVisuals.KINDS.has(kind):
+		EcosystemArt.draw(n,kind,v,r,m,slot_id)
+		return
 	if kind=="walls":
 		n.draw_rect(r,{"rock":Color("718582"),"nature":Color("95bda1"),"future":Color("4c687c")}[v])
 		for x in range(0,int(r.size.x),150):

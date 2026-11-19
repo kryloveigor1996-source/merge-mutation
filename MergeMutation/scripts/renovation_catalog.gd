@@ -1,11 +1,14 @@
 extends RefCounted
 ## Immutable authored geometry and identifiers; no player data or UI dependencies.
 const C=preload("res://scripts/mutant_catalog.gd")
+const EcoVisuals=preload("res://scripts/ecosystem_visuals.gd")
 var habitat_id:=""
 var slots: Dictionary={}
 var zones: Dictionary={}
 var error:=""
 var world_size:=Vector2(2350,420)
+var offers: Array=[]
+var offer_limit:=3
 const VISUALS={
 	"walls":["rock","nature","future"],"floor":["stone","sand","metal"],
 	"bed":["cave","cushion","pod"],"feeder":["bowl","auto","wood"],
@@ -32,7 +35,8 @@ func fail(message: String) -> bool:
 func configure(data: Variant) -> bool:
 	fail("")
 	if not data is Dictionary or data.get("version")!=1 or not C.valid_id(data.get("habitat_id")) or not data.get("slots") is Array or not data.get("zones") is Array: return fail("Неверный каталог")
-	if not data.get("world_size") is Array or data.world_size.size()!=2 or data.world_size[0]!=2350 or data.world_size[1]!=420 or data.slots.is_empty() or data.slots.size()>256: return fail("Неверный размер мира или число слотов")
+	if not data.get("world_size") is Array or data.world_size.size()!=2 or not C.integer(data.world_size[0],9400) or data.world_size[0]<340 or data.world_size[1]!=420 or data.slots.is_empty() or data.slots.size()>256: return fail("Неверный размер мира или число слотов")
+	world_size=Vector2(data.world_size[0],420)
 	habitat_id=data.habitat_id
 	var bounds:=Rect2(Vector2.ZERO,world_size)
 	for zone in data.zones:
@@ -46,7 +50,7 @@ func configure(data: Variant) -> bool:
 	for slot in data.slots:
 		if not slot is Dictionary or not C.valid_id(slot.get("slot_id")) or slots.has(slot.slot_id) or slot.get("habitat_id")!=habitat_id or not zones.has(slot.get("zone_id")): return fail("Неверный ID или ссылка слота")
 		if not slot.get("name") is String or slot.name.is_empty() or not slot.get("description") is String or slot.get("layer") not in ["back","ground","far","objects","front","light"]: return fail("Неверное описание слота")
-		if not VISUALS.has(slot.get("kind")): return fail("Неизвестный тип предмета")
+		if not VISUALS.has(slot.get("kind")) and not EcoVisuals.KINDS.has(slot.get("kind")): return fail("Неизвестный тип предмета")
 		if not rectangle(slot.get("rect"),bounds) or not rectangle(slot.get("touch"),bounds): return fail("Геометрия вне мира")
 		if slot.touch[2]<44 or slot.touch[3]<44: return fail("Слишком маленькая область касания")
 		if not slot.get("anchor") is Array or slot.anchor.size()!=2: return fail("Неверный маркер")
@@ -62,11 +66,11 @@ func configure(data: Variant) -> bool:
 			var r: Array=slot.rect
 			if not rectangle(slot.collision,Rect2(r[0],r[1],r[2],r[3])): return fail("Коллизия вне предмета")
 			var a: Array=slot.collision
-			if Rect2(a[0],a[1],a[2],a[3]).intersects(Rect2(48,274,2254,80)): return fail("Предмет перекрывает дорожку")
+			if Rect2(a[0],a[1],a[2],a[3]).intersects(Rect2(48,274,world_size.x-96,80)): return fail("Предмет перекрывает дорожку")
 		if not slot.get("designs") is Array or slot.designs.size()!=3: return fail("Нужны три варианта")
 		for design in slot.designs:
 			if not design is Dictionary or not C.valid_id(design.get("design_id")) or design_ids.has(design.design_id) or not C.valid_id(design.get("visual")) or not design.get("name") is String: return fail("Неверный или повторный вариант")
-			if design.visual not in VISUALS[slot.kind]: return fail("Неизвестное оформление")
+			if design.visual not in VISUALS.get(slot.kind,EcoVisuals.KINDS.get(slot.kind,[])): return fail("Неизвестное оформление")
 			if design.has("texture") and (not design.texture is String or not design.texture.begins_with("res://")): return fail("Неверный ресурс")
 			if design.has("texture") and not ResourceLoader.exists(design.texture,"Texture2D"): return fail("Отсутствует текстура варианта")
 			design_ids[design.design_id]=true
@@ -86,6 +90,14 @@ func configure(data: Variant) -> bool:
 		for id in ready:
 			pending.erase(id)
 			for key in pending: pending[key].erase(id)
+	offers=data.get("reveal_order",slots.keys()).duplicate()
+	offer_limit=int(data.get("offer_limit",3))
+	if offer_limit<1 or offer_limit>6 or offers.size()!=slots.size(): return fail("Неверный порядок появления")
+	var revealed: Dictionary={}
+	for id in offers:
+		if not slots.has(id) or revealed.has(id): return fail("Неверная ссылка появления")
+		revealed[id]=true
+		if slots[id].get("construction","crate") not in ["crate","covered","site"]: return fail("Неизвестная стройка")
 	return true
 func design(slot_id: String,design_id: String) -> Dictionary:
 	for d in slots.get(slot_id,{}).get("designs",[]):
