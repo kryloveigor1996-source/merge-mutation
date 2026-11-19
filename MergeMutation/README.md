@@ -80,44 +80,54 @@
 
 Повреждённые данные блокируют запись, игра показывает временное начальное поле. Исправьте файл и перезапустите игру либо подтвердите новую игру. Перед заменой существующего проблемного/старого файла v2 создаётся копия `.pre-update-<hash>.bak`. Запись выполняется через временный файл. Подробнее: [безопасность миграции](docs/species-evolution.md).
 
-## Проверки
+## Проверки и рабочие артефакты
 
-Из папки `MergeMutation` выполните:
-
-```text
-godot --headless --editor --path . --import --quit
-godot --headless --path . --script res://tests/prototype_test.gd
-godot --headless --path . --script res://tests/presentation_test.gd
-godot --headless --path . --script res://tests/slime_sprite_test.gd
-godot --headless --path . --script res://tests/mutant_sprites_test.gd
-godot --headless --path . --script res://tests/mutant_levels_4_6_test.gd
-godot --headless --path . --script res://tests/progressive_sizes_test.gd
-godot --headless --path . --script res://tests/species_evolution_test.gd
-godot --headless --path . --script res://tests/campaign_test.gd
-godot --headless --path . --script res://tests/tactical_test.gd
-godot --headless --path . --script res://tests/portal_world_test.gd
-godot --headless --path . --script res://tests/portal_revision_test.gd
-```
-
-Отдельная холодная компиляция **всех** `.gd`, включая наследуемые тесты и инструменты снимков:
+Git-корень и Godot-проект — разные каталоги с одинаковым именем: исходники находятся во
+**внутреннем** `MergeMutation/`. Запускайте инструменты ниже из этой папки либо вызывайте
+их по полному пути из любой рабочей директории. Они сами определяют проект, задают
+`--path` и рабочий каталог процесса; не используйте внешний корень как Godot-проект.
 
 ```powershell
-./tools/check_gdscript.ps1 -GodotPath 'C:/path/to/godot.exe'
+$godot = 'C:/path/to/godot.exe'
+./tools/check_workspace.ps1 -GodotPath $godot
+./tools/run_godot.ps1 -GodotPath $godot -Mode import -Label pr20-import
+./tools/run_godot.ps1 -GodotPath $godot -Mode import -Label pr20-reimport
+./tools/check_gdscript.ps1 -GodotPath $godot -Label pr20-compile
+./tools/check_landscape.ps1 -GodotPath $godot -IncludePortraitRegression -Label pr20
+./tools/check_landscape.ps1 -GodotPath $godot -Gpu -IncludePortraitRegression -Label pr20
+./tools/run_godot.ps1 -GodotPath $godot -Mode runtime -Label pr20-smoke
 ```
 
-Godot может вернуть код 0 при ошибке скрипта: проверяйте также Output и сообщения `SCRIPT ERROR`, `ERROR`, `WARNING`, `FAIL`.
+Состав регрессий и логика тестов сохранены: 29 headless-наборов, 11 GPU-наборов,
+124 GDScript. Инструменты проверяют код завершения и строки SCRIPT ERROR/ERROR/WARNING/FAIL.
+Каждый запуск создаёт собственный каталог с UTC-датой, типом, меткой и коротким ID
+в корневом `logs/import/`, `logs/runtime/` или `logs/tests/`.
+APPDATA изолирован во внутренней `.godot/test-appdata/` и восстанавливается после команды.
+Обычный запуск через редактор продолжает использовать пользовательский профиль.
 
-Для GPU-снимков (не headless):
+Отдельный тест и новые снимки PR20:
 
-```text
-godot --path . --script res://tests/capture_species.gd
-godot --path . --script res://tests/capture_tactical.gd
-godot --path . --script res://tests/capture_portals.gd
-godot --path . --script res://tests/portal_navigation_render_test.gd
+```powershell
+./tools/run_godot.ps1 -GodotPath $godot -Mode script -Script res://tests/world_progression_ui_test.gd -Gpu -Label pr20-capture
 ```
 
-Снимки и тестовые сохранения создаются только в игнорируемой `.godot/`. Тесты не используют сохранения игрока. С экспериментом проверено 5160 headless-утверждений и 988 GPU-проверок; все 75 скриптов компилируются отдельно. Реальное Android-устройство и экспорт APK не проверены.
+Снимки/одноразовые тестовые профили и доказательства решений остаются во внутренней
+игнорируемой `.godot/`: пути `res://.godot/...` не менялись. После проверки нужные материалы
+можно явно добавить в `docs/`; существующие отчёты и их ссылки не перемещались.
+Команды в старых отчётах отражают предыдущие этапы; для текущих запусков используйте
+эти обёртки. Политика артефактов и аудит: [workspace-cleanup.md](docs/workspace-cleanup.md).
 
+Экспорт разрешён только в корневой `builds/android/` или `builds/windows/`.
+После отдельной настройки существующего export preset:
+
+```powershell
+./tools/run_godot.ps1 -GodotPath $godot -Mode export -Platform android -ExportPreset Android -Label android-release
+```
+
+Имя сборки по умолчанию содержит UTC-дату; существующий файл не перезаписывается.
+В текущем проекте export_presets.cfg отсутствует, поэтому уборка не создаёт APK/AAB
+и не меняет настройки Android. Пароли/ключи подписи, локальные логи и сборки не добавляются
+в Git. `*.png.import`, `*.gd.uid`, игровые JSON/TXT/PNG и утверждённые docs сохраняются.
 ## Файлы и расширение
 
 - `scripts/mutant_catalog.gd`: стабильные ID, параметры видов, максимумы стадий, правила объединения.

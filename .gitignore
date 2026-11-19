@@ -13,3 +13,34 @@ Desktop.ini
 
 # macOS
 .DS_Store
+
+# Generated workspace outputs (only directory placeholders are tracked).
+/logs/**
+!/logs/import/
+!/logs/import/.gitkeep
+!/logs/runtime/
+!/logs/runtime/.gitkeep
+!/logs/tests/
+!/logs/tests/.gitkeep
+!/logs/archive/
+!/logs/archive/.gitkeep
+/builds/**
+!/builds/android/
+!/builds/android/.gitkeep
+!/builds/windows/
+!/builds/windows/.gitkeep
+*.apk
+*.aab
+
+# Local secrets and Android signing credentials.
+.env
+.env.*
+!.env.example
+export_credentials.cfg
+*.keystore
+*.jks
+*.p12
+*.pfx
+*.private.key
+*private*.pem
+*signing*.pem

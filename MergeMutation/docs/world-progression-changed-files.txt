@@ -1,4 +1,11 @@
+.gitignore
 AGENTS.md
+builds/android/.gitkeep
+builds/windows/.gitkeep
+logs/archive/.gitkeep
+logs/import/.gitkeep
+logs/runtime/.gitkeep
+logs/tests/.gitkeep
 MergeMutation/data/bestiary.json
 MergeMutation/data/ecosystems.json
 MergeMutation/data/environment_progression.json
@@ -6,6 +13,7 @@ MergeMutation/data/renovation/ecosystem_slime.json
 MergeMutation/docs/bestiary-world-progression-playtest.md
 MergeMutation/docs/bestiary-world-progression.md
 MergeMutation/docs/species-design-template.md
+MergeMutation/docs/workspace-cleanup.md
 MergeMutation/docs/workspace-isolation.md
 MergeMutation/docs/world-bible.md
 MergeMutation/docs/world-progression-changed-files.txt
@@ -33,6 +41,7 @@ MergeMutation/docs/world-progression/slime-empty.png
 MergeMutation/docs/world-progression/startup.png
 MergeMutation/docs/world-progression/unknown.png
 MergeMutation/docs/world-progression/wing-dossier.png
+MergeMutation/README.md
 MergeMutation/scripts/app_chrome.gd
 MergeMutation/scripts/bestiary_model.gd
 MergeMutation/scripts/bestiary_model.gd.uid
@@ -56,4 +65,9 @@ MergeMutation/tests/world_progression_model_test.gd
 MergeMutation/tests/world_progression_model_test.gd.uid
 MergeMutation/tests/world_progression_ui_test.gd
 MergeMutation/tests/world_progression_ui_test.gd.uid
+MergeMutation/tools/check_gdscript.ps1
 MergeMutation/tools/check_landscape.ps1
+MergeMutation/tools/check_staged.ps1
+MergeMutation/tools/check_workspace.ps1
+MergeMutation/tools/run_godot.ps1
+MergeMutation/tools/workspace_paths.ps1
