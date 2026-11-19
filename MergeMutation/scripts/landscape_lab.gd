@@ -46,6 +46,7 @@ func visit_from_bestiary(id: String) -> bool:
 	archive_return=true
 	return complex_ui.open_living(id)
 var app_chrome: Control
+func make_bestiary(): return Bestiary.new()
 func make_portal(): return PortalLandscape.new() if Layout.ecosystem_legacy() else EcoPortal.new()
 func make_experiment(): return ExperimentLandscape.new()
 func make_complex(): return ComplexLandscape.new() if Layout.ecosystem_legacy() else EcoComplex.new()
@@ -166,7 +167,7 @@ func show_panel(kind: String) -> void:
 		close_panel()
 		close_navigation()
 		panel_kind="collection"
-		overlay=Bestiary.new()
+		overlay=make_bestiary()
 		overlay.z_index=40
 		overlay.setup(game)
 		add_child(overlay)

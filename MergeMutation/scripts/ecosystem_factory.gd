@@ -2,14 +2,16 @@ extends RefCounted
 const Index=preload("res://scripts/ecosystem_catalog.gd")
 const Living=preload("res://scripts/living_registry.gd")
 const Resident=preload("res://scripts/ecosystem_state.gd")
+const Permanent=preload("res://scripts/permanent_habitat.gd")
 const Renovation=preload("res://scripts/ecosystem_renovation.gd")
-static func create(complex_registry,save_path: String,config_path: String="") -> Dictionary:
+static func create(complex_registry,save_path: String,config_path: String="",owner_game=null) -> Dictionary:
 	var models: Dictionary={}
 	if not complex_registry.habitats.has("habitat_horn") and not complex_registry.habitats.has("habitat_slime"): return models
 	var index:=Index.new()
 	if not index.load_file(complex_registry,config_path): return models
 	for id in index.rooms:
 		var room: Dictionary=index.rooms[id]
+		if owner_game!=null and not owner_game.species_known(room.species_id): continue
 		var living:=Living.new()
 		if not living.load_files(complex_registry): continue
 		var profile: Dictionary=room.motion_profile.duplicate(true)
@@ -27,8 +29,11 @@ static func create(complex_registry,save_path: String,config_path: String="") ->
 		var model:=Resident.new()
 		model.setup(id,living)
 		model.configure_ecology(room)
-		var state:=Renovation.new()
-		state.setup(index.catalogs[id],save_path+".habitat-demo-v1.json")
+		var state=Renovation.new() if owner_game==null else Permanent.new()
+		if owner_game==null: state.setup(index.catalogs[id],save_path+".habitat-demo-v1.json")
+		else:
+			state.bind(owner_game,index.catalogs[id])
+			model.action_completed.connect(owner_game.observe)
 		model.attach(state)
 		models[id]=model
 	return models

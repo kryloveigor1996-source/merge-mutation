@@ -8,6 +8,7 @@ param(
     [string]$Label='godot',
     [ValidateSet('android','windows')][string]$Platform='android',
     [string]$ExportPreset,
+    [switch]$DebugExport,
     [string]$OutputName
 )
 $ErrorActionPreference='Stop'
@@ -34,7 +35,8 @@ switch($Mode){
         $output=Get-MMBuildPath -Platform $Platform -FileName $OutputName
         New-Item -ItemType Directory -Path ([IO.Path]::GetDirectoryName($output)) -Force | Out-Null
         if(Test-Path -LiteralPath $output){throw 'Build output exists; choose a new filename.'}
-        $arguments+=' --export-release "'+$ExportPreset+'" "'+$output+'"'
+        $exportMode=if($DebugExport){' --export-debug "'}else{' --export-release "'}
+        $arguments+=$exportMode+$ExportPreset+'" "'+$output+'"'
     }
 }
 $category=if($Mode -eq 'import'){'import'}elseif($Mode -eq 'script'){'tests'}else{'runtime'}

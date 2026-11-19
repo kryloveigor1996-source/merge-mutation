@@ -164,6 +164,8 @@ func settle_campaign_action() -> void:
 			if campaign.status=="won" and campaign.config.id=="lab_10" and last_reward.stars>0 and not journey_state.has_seen("swamp_activation"):
 				view.show_story("swamp_activation")
 
+func make_view():
+	return LabView.new() if Layout.portrait_regression() else LandscapeView.new()
 func _ready() -> void:
 	if Layout.portrait_regression(): get_window().content_scale_size=Vector2i(360,720)
 	rng.randomize()
@@ -173,7 +175,7 @@ func _ready() -> void:
 	reset_dialog.dialog_text = "Начать заново?\nПоле, монеты и коллекция будут сброшены."
 	reset_dialog.confirmed.connect(_new_game)
 	add_child(reset_dialog)
-	view = LabView.new() if Layout.portrait_regression() else LandscapeView.new()
+	view = make_view()
 	view.game = self
 	add_child(view)
 	resized.connect(view.layout)
