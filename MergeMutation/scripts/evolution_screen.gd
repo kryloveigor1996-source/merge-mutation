@@ -7,6 +7,8 @@ const History=preload("res://scripts/mutation_history.gd")
 const Board=preload("res://scripts/evolution_board.gd")
 const TouchScroll=preload("res://scripts/evolution_touch_scroll.gd")
 const Art=preload("res://scripts/mutant_art.gd")
+const Tap=preload("res://scripts/puzzle_tap.gd")
+var gesture=Tap.new()
 var game
 var session
 var history=History.new()
@@ -38,7 +40,7 @@ func setup(value) -> void:
 	show_list()
 func clear_ui() -> void:
 	if animation!=null: animation.kill()
-	busy=false; selected=-1; pressed=-1
+	busy=false; selected=-1; pressed=-1; gesture.cancel()
 	actors.clear()
 	result_panel=null
 	for child in get_children(): remove_child(child); child.queue_free()
@@ -84,7 +86,7 @@ func start_trial(index: int) -> bool:
 	completed_before_attempt=completed.has(index)
 	session=attempt; number=index; history.reset(); idle=0
 	reflow()
-	game.view.tutorial.request("movement","Перетащите обитателя или выберите его, затем клетку. Цифра — цена пути.",G.board(tall()),"evolution_"+str(number))
+	game.view.tutorial.request("tap_controls","Нажмите на обитателя, затем на отмеченную клетку. Цифра — цена. Повторное нажатие снимает выбор.",G.board(tall()),"evolution_"+str(number))
 	for object in session.config.objects:
 		var hints: Dictionary={"plate":"Плита работает, пока на ней стоит обитатель или ящик.","crate":"Рогач толкает ящик в свободную соседнюю клетку.","hidden":"Глазастик обнаруживает скрытые механизмы рядом с собой.","portal":"Подходящий обитатель эвакуируется при входе в портал.","equipment":"Подойдите к прибору и взаимодействуйте с ним подходящим обитателем.","sample":"Образец подбирает обитатель, вошедший в клетку.","anomaly":"У аномалии есть требования к виду, стадии и питанию."}
 		if hints.has(object.type):
@@ -154,7 +156,7 @@ func notify(text: String) -> void:
 		if is_instance_valid(feedback): feedback.hide(); status_label.show()
 	)
 func spawn_creature() -> void:
-	if busy: return
+	if busy or gesture.active: return
 	var result=history.execute(session,{"kind":"spawn"})
 	if not result.ok:
 		notify(result.get("reason","Создание недоступно"))
@@ -167,6 +169,7 @@ func act(index: int) -> void:
 	if not result.ok: notify(result.get("reason","Действие недоступно")); return
 	finish(result)
 func finish(result: Dictionary) -> void:
+	game.view.preferences.master("tap_controls")
 	if result.kind in ["move","merge","jump","push","corridor"]: game.view.preferences.master("movement")
 	var mastery: Dictionary={"push":"mechanism_crate","reveal":"mechanism_hidden","neutralize":"mechanism_anomaly"}
 	if mastery.has(result.kind): game.view.preferences.master(mastery[result.kind])
@@ -218,21 +221,36 @@ func exit_experiment() -> void:
 	if animation!=null: animation.kill()
 	if get_parent()!=null: get_parent().remove_child(self)
 	queue_free()
+func cancel_control() -> void:
+	gesture.cancel(); pressed=-1
+	if session==null: return
+	if animation!=null: animation.kill()
+	busy=false
+	# Session is authoritative; never leave a killed tween at an intermediate position.
+	refresh()
+func choose(index: int) -> void:
+	if busy or session==null or session.status!="active" or index<0: return
+	if index==selected: selected=-1
+	elif selected>=0 and not session.target_action(selected,index).is_empty(): act(index); return
+	elif session.cells[index]!=null: selected=index
+	queue_redraw(); marks.queue_redraw()
 func _gui_input(event: InputEvent) -> void:
+	if session!=null:
+		if busy: gesture.cancel(); accept_event(); return
+		var click=gesture.feed(event)
+		if not click.is_empty() and G.cell_at(click.origin,tall())==G.cell_at(click.point,tall()): choose(G.cell_at(click.point,tall()))
+		accept_event(); return
+	# List swipes remain available independently of board controls.
 	var point=Vector2.ZERO
 	var down=false
 	var up=false
 	var motion=false
 	if event is InputEventScreenTouch:
 		if event.index!=0: return
-		if event.canceled:
-			if actors.has(selected): actors[selected].position=G.center(selected,tall()); actors[selected].settle()
-			pressed=-1; selected=-1
-			if is_instance_valid(marks): marks.queue_redraw()
-			accept_event(); return
+		if event.canceled: pressed=-1; accept_event(); return
 		point=event.position; down=event.pressed; up=not down
 	elif event is InputEventMouseButton:
-		if session==null and event.button_index in [MOUSE_BUTTON_WHEEL_UP,MOUSE_BUTTON_WHEEL_DOWN]:
+		if event.button_index in [MOUSE_BUTTON_WHEEL_UP,MOUSE_BUTTON_WHEEL_DOWN]:
 			if event.pressed: list_scroll.scroll_vertical+=86 if event.button_index==MOUSE_BUTTON_WHEEL_DOWN else -86
 			accept_event(); return
 		if event.button_index!=MOUSE_BUTTON_LEFT: return
@@ -242,30 +260,17 @@ func _gui_input(event: InputEvent) -> void:
 		point=event.position; motion=true
 	elif event is InputEventMouseMotion: point=event.position; motion=true
 	else: return
-	if busy: accept_event(); return
 	if down:
-		pointer_start=point; last_pointer=point; travel=0; idle=0
-		pressed=G.cell_at(point,tall()) if session!=null else (0 if list_area.has_point(point) else -1)
-		if session!=null and pressed>=0 and (selected<0 or pressed==selected or session.target_action(selected,pressed).is_empty()):
-			if session.cells[pressed]!=null:
-				selected=pressed
-				if actors.has(selected): actors[selected].lift()
-				marks.queue_redraw()
+		pointer_start=point; last_pointer=point; travel=0
+		pressed=0 if list_area.has_point(point) else -1
 	elif motion and pressed>=0:
 		travel+=point.distance_to(last_pointer)
-		if session==null: list_scroll.scroll_vertical-=int(point.y-last_pointer.y)
-		elif selected==pressed and travel>12 and actors.has(selected): actors[selected].position=point.clamp(G.board(tall()).position+Vector2.ONE*20,G.board(tall()).end-Vector2.ONE*20)
-		last_pointer=point
+		list_scroll.scroll_vertical-=int(point.y-last_pointer.y); last_pointer=point
 	elif up and pressed>=0:
-		if session==null:
-			if maxf(travel,point.distance_to(pointer_start))<12 and list_area.has_point(point):
-				var row=int((point.y-list_area.position.y+list_scroll.scroll_vertical)/86)
-				if row>=0 and row<10: start_trial(row+1)
-		else:
-			var index=G.cell_at(point,tall())
-			if index!=selected: act(index)
-			elif actors.has(selected): actors[selected].position=G.center(selected,tall()); actors[selected].settle()
 		pressed=-1
+		if maxf(travel,point.distance_to(pointer_start))<12 and list_area.has_point(point):
+			var row=int((point.y-list_area.position.y+list_scroll.scroll_vertical)/86)
+			if row>=0 and row<10: start_trial(row+1)
 	accept_event()
 func _process(delta: float) -> void:
 	elapsed+=delta; idle+=delta

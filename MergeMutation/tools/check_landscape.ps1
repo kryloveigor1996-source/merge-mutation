@@ -20,12 +20,12 @@ try {
     }
     if ($Gpu) { $suites += @('world_progression_ui') } else { $suites += @('world_progression_model','world_progression_ui') }
     $suites += if($Gpu){@('core_loop_ui','adaptive_audio')}else{@('core_loop','core_loop_ui','adaptive_audio')}
-    $suites += if($Gpu){@('evolution_layout','evolution_navigation','evolution_gameplay_ui')}else{@('evolution_model','evolution_layout','evolution_navigation','evolution_gameplay_ui')}
+    $suites += if($Gpu){@('evolution_layout','evolution_navigation','evolution_gameplay_ui','mobile_control')}else{@('evolution_model','evolution_layout','evolution_navigation','evolution_gameplay_ui','mobile_control')}
     $failed = @()
     foreach ($suite in $suites) {
         $log = Join-Path $logRoot ($suite + '-' + $mode + '.log')
         $renderer = if ($Gpu) {'--rendering-method gl_compatibility'} else {'--headless'}
-        $legacy = if ($suite.StartsWith('evolution_')) {''} elseif ($suite.StartsWith('core_loop')) {' -- --pr21-regression'} elseif ($suite -eq 'adaptive_audio') {''} elseif ($suite.StartsWith('world_progression_')) {' -- --core-loop-legacy'} elseif ($suite.StartsWith('landscape_')) {' -- --habitat-stage-regression --ecosystem-legacy'} elseif ($suite.StartsWith('modular_')) {' -- --ecosystem-legacy'} elseif ($suite.StartsWith('wheel_') -or $suite.StartsWith('ecosystem_')) {' -- --living-world-legacy'} else {' -- --portrait-regression'}
+        $legacy = if (($suite.StartsWith('evolution_') -or $suite.StartsWith('mobile_'))) {''} elseif ($suite.StartsWith('core_loop')) {' -- --pr21-regression'} elseif ($suite -eq 'adaptive_audio') {''} elseif ($suite.StartsWith('world_progression_')) {' -- --core-loop-legacy'} elseif ($suite.StartsWith('landscape_')) {' -- --habitat-stage-regression --ecosystem-legacy'} elseif ($suite.StartsWith('modular_')) {' -- --ecosystem-legacy'} elseif ($suite.StartsWith('wheel_') -or $suite.StartsWith('ecosystem_')) {' -- --living-world-legacy'} else {' -- --portrait-regression'}
         try {
             $content = Invoke-MMGodot -GodotPath $GodotPath -LogPath $log -EngineArguments ($renderer + ' --script res://tests/' + $suite + '_test.gd' + $legacy)
             Write-Output ($content -split '\r?\n' | Where-Object { $_ -match 'checks:' })

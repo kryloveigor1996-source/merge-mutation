@@ -1,4 +1,5 @@
 extends RefCounted
+const Marks=preload("res://scripts/puzzle_marks.gd")
 const W=preload("res://scripts/journey_widgets.gd")
 const G=preload("res://scripts/evolution_geometry.gd")
 static func draw_board(node: CanvasItem,session,portrait: bool,selected: int,elapsed: float) -> void:
@@ -46,11 +47,8 @@ static func draw_board(node: CanvasItem,session,portrait: bool,selected: int,ela
 static func draw_targets(node: CanvasItem,session,portrait: bool,selected: int) -> void:
 	if selected<0 or session.status!="active": return
 	var cell=G.board(portrait).size.x/5
-	var targets=session.preview_actions(selected)
-	for index in targets:
-		var target: Dictionary=targets[index]
-		var p=G.center(index,portrait)
-		var color=Color("f6c657") if target.kind in ["merge","push","activate","reveal","neutralize","break"] else Color("48add0")
-		node.draw_rect(Rect2(p-Vector2.ONE*cell*.43,Vector2.ONE*cell*.86),color,false,3)
-		node.draw_circle(p+Vector2(cell*.28,-cell*.28),13,color)
-		node.draw_string(ThemeDB.fallback_font,p+Vector2(cell*.28-5,-cell*.28+6),str(target.cost),HORIZONTAL_ALIGNMENT_LEFT,-1,16,W.INK)
+	Marks.selected(node,G.center(selected,portrait),cell*.43)
+	for index in session.preview_actions(selected):
+		var target: Dictionary=session.preview_actions(selected)[index]
+		var object: Dictionary=session.object_at(index)
+		Marks.target(node,G.center(index,portrait),cell*.43,Marks.category(target.kind,object.get("type","")=="portal"),target.cost)

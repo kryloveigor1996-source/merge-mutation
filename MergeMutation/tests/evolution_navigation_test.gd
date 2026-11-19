@@ -104,17 +104,16 @@ func run() -> void:
 		check(game.view.panel_kind=="collection","settings returns to archive")
 		game.view.handle_back()
 		await process_frame
-		# The original campaign still runs with new tap/drag controls.
+		# The original campaign runs with release-qualified tap controls.
 		game.start_level(10,false)
 		var proof=ClassicSolver.solve(ClassicLevels.get_level(10))
 		var index=0
 		for action in proof.actions:
 			if action.kind=="spawn": press_button(game.view.create_button)
-			elif index%2==0:
+			else:
 				tap(game.view,game.view.cell_center(action.source))
 				tap(game.view,game.view.cell_center(action.index))
-			else: drag(game.view,game.view.cell_center(action.source),game.view.cell_center(action.index),true)
-			await process_frame
+			await create_timer(.42).timeout
 			index+=1
 		check(game.campaign.status=="won","old level 10 wins with new controls")
 		if game.campaign.status!="won": quit(1); return

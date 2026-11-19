@@ -43,13 +43,12 @@ func run() -> void:
 			for action in proofs[number].actions:
 				if step==proofs[number].actions.size()-1 and number in [4,7,10]: await shot(("portrait" if tall else "landscape")+"-mechanics-%02d" % number)
 				if action.kind=="spawn": press_button(screen.get_node("EvolutionSpawn"),not tall)
-				elif step%2==0:
+				else:
 					tap(screen,G.center(action.source,tall),not tall)
 					tap(screen,G.center(action.index,tall),not tall)
-				else: drag(screen,G.center(action.source,tall),G.center(action.index,tall),not tall)
 				await create_timer(0.24).timeout
 				check(model.apply_action(action).ok,"reference action")
-				check(screen.session.signature()==model.signature(),"drag/tap executes exactly one reference action %d.%d %s" % [number,step,str(tall)])
+				check(screen.session.signature()==model.signature(),"two taps execute exactly one reference action %d.%d %s" % [number,step,str(tall)])
 				if screen.session.signature()!=model.signature(): quit(1); return
 				step+=1
 			check(screen.session.won() and is_instance_valid(screen.result_panel),"UI victory "+str(number))

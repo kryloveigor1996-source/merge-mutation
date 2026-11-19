@@ -1,4 +1,4 @@
-param([Parameter(Mandatory=$true)][string]$ApkPath,[string]$SdkPath=(Join-Path $env:LOCALAPPDATA 'Android/Sdk'),[string]$BuildToolsVersion='36.0.0',[int]$ExpectedVersionCode=22,[string]$PreviousApkPath)
+param([Parameter(Mandatory=$true)][string]$ApkPath,[string]$SdkPath=(Join-Path $env:LOCALAPPDATA 'Android/Sdk'),[string]$BuildToolsVersion='36.0.0',[int]$ExpectedVersionCode=23,[string]$PreviousApkPath)
 $ErrorActionPreference='Stop'
 . (Join-Path $PSScriptRoot 'workspace_paths.ps1')
 $w=Get-MMWorkspace
@@ -32,6 +32,7 @@ try {
  Check (@($names | Where-Object {$_ -match '(?i)/tests/|/tools/|/docs/|/references/|\.keystore$|\.jks$'}).Count -eq 0) 'No test suites, generation sources, docs, references or signing keys exported'
  Check (@($names | Where-Object {$_ -like '*.oggvorbisstr'}).Count -eq 9) 'All nine OGG resources packed'
  if($ExpectedVersionCode -ge 22){foreach($required in @('assets/scripts/evolution_game.gdc','assets/scripts/evolution_session.gdc')){Check ($required -in $names) ('Evolution runtime '+$required)}; foreach($number in 1..10){Check (('assets/evolution/levels/level_{0:00}.json' -f $number) -in $names) ('Experimental level '+$number)}}
+ if($ExpectedVersionCode -ge 23){foreach($required in @('assets/scripts/puzzle_tap.gdc','assets/scripts/puzzle_marks.gdc')){Check ($required -in $names) ('Mobile control runtime '+$required)}}
  foreach($name in @('assets/data/core_economy.json','assets/data/music.json','assets/scripts/core_game.gdc','assets/scripts/music_manager.gdc')){Check ($name -in $names) ('Runtime resource '+$name)}
 } finally {$zip.Dispose()}
 if($PreviousApkPath){

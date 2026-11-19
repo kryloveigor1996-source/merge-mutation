@@ -13,6 +13,7 @@ const Evolution=preload("res://scripts/evolution_screen.gd")
 const Movement=preload("res://scripts/evolution_movement.gd")
 var portrait_mode=false
 var app_suspended=false
+const Marks=preload("res://scripts/puzzle_marks.gd")
 var target_key=""
 var tap_targets: Dictionary={}
 var preferences=Preferences.new()
@@ -57,8 +58,7 @@ func set_portrait(value: bool) -> void:
 	portrait_mode=value
 	preferences.portrait=value
 	if not preferences.save(): game._notice(preferences.error)
-	game._cancel_drag()
-	game.tap_source=-1
+	game.cancel_control()
 	tutorial.dismiss(); tutorial.requests.clear()
 	apply_orientation()
 	rebuild()
@@ -127,7 +127,7 @@ func adapt_panel() -> void:
 	if portrait_mode and overlay.get_child_count()>1 and overlay.get_child(1) is PanelContainer:
 		overlay.get_child(1).position=Vector2(12,140); overlay.get_child(1).size=Vector2(516,700)
 func show_audio_settings() -> void:
-	game._cancel_drag(); game.tap_source=-1
+	game.cancel_control()
 	var rebuilding=panel_kind=="settings"
 	var destination=settings_return
 	if rebuilding: settings_return=""
@@ -179,29 +179,37 @@ func _draw() -> void:
 		plate(Rect2(cell_center(index)-Vector2.ONE*46,Vector2.ONE*92),Color("c5e3db"),10)
 	draw_tap_targets()
 func _process(delta: float) -> void:
+	_process_puzzle_guard()
 	super._process(delta)
 	if is_instance_valid(complex_ui) and is_instance_valid(complex_ui.detail): complex_ui.detail.set_active(not app_suspended and not is_instance_valid(overlay) and complex_ui.modal==null)
+func sync_puzzle_art() -> void:
+	for tween: Tween in motion.values(): tween.kill()
+	motion.clear(); drag_index=-1
+	for index in creatures:
+		var actor=creatures[index]
+		actor.position=rest_position(index,actor)
+		actor.z_index=0
+	queue_redraw()
+func _process_puzzle_guard() -> void:
+	# The inherited view follows drag_index, so a tap selection must never set it.
+	if game.in_campaign(): drag_index=-1
 func draw_tap_targets() -> void:
-	if game.tap_source<0 or input_blocked(): return
-	var key=(game.campaign.signature() if game.in_campaign() else JSON.stringify(game.cells))+str(game.tap_source)
+	if game.tap_source<0 or input_blocked() or not game.in_campaign(): return
+	var key=game.campaign.signature()+str(game.tap_source)+str(game.teleport_mode)
 	if key!=target_key:
 		target_key=key; tap_targets.clear()
 		for index in range(30):
 			if index==game.tap_source: continue
-			var cost=1
-			if game.in_campaign():
-				var result=Movement.apply(game.campaign,game.tap_source,index,false)
-				if not result.ok: continue
-				cost=result.cost
-			elif game.cells[index]!=null and not Catalog.can_merge(game.cells[game.tap_source],game.cells[index]): continue
-			tap_targets[index]=cost
+			var result=Movement.apply(game.campaign,game.tap_source,index,false)
+			if game.teleport_mode:
+				var trial=game.campaign.fork()
+				result=trial.use_booster("teleporter",game.tap_source,index)
+			if not result.ok: continue
+			tap_targets[index]={"cost":int(result.get("cost",1)),"kind":Marks.category("move",game.teleport_mode) if game.teleport_mode else Marks.category("merge" if game.cells[index]!=null else "move")}
+	var radius=44 if portrait_mode else 28
+	Marks.selected(self,cell_center(game.tap_source),radius)
 	for index in tap_targets:
-		var cost=tap_targets[index]
-		var point=cell_center(index)
-		var radius=44 if portrait_mode else 28
-		draw_rect(Rect2(point-Vector2.ONE*radius,Vector2.ONE*radius*2),Color("edc95c"),false,3)
-		draw_circle(point+Vector2(radius-8,-radius+8),11,Color("edc95c"))
-		draw_string(ThemeDB.fallback_font,point+Vector2(radius-13,-radius+14),str(cost),HORIZONTAL_ALIGNMENT_LEFT,-1,14,INK)
+		Marks.target(self,cell_center(index),radius,tap_targets[index].kind,tap_targets[index].cost)
 func hint_scope() -> String:
 	if is_instance_valid(experiment_ui): return ("evolution_" if experiment_ui is Evolution else "legacy_")+str(experiment_ui.number)
 	if is_instance_valid(complex_ui): return "habitat_"+complex_ui.detail.model.habitat_id if is_instance_valid(complex_ui.detail) else "complex"
