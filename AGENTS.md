@@ -14,10 +14,8 @@
   `git add .` or automatically include unrelated files.
 - Preserve local user changes and saves. Moving this repository or existing work
   documents requires explicit approval and checks for active apps/workspaces.
-- User-approved relocation after PR19:
-  `ChatGPT/Plus upgrade` → `ChatGPT/Games/Merge Mutation`.
-  Close/check Godot and GitHub Desktop first. Keep Git history and all files;
-  never overwrite an existing destination. Reconnect the Codex project afterward.
+- Actual repository: ChatGPT/Games/MergeMutation. Relocation is complete.
+  Never recreate Plus upgrade or move the repository again without authorization.
 - Run checks with the installed Godot 4.7.2. Keep existing gameplay regressions,
   isolate test profiles, and report Windows synthetic touch separately from
   physical Android verification.

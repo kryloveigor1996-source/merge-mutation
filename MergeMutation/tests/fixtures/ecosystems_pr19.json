@@ -1,0 +1,267 @@
+{
+  "version": 1,
+  "room_sizes": {
+    "S": 940,
+    "L": 2820,
+    "XL": 4700,
+    "M": 1880
+  },
+  "rooms": [
+    {
+      "habitat_type": "rocky_canyon",
+      "catalog": "res://data/renovation/ecosystem_horn.json",
+      "origin": "Каменистые разломы",
+      "habits": [
+        "curl",
+        "guard",
+        "listen"
+      ],
+      "species_id": "horn",
+      "room_size": "S",
+      "habitat_id": "habitat_horn",
+      "movement_driver": "ground_horizontal",
+      "start_x": 360,
+      "rare_events": [
+        {
+          "weight": 2,
+          "duration": 1.5,
+          "event_id": "dust_sneeze",
+          "requires_slot": "",
+          "cooldown": 35
+        },
+        {
+          "weight": 1,
+          "duration": 1.8,
+          "event_id": "monument_push",
+          "requires_slot": "cabinets",
+          "cooldown": 50
+        },
+        {
+          "weight": 1,
+          "duration": 1.6,
+          "event_id": "proud_ram",
+          "requires_slot": "training",
+          "cooldown": 30
+        }
+      ],
+      "available_actions": [
+        "walk",
+        "idle",
+        "rest",
+        "sleep",
+        "mineral_feed",
+        "ram",
+        "monument",
+        "inspect_trophy",
+        "light",
+        "play",
+        "lab_scan"
+      ],
+      "temperament": "Территориальный исследователь",
+      "decorative_slots": [
+        "walls",
+        "floor",
+        "plants"
+      ],
+      "autonomy": [
+        {
+          "weight": 4,
+          "repeat_after": 4,
+          "action": "walk"
+        },
+        {
+          "weight": 1,
+          "repeat_after": 2,
+          "action": "idle"
+        },
+        {
+          "weight": 2,
+          "repeat_after": 10,
+          "action": "rest"
+        },
+        {
+          "weight": 2,
+          "repeat_after": 18,
+          "action": "sleep"
+        },
+        {
+          "weight": 3,
+          "repeat_after": 13,
+          "action": "mineral_feed"
+        },
+        {
+          "weight": 4,
+          "repeat_after": 16,
+          "action": "ram"
+        },
+        {
+          "weight": 2,
+          "repeat_after": 18,
+          "action": "monument"
+        },
+        {
+          "weight": 1,
+          "repeat_after": 12,
+          "action": "inspect_trophy"
+        },
+        {
+          "weight": 3,
+          "repeat_after": 14,
+          "action": "play"
+        },
+        {
+          "weight": 3,
+          "repeat_after": 14,
+          "action": "lab_scan"
+        }
+      ],
+      "behavior_driver": "territorial_horn",
+      "laboratory_slots": [
+        "water"
+      ],
+      "functional_slots": [
+        "bed",
+        "feeder",
+        "training",
+        "cabinets",
+        "lighting",
+        "toy"
+      ],
+      "movement_speed": 65,
+      "preferred_objects": [
+        "training",
+        "water",
+        "cabinets"
+      ],
+      "motion_profile": {
+        "body_height": 80,
+        "sleep_duration_range": [
+          3.0,
+          6.0
+        ],
+        "body_radius": 40,
+        "interaction_cooldown": 0.9,
+        "idle_duration_range": [
+          1.0,
+          2.8
+        ],
+        "ground_y": 354
+      }
+    },
+    {
+      "habitat_type": "biochemical_wetland",
+      "catalog": "res://tests/fixtures/ecosystem_slime_medium.json",
+      "origin": "Кислотные водоёмы",
+      "habits": [
+        "jelly_rest",
+        "bubble_rest"
+      ],
+      "species_id": "slime",
+      "room_size": "M",
+      "habitat_id": "habitat_slime",
+      "movement_driver": "slime_crawl",
+      "start_x": 560,
+      "rare_events": [
+        {
+          "weight": 1,
+          "duration": 2.2,
+          "event_id": "bubble_splat",
+          "requires_slot": "",
+          "cooldown": 45
+        }
+      ],
+      "available_actions": [
+        "walk",
+        "idle",
+        "rest",
+        "acid_sleep",
+        "plasma_feed",
+        "acid_bath",
+        "inspect_plants",
+        "inspect_channels",
+        "biochemical_scan"
+      ],
+      "temperament": "Текучий любопытный",
+      "decorative_slots": [
+        "plants",
+        "channels"
+      ],
+      "autonomy": [
+        {
+          "weight": 5,
+          "repeat_after": 3,
+          "action": "walk"
+        },
+        {
+          "weight": 1,
+          "repeat_after": 2,
+          "action": "idle"
+        },
+        {
+          "weight": 2,
+          "repeat_after": 9,
+          "action": "rest"
+        },
+        {
+          "weight": 4,
+          "repeat_after": 20,
+          "action": "acid_sleep"
+        },
+        {
+          "weight": 4,
+          "repeat_after": 14,
+          "action": "plasma_feed"
+        },
+        {
+          "weight": 4,
+          "repeat_after": 15,
+          "action": "acid_bath"
+        },
+        {
+          "weight": 2,
+          "repeat_after": 12,
+          "action": "inspect_plants"
+        },
+        {
+          "weight": 2,
+          "repeat_after": 12,
+          "action": "inspect_channels"
+        },
+        {
+          "weight": 3,
+          "repeat_after": 16,
+          "action": "biochemical_scan"
+        }
+      ],
+      "behavior_driver": "liquid_slime",
+      "laboratory_slots": [
+        "laboratory"
+      ],
+      "functional_slots": [
+        "bed",
+        "feeder",
+        "reservoir"
+      ],
+      "movement_speed": 76,
+      "preferred_objects": [
+        "bed",
+        "feeder",
+        "reservoir"
+      ],
+      "motion_profile": {
+        "body_height": 62,
+        "sleep_duration_range": [
+          3.0,
+          6.0
+        ],
+        "body_radius": 36,
+        "interaction_cooldown": 0.9,
+        "idle_duration_range": [
+          1.0,
+          2.8
+        ],
+        "ground_y": 354
+      }
+    }
+  ]
+}

@@ -78,7 +78,7 @@ func _draw() -> void:
 	# Glazing reflection and frame screws.
 	draw_line(Vector2(12,45),Vector2(size.x*0.44,75),Color(0.8,0.96,1,0.3),4)
 	for p in [Vector2(5,5),Vector2(size.x-5,5),Vector2(5,size.y-5),size-Vector2(5,5)]: draw_circle(p,2,Color("dfedf1"))
-	var title: String={"acid":"КИСЛОТА","air":"ВОЗДУХ","crystal":"МИНЕРАЛЫ","forest":"БИОМ"}.get(data.theme_id,data.name)
+	var title: String={"acid":"КИСЛОТА","air":"ВОЗДУХ","crystal":"МИНЕРАЛЫ","forest":"БИОМ"}.get(data.theme_id,data.name) if not data.has("archive_name") else data.archive_name
 	var ink:=Color("f8efc8") if data.theme_id=="secret" else W.INK
 	draw_string(ThemeDB.fallback_font,Vector2(8,22),title,HORIZONTAL_ALIGNMENT_LEFT,size.x-16,10 if size.x<110 else 13,ink)
 	var footer: String="ДЕМО · ОБЗОР" if data.preview_accessible else "ЗАКРЫТО"

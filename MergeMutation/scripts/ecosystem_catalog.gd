@@ -7,7 +7,10 @@ var rooms: Dictionary={}
 var sizes: Dictionary={}
 var catalogs: Dictionary={}
 var error:=""
-func load_file(complex_registry,path: String="res://data/ecosystems.json") -> bool:
+static func default_path() -> String:
+	return "res://tests/fixtures/ecosystems_pr19.json" if "--living-world-legacy" in OS.get_cmdline_user_args() else "res://data/ecosystems.json"
+func load_file(complex_registry,path: String="") -> bool:
+	if path.is_empty(): path=default_path()
 	return configure(JSON.parse_string(FileAccess.get_file_as_string(path)),complex_registry)
 func fail(message: String) -> bool:
 	rooms.clear()

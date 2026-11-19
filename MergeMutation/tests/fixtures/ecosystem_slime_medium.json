@@ -1,0 +1,339 @@
+{
+  "habitat_id": "habitat_slime",
+  "world_size": [
+    1880,
+    420
+  ],
+  "slots": [
+    {
+      "slot_id": "bed",
+      "habitat_id": "habitat_slime",
+      "zone_id": "west",
+      "name": "Кислотная купель",
+      "description": "Слизик изучит новое биохимическое оборудование.",
+      "kind": "acid_bed",
+      "rect": [
+        120,
+        248,
+        160,
+        92
+      ],
+      "anchor": [
+        200,
+        290
+      ],
+      "layer": "objects",
+      "interaction": "sleep",
+      "action": "acid_sleep",
+      "construction": "covered",
+      "cost": 1,
+      "requires": [],
+      "collision": [],
+      "touch": [
+        165,
+        260,
+        70,
+        60
+      ],
+      "designs": [
+        {
+          "design_id": "slime_bed_basin",
+          "name": "Кислотная купель",
+          "visual": "basin"
+        },
+        {
+          "design_id": "slime_bed_gel_nest",
+          "name": "Гелевое гнездо",
+          "visual": "gel_nest"
+        },
+        {
+          "design_id": "slime_bed_bubble_pod",
+          "name": "Пузырьковая капсула",
+          "visual": "bubble_pod"
+        }
+      ]
+    },
+    {
+      "slot_id": "feeder",
+      "habitat_id": "habitat_slime",
+      "zone_id": "east",
+      "name": "Источник плазмы",
+      "description": "Слизик изучит новое биохимическое оборудование.",
+      "kind": "plasma_feeder",
+      "rect": [
+        1480,
+        272,
+        140,
+        64
+      ],
+      "anchor": [
+        1550,
+        300
+      ],
+      "layer": "objects",
+      "interaction": "feed",
+      "action": "plasma_feed",
+      "construction": "crate",
+      "cost": 1,
+      "requires": [],
+      "collision": [],
+      "touch": [
+        1515,
+        270,
+        70,
+        60
+      ],
+      "designs": [
+        {
+          "design_id": "slime_feeder_vessel",
+          "name": "Плазменная чаша",
+          "visual": "vessel"
+        },
+        {
+          "design_id": "slime_feeder_dripper",
+          "name": "Плазменная капельница",
+          "visual": "dripper"
+        },
+        {
+          "design_id": "slime_feeder_coil",
+          "name": "Катушка плазмы",
+          "visual": "coil"
+        }
+      ]
+    },
+    {
+      "slot_id": "reservoir",
+      "habitat_id": "habitat_slime",
+      "zone_id": "central",
+      "name": "Кислотный резервуар",
+      "description": "Слизик изучит новое биохимическое оборудование.",
+      "kind": "acid_reservoir",
+      "rect": [
+        800,
+        264,
+        180,
+        90
+      ],
+      "anchor": [
+        890,
+        300
+      ],
+      "layer": "objects",
+      "interaction": "storage",
+      "action": "acid_bath",
+      "construction": "covered",
+      "cost": 1,
+      "requires": [],
+      "collision": [],
+      "touch": [
+        855,
+        270,
+        70,
+        60
+      ],
+      "designs": [
+        {
+          "design_id": "slime_reservoir_fountain",
+          "name": "Кислотный фонтан",
+          "visual": "fountain"
+        },
+        {
+          "design_id": "slime_reservoir_tank",
+          "name": "Прозрачный резервуар",
+          "visual": "tank"
+        },
+        {
+          "design_id": "slime_reservoir_geyser",
+          "name": "Кислотный гейзер",
+          "visual": "geyser"
+        }
+      ]
+    },
+    {
+      "slot_id": "plants",
+      "habitat_id": "habitat_slime",
+      "zone_id": "central",
+      "name": "Токсичная растительность",
+      "description": "Слизик изучит новое биохимическое оборудование.",
+      "kind": "toxic_plants",
+      "rect": [
+        1080,
+        154,
+        120,
+        176
+      ],
+      "anchor": [
+        1140,
+        220
+      ],
+      "layer": "far",
+      "interaction": "storage",
+      "action": "inspect_plants",
+      "construction": "crate",
+      "cost": 1,
+      "requires": [],
+      "collision": [],
+      "touch": [
+        1105,
+        190,
+        70,
+        60
+      ],
+      "designs": [
+        {
+          "design_id": "slime_plants_reeds",
+          "name": "Токсичный камыш",
+          "visual": "reeds"
+        },
+        {
+          "design_id": "slime_plants_fungi",
+          "name": "Светящиеся грибы",
+          "visual": "fungi"
+        },
+        {
+          "design_id": "slime_plants_tendrils",
+          "name": "Биохимические лианы",
+          "visual": "tendrils"
+        }
+      ]
+    },
+    {
+      "slot_id": "channels",
+      "habitat_id": "habitat_slime",
+      "zone_id": "central",
+      "name": "Трубы и каналы",
+      "description": "Слизик изучит новое биохимическое оборудование.",
+      "kind": "acid_channels",
+      "rect": [
+        400,
+        372,
+        1180,
+        36
+      ],
+      "anchor": [
+        990,
+        390
+      ],
+      "layer": "front",
+      "interaction": "storage",
+      "action": "inspect_channels",
+      "construction": "site",
+      "cost": 1,
+      "requires": [],
+      "collision": [],
+      "touch": [
+        955,
+        360,
+        70,
+        60
+      ],
+      "designs": [
+        {
+          "design_id": "slime_channels_pipes",
+          "name": "Кислотные трубы",
+          "visual": "pipes"
+        },
+        {
+          "design_id": "slime_channels_trenches",
+          "name": "Открытые каналы",
+          "visual": "trenches"
+        },
+        {
+          "design_id": "slime_channels_glass",
+          "name": "Стеклянные каналы",
+          "visual": "glass"
+        }
+      ]
+    },
+    {
+      "slot_id": "laboratory",
+      "habitat_id": "habitat_slime",
+      "zone_id": "east",
+      "name": "Биохимическая станция",
+      "description": "Слизик изучит новое биохимическое оборудование.",
+      "kind": "slime_laboratory",
+      "rect": [
+        1700,
+        160,
+        120,
+        140
+      ],
+      "anchor": [
+        1760,
+        220
+      ],
+      "layer": "far",
+      "interaction": "storage",
+      "action": "biochemical_scan",
+      "construction": "crate",
+      "cost": 1,
+      "requires": [],
+      "collision": [],
+      "touch": [
+        1725,
+        190,
+        70,
+        60
+      ],
+      "designs": [
+        {
+          "design_id": "slime_laboratory_centrifuge",
+          "name": "Биоцентрифуга",
+          "visual": "centrifuge"
+        },
+        {
+          "design_id": "slime_laboratory_analyzer",
+          "name": "Анализатор плазмы",
+          "visual": "analyzer"
+        },
+        {
+          "design_id": "slime_laboratory_reactor",
+          "name": "Лабораторный реактор",
+          "visual": "reactor"
+        }
+      ]
+    }
+  ],
+  "offer_limit": 3,
+  "version": 1,
+  "reveal_order": [
+    "bed",
+    "feeder",
+    "reservoir",
+    "channels",
+    "plants",
+    "laboratory"
+  ],
+  "zones": [
+    {
+      "rect": [
+        0,
+        0,
+        625,
+        420
+      ],
+      "name": "Отдых",
+      "zone_id": "west"
+    },
+    {
+      "rect": [
+        625,
+        0,
+        630,
+        420
+      ],
+      "name": "Кислотная среда",
+      "zone_id": "central"
+    },
+    {
+      "rect": [
+        1255,
+        0,
+        625,
+        420
+      ],
+      "name": "Плазма и исследования",
+      "zone_id": "east"
+    }
+  ]
+}
