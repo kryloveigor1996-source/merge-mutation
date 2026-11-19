@@ -1,0 +1,114 @@
+{
+  "schema": "tactical_evolution_v1",
+  "id": "evolution_05",
+  "number": 5,
+  "name": "Потерянный образец",
+  "difficulty": 3,
+  "available_species": [
+    "slime",
+    "horn",
+    "wing",
+    "eyeball"
+  ],
+  "initial": [
+    {
+      "cell": 10,
+      "evolution_stage": 1,
+      "species_id": "horn"
+    },
+    {
+      "cell": 20,
+      "evolution_stage": 1,
+      "species_id": "slime"
+    }
+  ],
+  "sequence": [],
+  "creation_limit": 0,
+  "spawn_points": [],
+  "move_limit": 12,
+  "blocked_cells": [
+    0,
+    1,
+    2,
+    3,
+    4,
+    7,
+    8,
+    9,
+    18,
+    19,
+    23,
+    24,
+    25,
+    26,
+    27,
+    28,
+    29
+  ],
+  "goals": [
+    {
+      "count": 1,
+      "type": "merge_count"
+    }
+  ],
+  "reward_coins": 0,
+  "reward_stars": 0,
+  "terrain": {},
+  "objects": [
+    {
+      "type": "crate",
+      "id": "box",
+      "cell": 11
+    },
+    {
+      "type": "plate",
+      "id": "hold",
+      "cell": 6
+    },
+    {
+      "type": "gate",
+      "id": "door",
+      "channel": "hold_power",
+      "cell": 13
+    },
+    {
+      "type": "portal",
+      "id": "exit",
+      "species_id": "slime",
+      "cell": 14
+    },
+    {
+      "type": "sample",
+      "id": "first",
+      "cell": 5
+    },
+    {
+      "type": "sample",
+      "id": "second",
+      "cell": 22
+    }
+  ],
+  "circuits": [
+    {
+      "mode": "all",
+      "id": "hold_power",
+      "inputs": [
+        "hold"
+      ]
+    }
+  ],
+  "objectives": [
+    {
+      "text": "Соберите оба исследовательских образца",
+      "type": "collect",
+      "count": 2
+    },
+    {
+      "text": "Эвакуируйте Слизика",
+      "type": "evacuate",
+      "species_id": "slime",
+      "count": 1
+    }
+  ],
+  "minimum_moves": 8
+}

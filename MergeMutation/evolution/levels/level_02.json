@@ -1,0 +1,77 @@
+{
+  "schema": "tactical_evolution_v1",
+  "id": "evolution_02",
+  "number": 2,
+  "name": "Кислотный барьер",
+  "difficulty": 2,
+  "available_species": [
+    "slime",
+    "horn",
+    "wing",
+    "eyeball"
+  ],
+  "initial": [
+    {
+      "cell": 15,
+      "evolution_stage": 1,
+      "species_id": "slime"
+    }
+  ],
+  "sequence": [],
+  "creation_limit": 0,
+  "spawn_points": [],
+  "move_limit": 9,
+  "blocked_cells": [
+    0,
+    1,
+    2,
+    3,
+    4,
+    12,
+    13,
+    14,
+    17,
+    18,
+    19,
+    20,
+    21,
+    22,
+    23,
+    24,
+    25,
+    26,
+    27,
+    28,
+    29
+  ],
+  "goals": [
+    {
+      "count": 1,
+      "type": "merge_count"
+    }
+  ],
+  "reward_coins": 0,
+  "reward_stars": 0,
+  "terrain": {
+    "7": "acid",
+    "8": "acid"
+  },
+  "objects": [
+    {
+      "type": "portal",
+      "id": "exit",
+      "species_id": "slime",
+      "cell": 9
+    }
+  ],
+  "circuits": [],
+  "objectives": [
+    {
+      "text": "Проведите Слизика через кислоту к порталу",
+      "type": "evacuate",
+      "species_id": "slime",
+      "count": 1
+    }
+  ],
+  "minimum_moves": 6
+}

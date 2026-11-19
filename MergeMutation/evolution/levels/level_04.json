@@ -1,0 +1,98 @@
+{
+  "schema": "tactical_evolution_v1",
+  "id": "evolution_04",
+  "number": 4,
+  "name": "Тяжёлая работа",
+  "difficulty": 3,
+  "available_species": [
+    "slime",
+    "horn",
+    "wing",
+    "eyeball"
+  ],
+  "initial": [
+    {
+      "cell": 10,
+      "evolution_stage": 1,
+      "species_id": "horn"
+    }
+  ],
+  "sequence": [],
+  "creation_limit": 0,
+  "spawn_points": [],
+  "move_limit": 10,
+  "blocked_cells": [
+    0,
+    1,
+    2,
+    3,
+    4,
+    7,
+    8,
+    9,
+    18,
+    19,
+    20,
+    21,
+    23,
+    24,
+    25,
+    26,
+    27,
+    28,
+    29
+  ],
+  "goals": [
+    {
+      "count": 1,
+      "type": "merge_count"
+    }
+  ],
+  "reward_coins": 0,
+  "reward_stars": 0,
+  "terrain": {
+    "12": "rock"
+  },
+  "objects": [
+    {
+      "type": "crate",
+      "id": "box",
+      "cell": 11
+    },
+    {
+      "type": "plate",
+      "id": "hold",
+      "cell": 6
+    },
+    {
+      "type": "gate",
+      "id": "door",
+      "channel": "hold_power",
+      "cell": 13
+    },
+    {
+      "type": "portal",
+      "id": "exit",
+      "species_id": "horn",
+      "cell": 14
+    }
+  ],
+  "circuits": [
+    {
+      "mode": "all",
+      "id": "hold_power",
+      "inputs": [
+        "hold"
+      ]
+    }
+  ],
+  "objectives": [
+    {
+      "text": "Эвакуируйте Рогача через управляемый шлюз",
+      "type": "evacuate",
+      "species_id": "horn",
+      "count": 1
+    }
+  ],
+  "minimum_moves": 7
+}

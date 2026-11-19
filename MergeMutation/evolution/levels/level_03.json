@@ -1,0 +1,96 @@
+{
+  "schema": "tactical_evolution_v1",
+  "id": "evolution_03",
+  "number": 3,
+  "name": "Закрытый сектор",
+  "difficulty": 2,
+  "available_species": [
+    "slime",
+    "horn",
+    "wing",
+    "eyeball"
+  ],
+  "initial": [
+    {
+      "cell": 10,
+      "evolution_stage": 1,
+      "species_id": "slime"
+    },
+    {
+      "cell": 16,
+      "evolution_stage": 1,
+      "species_id": "slime"
+    }
+  ],
+  "sequence": [],
+  "creation_limit": 0,
+  "spawn_points": [],
+  "move_limit": 8,
+  "blocked_cells": [
+    0,
+    1,
+    2,
+    3,
+    4,
+    9,
+    12,
+    13,
+    14,
+    18,
+    19,
+    20,
+    21,
+    22,
+    23,
+    24,
+    25,
+    26,
+    27,
+    28,
+    29
+  ],
+  "goals": [
+    {
+      "count": 1,
+      "type": "merge_count"
+    }
+  ],
+  "reward_coins": 0,
+  "reward_stars": 0,
+  "terrain": {},
+  "objects": [
+    {
+      "type": "plate",
+      "id": "hold",
+      "cell": 11
+    },
+    {
+      "type": "gate",
+      "id": "door",
+      "channel": "hold_power",
+      "cell": 7
+    },
+    {
+      "type": "portal",
+      "id": "exit",
+      "cell": 8
+    }
+  ],
+  "circuits": [
+    {
+      "mode": "all",
+      "id": "hold_power",
+      "inputs": [
+        "hold"
+      ]
+    }
+  ],
+  "objectives": [
+    {
+      "text": "Эвакуируйте одного обитателя",
+      "type": "evacuate",
+      "count": 1
+    }
+  ],
+  "minimum_moves": 5
+}

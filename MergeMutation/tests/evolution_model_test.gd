@@ -1,0 +1,118 @@
+extends SceneTree
+const Session=preload("res://scripts/evolution_session.gd")
+const Levels=preload("res://scripts/evolution_levels.gd")
+const Solver=preload("res://scripts/mutation_search.gd")
+const History=preload("res://scripts/mutation_history.gd")
+const Movement=preload("res://scripts/evolution_movement.gd")
+const Classic=preload("res://scripts/campaign_session.gd")
+const Preferences=preload("res://scripts/evolution_preferences.gd")
+var checks=0
+var failures=0
+func _initialize() -> void: call_deferred("run")
+func check(value: bool,label: String) -> void:
+	checks+=1
+	if not value: failures+=1; printerr("FAIL: ",label)
+func run() -> void:
+	for number in range(1,11):
+		var data=Levels.get_level(number)
+		var state=Session.new()
+		check(state.start(data),"level valid "+str(number))
+		check(data.reward_coins==0 and data.reward_stars==0,"isolated rewards "+str(number))
+		var proof=Solver.solve(state)
+		check(proof.won and proof.optimal and not proof.cutoff,"optimal proof "+str(number))
+		check(proof.moves==data.minimum_moves and proof.moves<=data.move_limit,"documented minimum and budget")
+		for action in proof.actions:
+			var before=state.signature()
+			var history=History.new()
+			var result=history.execute(state,action)
+			check(result.ok,"playable solver primitive "+str(number))
+			check(history.undo(state) and state.signature()==before,"Undo restores all object/goal/terrain state "+str(result.kind))
+			check(history.execute(state,action).ok,"replay exact restored action")
+		check(state.won() and state.status=="won","all objectives met "+str(number))
+		var saved=state.signature()
+		check(not state.apply_action({"kind":"spawn"}).ok and state.signature()==saved,"terminal state rejects repeated actions")
+	var invalid=Levels.get_level(1).duplicate(true)
+	invalid.objects.append(invalid.objects[0].duplicate(true))
+	check(not Session.valid(invalid),"duplicate object IDs/cells rejected")
+	invalid=Levels.get_level(1).duplicate(true)
+	invalid.objectives[0].erase("text")
+	check(not Session.valid(invalid),"incomplete objective rejected")
+	invalid=Levels.get_level(1).duplicate(true)
+	invalid.reward_coins=100
+	check(not Session.valid(invalid),"experimental reward configuration rejected")
+	var state=Session.new()
+	state.start(Levels.get_level(2))
+	var acid_state=state.fork()
+	acid_state.cells[15]={"species_id":"horn","evolution_stage":1}
+	check(not acid_state.can_transfer(6,7),"empty source never crosses acid")
+	acid_state.cells[6]={"species_id":"horn","evolution_stage":1}
+	check(not acid_state.can_transfer(6,7),"horn cannot enter acid")
+	acid_state.cells[6]={"species_id":"slime","evolution_stage":1}
+	check(acid_state.can_transfer(6,7),"slime enters acid")
+	state.start(Levels.get_level(4))
+	check(not state.can_transfer(12,13),"closed gate blocks")
+	var original=state.signature()
+	check(not state.corridor(10,14).ok and state.signature()==original,"occupied straight route rejected atomically")
+	state.cells[12]=Session.Catalog.make("slime")
+	check(not state.interact(10,11).ok,"crate cannot be pushed without a free cell behind")
+	state.start(Levels.get_level(1))
+	state.cells[10]=Session.Catalog.make("horn"); state.terrain["11"]="rock"
+	check(state.interact(10,11).ok and not state.terrain.has("11") and state.moves_used==1,"horn retains destructive ram")
+	state.start(Levels.get_level(6))
+	state.cells[11]=Session.Catalog.make("slime")
+	check(not state.can_interact(11,6),"hidden mechanism requires eyeball")
+	state.cells[11]=Session.Catalog.make("eyeball")
+	check(state.interact(11,6).ok and state.revealed.has("concealed") and not state.activated.has("concealed"),"reveal and activation are separate actions")
+	state.start(Levels.get_level(10)); state.cells[21]=Session.Catalog.make("slime")
+	original=state.signature()
+	check(not state.spawn().ok and state.signature()==original,"occupied incubator spends nothing")
+	# One straight command is precisely the same primitive sequence and move cost.
+	state.start(Levels.get_level(1))
+	var stepped=state.fork()
+	stepped.transfer(10,11); stepped.transfer(11,12); stepped.transfer(12,13)
+	check(state.corridor(10,13).ok and state.signature()==stepped.signature(),"corridor equivalence and cost")
+	var history=History.new()
+	state.start(Levels.get_level(1))
+	history.execute(state,{"kind":"move","source":10,"index":11})
+	check(history.undo(state),"first free undo")
+	history.execute(state,{"kind":"move","source":10,"index":11})
+	check(history.undo(state),"second free undo")
+	history.execute(state,{"kind":"move","source":10,"index":11})
+	check(not history.undo(state),"no additional free undos")
+	var free_spawn=Levels.get_level(1).duplicate(true)
+	free_spawn.objects=[]; free_spawn.objectives=[{"type":"create","species_id":"slime","stage":1,"text":"Создать","count":1}]
+	free_spawn.move_limit=1; free_spawn.creation_limit=1; free_spawn.sequence=["slime"]; free_spawn.spawn_points=[15]
+	state.start(free_spawn)
+	state.transfer(10,11)
+	check(state.status=="active" and state.moves_left()==0,"free creation remains legal after move budget is spent")
+	check(state.spawn().ok and state.won() and state.moves_used==1,"creation keeps zero move cost")
+	var classic=Classic.new()
+	var data=Levels.get_level(1).duplicate(true)
+	data.initial=[{"species_id":"slime","evolution_stage":1,"cell":0},{"species_id":"slime","evolution_stage":1,"cell":4}]
+	data.blocked_cells=[]; data.sequence=[]; data.creation_limit=0; data.move_limit=10
+	data.goals=[{"type":"reach_stage","species_id":"slime","evolution_stage":2}]
+	check(classic.start(data),"classic route fixture")
+	var signature=classic.signature()
+	check(Movement.apply(classic,0,3,false).cost==3 and classic.signature()==signature,"classic preview is pure")
+	var reference=classic.cells
+	check(Movement.apply(classic,0,3).cost==3 and classic.moves_used==3 and reference[0]==null and reference[3]!=null,"classic straight movement preserves shared cells and per-cell cost")
+	state.start(Levels.get_level(1))
+	state.preview_actions(10)
+	var builds=state.preview_builds
+	for repeat in range(20): state.preview_actions(10)
+	check(state.preview_builds==builds,"frame redraws reuse legal-target cache")
+	state.transfer(10,11)
+	state.preview_actions(11)
+	check(state.preview_builds==builds+1,"action invalidates target cache")
+	var path="res://.godot/pr22-preferences-"+str(Time.get_ticks_usec())+".cfg"
+	var file=ConfigFile.new()
+	file.set_value("audio","music",0.37); file.save(path)
+	var preferences=Preferences.new()
+	preferences.setup(path); preferences.portrait=true; preferences.hints=false; preferences.master("movement")
+	var reloaded=Preferences.new()
+	reloaded.setup(path)
+	check(reloaded.portrait and not reloaded.hints and reloaded.learned.has("movement"),"orientation, hint toggle and mastered actions persist")
+	file.load(path)
+	check(file.get_value("audio","music")==0.37,"tutorial preserves audio settings")
+	print("Evolution model checks: %d; failures: %d" % [checks,failures])
+	quit(1 if failures else 0)

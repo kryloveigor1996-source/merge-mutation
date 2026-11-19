@@ -1,0 +1,71 @@
+{
+  "schema": "tactical_evolution_v1",
+  "id": "evolution_01",
+  "number": 1,
+  "name": "Нарушение протокола",
+  "difficulty": 1,
+  "available_species": [
+    "slime",
+    "horn",
+    "wing",
+    "eyeball"
+  ],
+  "initial": [
+    {
+      "cell": 10,
+      "evolution_stage": 1,
+      "species_id": "slime"
+    }
+  ],
+  "sequence": [],
+  "creation_limit": 0,
+  "spawn_points": [],
+  "move_limit": 7,
+  "blocked_cells": [
+    0,
+    1,
+    2,
+    3,
+    4,
+    9,
+    14,
+    19,
+    20,
+    21,
+    22,
+    23,
+    24,
+    25,
+    26,
+    27,
+    28,
+    29
+  ],
+  "goals": [
+    {
+      "count": 1,
+      "type": "merge_count"
+    }
+  ],
+  "reward_coins": 0,
+  "reward_stars": 0,
+  "terrain": {},
+  "objects": [
+    {
+      "type": "portal",
+      "id": "exit",
+      "species_id": "slime",
+      "cell": 8
+    }
+  ],
+  "circuits": [],
+  "objectives": [
+    {
+      "text": "Эвакуируйте Слизика",
+      "type": "evacuate",
+      "species_id": "slime",
+      "count": 1
+    }
+  ],
+  "minimum_moves": 4
+}
