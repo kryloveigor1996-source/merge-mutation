@@ -1,0 +1,120 @@
+{
+  "schema": "tactical_evolution_v1",
+  "id": "evolution_08",
+  "number": 8,
+  "name": "Цепная реакция",
+  "difficulty": 4,
+  "available_species": [
+    "slime",
+    "horn",
+    "wing",
+    "eyeball"
+  ],
+  "initial": [
+    {
+      "cell": 10,
+      "evolution_stage": 1,
+      "species_id": "horn"
+    },
+    {
+      "cell": 20,
+      "evolution_stage": 1,
+      "species_id": "eyeball"
+    }
+  ],
+  "sequence": [],
+  "creation_limit": 0,
+  "spawn_points": [],
+  "move_limit": 16,
+  "blocked_cells": [
+    0,
+    1,
+    2,
+    3,
+    4,
+    7,
+    8,
+    9,
+    18,
+    19,
+    23,
+    24,
+    25,
+    26,
+    27,
+    28,
+    29
+  ],
+  "goals": [
+    {
+      "count": 1,
+      "type": "merge_count"
+    }
+  ],
+  "reward_coins": 0,
+  "reward_stars": 0,
+  "terrain": {},
+  "objects": [
+    {
+      "type": "crate",
+      "id": "box",
+      "cell": 11
+    },
+    {
+      "type": "plate",
+      "id": "hold",
+      "cell": 6
+    },
+    {
+      "type": "hidden",
+      "id": "concealed",
+      "cell": 16
+    },
+    {
+      "species_id": "eyeball",
+      "type": "equipment",
+      "id": "console",
+      "channel": "research",
+      "cell": 12
+    },
+    {
+      "type": "gate",
+      "id": "door",
+      "channel": "research",
+      "cell": 13
+    },
+    {
+      "type": "portal",
+      "id": "exit",
+      "species_id": "horn",
+      "cell": 14
+    }
+  ],
+  "circuits": [
+    {
+      "mode": "all",
+      "id": "research",
+      "inputs": [
+        "hold",
+        "concealed"
+      ]
+    }
+  ],
+  "objectives": [
+    {
+      "text": "Запустите исследовательскую установку",
+      "type": "activate",
+      "ids": [
+        "console"
+      ],
+      "count": 1
+    },
+    {
+      "text": "Эвакуируйте Рогача",
+      "type": "evacuate",
+      "species_id": "horn",
+      "count": 1
+    }
+  ],
+  "minimum_moves": 12
+}

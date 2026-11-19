@@ -1,0 +1,460 @@
+{
+	"1": {
+		"actions": [
+			{
+				"index": 5,
+				"kind": "move",
+				"source": 10
+			},
+			{
+				"index": 6,
+				"kind": "move",
+				"source": 5
+			},
+			{
+				"index": 7,
+				"kind": "move",
+				"source": 6
+			},
+			{
+				"index": 8,
+				"kind": "move",
+				"source": 7
+			}
+		],
+		"cutoff": false,
+		"moves": 4,
+		"optimal": true,
+		"visited": 11,
+		"won": true
+	},
+	"10": {
+		"actions": [
+			{
+				"kind": "spawn"
+			},
+			{
+				"index": 15,
+				"kind": "interact",
+				"source": 10
+			},
+			{
+				"index": 15,
+				"kind": "interact",
+				"source": 10
+			},
+			{
+				"index": 11,
+				"kind": "interact",
+				"source": 16
+			},
+			{
+				"index": 5,
+				"kind": "interact",
+				"source": 10
+			},
+			{
+				"index": 5,
+				"kind": "move",
+				"source": 10
+			},
+			{
+				"index": 10,
+				"kind": "move",
+				"source": 11
+			},
+			{
+				"index": 21,
+				"kind": "move",
+				"source": 20
+			},
+			{
+				"index": 16,
+				"kind": "move",
+				"source": 21
+			},
+			{
+				"index": 11,
+				"kind": "move",
+				"source": 16
+			},
+			{
+				"index": 12,
+				"kind": "move",
+				"source": 11
+			},
+			{
+				"index": 13,
+				"kind": "interact",
+				"source": 12
+			},
+			{
+				"index": 13,
+				"kind": "move",
+				"source": 12
+			},
+			{
+				"index": 14,
+				"kind": "move",
+				"source": 13
+			}
+		],
+		"cutoff": false,
+		"moves": 13,
+		"optimal": true,
+		"visited": 9559,
+		"won": true
+	},
+	"2": {
+		"actions": [
+			{
+				"index": 10,
+				"kind": "move",
+				"source": 15
+			},
+			{
+				"index": 5,
+				"kind": "move",
+				"source": 10
+			},
+			{
+				"index": 6,
+				"kind": "move",
+				"source": 5
+			},
+			{
+				"index": 7,
+				"kind": "move",
+				"source": 6
+			},
+			{
+				"index": 8,
+				"kind": "move",
+				"source": 7
+			},
+			{
+				"index": 9,
+				"kind": "move",
+				"source": 8
+			}
+		],
+		"cutoff": false,
+		"moves": 6,
+		"optimal": true,
+		"visited": 9,
+		"won": true
+	},
+	"3": {
+		"actions": [
+			{
+				"index": 5,
+				"kind": "move",
+				"source": 10
+			},
+			{
+				"index": 6,
+				"kind": "move",
+				"source": 5
+			},
+			{
+				"index": 11,
+				"kind": "move",
+				"source": 16
+			},
+			{
+				"index": 7,
+				"kind": "move",
+				"source": 6
+			},
+			{
+				"index": 8,
+				"kind": "move",
+				"source": 7
+			}
+		],
+		"cutoff": false,
+		"moves": 5,
+		"optimal": true,
+		"visited": 30,
+		"won": true
+	},
+	"4": {
+		"actions": [
+			{
+				"index": 15,
+				"kind": "move",
+				"source": 10
+			},
+			{
+				"index": 16,
+				"kind": "move",
+				"source": 15
+			},
+			{
+				"index": 11,
+				"kind": "interact",
+				"source": 16
+			},
+			{
+				"index": 12,
+				"kind": "interact",
+				"source": 11
+			},
+			{
+				"index": 12,
+				"kind": "move",
+				"source": 11
+			},
+			{
+				"index": 13,
+				"kind": "move",
+				"source": 12
+			},
+			{
+				"index": 14,
+				"kind": "move",
+				"source": 13
+			}
+		],
+		"cutoff": false,
+		"moves": 7,
+		"optimal": true,
+		"visited": 47,
+		"won": true
+	},
+	"5": {
+		"actions": [
+			{
+				"index": 5,
+				"kind": "move",
+				"source": 10
+			},
+			{
+				"index": 6,
+				"kind": "move",
+				"source": 5
+			},
+			{
+				"index": 21,
+				"kind": "move",
+				"source": 20
+			},
+			{
+				"index": 22,
+				"kind": "move",
+				"source": 21
+			},
+			{
+				"index": 17,
+				"kind": "move",
+				"source": 22
+			},
+			{
+				"index": 12,
+				"kind": "move",
+				"source": 17
+			},
+			{
+				"index": 13,
+				"kind": "move",
+				"source": 12
+			},
+			{
+				"index": 14,
+				"kind": "move",
+				"source": 13
+			}
+		],
+		"cutoff": false,
+		"moves": 8,
+		"optimal": true,
+		"visited": 695,
+		"won": true
+	},
+	"6": {
+		"actions": [
+			{
+				"index": 11,
+				"kind": "move",
+				"source": 10
+			},
+			{
+				"index": 6,
+				"kind": "interact",
+				"source": 11
+			},
+			{
+				"index": 6,
+				"kind": "interact",
+				"source": 11
+			},
+			{
+				"index": 12,
+				"kind": "move",
+				"source": 11
+			},
+			{
+				"index": 13,
+				"kind": "move",
+				"source": 12
+			},
+			{
+				"index": 14,
+				"kind": "move",
+				"source": 13
+			}
+		],
+		"cutoff": false,
+		"moves": 6,
+		"optimal": true,
+		"visited": 173,
+		"won": true
+	},
+	"7": {
+		"actions": [
+			{
+				"index": 6,
+				"kind": "move",
+				"source": 5
+			},
+			{
+				"index": 16,
+				"kind": "move",
+				"source": 15
+			},
+			{
+				"index": 8,
+				"kind": "move",
+				"source": 6
+			},
+			{
+				"index": 9,
+				"kind": "move",
+				"source": 8
+			},
+			{
+				"index": 21,
+				"kind": "move",
+				"source": 16
+			}
+		],
+		"cutoff": false,
+		"moves": 5,
+		"optimal": true,
+		"visited": 77,
+		"won": true
+	},
+	"8": {
+		"actions": [
+			{
+				"index": 15,
+				"kind": "move",
+				"source": 10
+			},
+			{
+				"index": 16,
+				"kind": "move",
+				"source": 15
+			},
+			{
+				"index": 11,
+				"kind": "interact",
+				"source": 16
+			},
+			{
+				"index": 12,
+				"kind": "move",
+				"source": 11
+			},
+			{
+				"index": 15,
+				"kind": "move",
+				"source": 20
+			},
+			{
+				"index": 10,
+				"kind": "move",
+				"source": 15
+			},
+			{
+				"index": 11,
+				"kind": "move",
+				"source": 10
+			},
+			{
+				"index": 16,
+				"kind": "interact",
+				"source": 11
+			},
+			{
+				"index": 16,
+				"kind": "interact",
+				"source": 11
+			},
+			{
+				"index": 12,
+				"kind": "interact",
+				"source": 11
+			},
+			{
+				"index": 13,
+				"kind": "move",
+				"source": 12
+			},
+			{
+				"index": 14,
+				"kind": "move",
+				"source": 13
+			}
+		],
+		"cutoff": false,
+		"moves": 12,
+		"optimal": true,
+		"visited": 944,
+		"won": true
+	},
+	"9": {
+		"actions": [
+			{
+				"index": 10,
+				"kind": "move",
+				"source": 15
+			},
+			{
+				"index": 11,
+				"kind": "move",
+				"source": 10
+			},
+			{
+				"index": 6,
+				"kind": "interact",
+				"source": 11
+			},
+			{
+				"index": 12,
+				"kind": "move",
+				"source": 11
+			},
+			{
+				"index": 13,
+				"kind": "interact",
+				"source": 12
+			},
+			{
+				"index": 13,
+				"kind": "move",
+				"source": 12
+			},
+			{
+				"index": 14,
+				"kind": "move",
+				"source": 13
+			}
+		],
+		"cutoff": false,
+		"moves": 7,
+		"optimal": true,
+		"visited": 120,
+		"won": true
+	}
+}

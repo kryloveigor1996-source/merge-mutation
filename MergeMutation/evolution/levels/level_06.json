@@ -1,0 +1,104 @@
+{
+  "schema": "tactical_evolution_v1",
+  "id": "evolution_06",
+  "number": 6,
+  "name": "Слепая зона",
+  "difficulty": 3,
+  "available_species": [
+    "slime",
+    "horn",
+    "wing",
+    "eyeball"
+  ],
+  "initial": [
+    {
+      "cell": 10,
+      "evolution_stage": 1,
+      "species_id": "eyeball"
+    },
+    {
+      "cell": 16,
+      "evolution_stage": 1,
+      "species_id": "slime"
+    }
+  ],
+  "sequence": [],
+  "creation_limit": 0,
+  "spawn_points": [],
+  "move_limit": 10,
+  "blocked_cells": [
+    0,
+    1,
+    2,
+    3,
+    4,
+    8,
+    9,
+    18,
+    19,
+    20,
+    21,
+    22,
+    23,
+    24,
+    25,
+    26,
+    27,
+    28,
+    29
+  ],
+  "goals": [
+    {
+      "count": 1,
+      "type": "merge_count"
+    }
+  ],
+  "reward_coins": 0,
+  "reward_stars": 0,
+  "terrain": {},
+  "objects": [
+    {
+      "type": "hidden",
+      "id": "concealed",
+      "cell": 6
+    },
+    {
+      "type": "gate",
+      "id": "door",
+      "channel": "sensor",
+      "cell": 13
+    },
+    {
+      "type": "portal",
+      "id": "exit",
+      "species_id": "eyeball",
+      "cell": 14
+    }
+  ],
+  "circuits": [
+    {
+      "mode": "all",
+      "id": "sensor",
+      "inputs": [
+        "concealed"
+      ]
+    }
+  ],
+  "objectives": [
+    {
+      "text": "Активируйте скрытый механизм",
+      "type": "activate",
+      "ids": [
+        "concealed"
+      ],
+      "count": 1
+    },
+    {
+      "text": "Эвакуируйте Глазастика",
+      "type": "evacuate",
+      "species_id": "eyeball",
+      "count": 1
+    }
+  ],
+  "minimum_moves": 6
+}
