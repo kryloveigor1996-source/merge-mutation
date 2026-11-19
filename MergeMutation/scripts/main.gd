@@ -177,6 +177,7 @@ func _ready() -> void:
 	view.game = self
 	add_child(view)
 	resized.connect(view.layout)
+	if not Layout.world_legacy(): view.call_deferred("open_home")
 	set_process(true)
 	queue_redraw()
 	if write_blocked:

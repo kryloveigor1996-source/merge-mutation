@@ -1,0 +1,233 @@
+{
+  "version": 1,
+  "habitats": {
+    "habitat_horn": [
+      {
+        "threshold": 0,
+        "layer": "back",
+        "kind": "crack",
+        "positions": [
+          [
+            70,
+            100
+          ],
+          [
+            650,
+            170
+          ],
+          [
+            380,
+            60
+          ]
+        ],
+        "color": "b4a486",
+        "texture": ""
+      },
+      {
+        "threshold": 20,
+        "layer": "walls",
+        "kind": "sensor",
+        "positions": [
+          [
+            110,
+            80
+          ],
+          [
+            720,
+            110
+          ]
+        ],
+        "color": "9ab6b3",
+        "texture": ""
+      },
+      {
+        "threshold": 40,
+        "layer": "far",
+        "kind": "rock",
+        "positions": [
+          [
+            35,
+            220
+          ],
+          [
+            640,
+            230
+          ]
+        ],
+        "color": "a68e75",
+        "texture": ""
+      },
+      {
+        "threshold": 60,
+        "layer": "small",
+        "kind": "fossil",
+        "positions": [
+          [
+            60,
+            305
+          ],
+          [
+            680,
+            350
+          ]
+        ],
+        "color": "d5c597",
+        "texture": ""
+      },
+      {
+        "threshold": 80,
+        "layer": "front",
+        "kind": "shards",
+        "positions": [
+          [
+            35,
+            410
+          ],
+          [
+            920,
+            405
+          ]
+        ],
+        "color": "d5b470",
+        "texture": ""
+      },
+      {
+        "threshold": 100,
+        "layer": "atmosphere",
+        "kind": "dust",
+        "positions": [
+          [
+            100,
+            90
+          ],
+          [
+            330,
+            120
+          ],
+          [
+            590,
+            70
+          ],
+          [
+            780,
+            180
+          ]
+        ],
+        "color": "f0d7a2",
+        "texture": ""
+      }
+    ],
+    "habitat_slime": [
+      {
+        "threshold": 0,
+        "layer": "back",
+        "kind": "pipe",
+        "positions": [
+          [
+            40,
+            80
+          ],
+          [
+            620,
+            75
+          ]
+        ],
+        "color": "688d9d",
+        "texture": ""
+      },
+      {
+        "threshold": 20,
+        "layer": "walls",
+        "kind": "panel",
+        "positions": [
+          [
+            290,
+            100
+          ],
+          [
+            680,
+            85
+          ]
+        ],
+        "color": "b1d4ac",
+        "texture": ""
+      },
+      {
+        "threshold": 40,
+        "layer": "far",
+        "kind": "film",
+        "positions": [
+          [
+            25,
+            220
+          ],
+          [
+            650,
+            195
+          ]
+        ],
+        "color": "5d966d",
+        "texture": ""
+      },
+      {
+        "threshold": 60,
+        "layer": "small",
+        "kind": "fungus",
+        "positions": [
+          [
+            35,
+            295
+          ],
+          [
+            620,
+            310
+          ]
+        ],
+        "color": "c6e49b",
+        "texture": ""
+      },
+      {
+        "threshold": 80,
+        "layer": "front",
+        "kind": "vine",
+        "positions": [
+          [
+            15,
+            190
+          ],
+          [
+            930,
+            140
+          ]
+        ],
+        "color": "7bac89",
+        "texture": ""
+      },
+      {
+        "threshold": 100,
+        "layer": "atmosphere",
+        "kind": "bubbles",
+        "positions": [
+          [
+            75,
+            190
+          ],
+          [
+            390,
+            180
+          ],
+          [
+            600,
+            220
+          ],
+          [
+            900,
+            180
+          ]
+        ],
+        "color": "c1f9aa",
+        "texture": ""
+      }
+    ]
+  }
+}

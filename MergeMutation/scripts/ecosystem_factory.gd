@@ -3,7 +3,7 @@ const Index=preload("res://scripts/ecosystem_catalog.gd")
 const Living=preload("res://scripts/living_registry.gd")
 const Resident=preload("res://scripts/ecosystem_state.gd")
 const Renovation=preload("res://scripts/ecosystem_renovation.gd")
-static func create(complex_registry,save_path: String,config_path: String="res://data/ecosystems.json") -> Dictionary:
+static func create(complex_registry,save_path: String,config_path: String="") -> Dictionary:
 	var models: Dictionary={}
 	if not complex_registry.habitats.has("habitat_horn") and not complex_registry.habitats.has("habitat_slime"): return models
 	var index:=Index.new()

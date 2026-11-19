@@ -38,7 +38,7 @@ func run() -> void:
 		for slot in cat.slots.values():
 			check(slot.designs.size()==3,"three designs per ecosystem item")
 			check(slot.has("action") and slot.has("construction"),"world actions and construction are data driven")
-	var fixture: Dictionary=JSON.parse_string(FileAccess.get_file_as_string("res://data/ecosystems.json"))
+	var fixture: Dictionary=JSON.parse_string(FileAccess.get_file_as_string(Index.default_path()))
 	for problem in ["species","driver","size","negative_weight","habit","event","reference","motion"]:
 		var invalid:=fixture.duplicate(true)
 		match problem:

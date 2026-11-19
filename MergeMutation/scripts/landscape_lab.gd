@@ -7,7 +7,44 @@ const StoryLandscape=preload("res://scripts/landscape_story.gd")
 const EcoComplex=preload("res://scripts/ecosystem_complex.gd")
 const EcoPortal=preload("res://scripts/ecosystem_portal.gd")
 const AppChrome=preload("res://scripts/app_chrome.gd")
+const Bestiary=preload("res://scripts/bestiary_screen.gd")
+const Registry=preload("res://scripts/complex_registry.gd")
+const Factory=preload("res://scripts/ecosystem_factory.gd")
+var archive_return:=false
+var settings_return:=""
+func close_panel() -> void:
+	var destination: String=settings_return if panel_kind=="settings" and not Layout.world_legacy() else ""
+	if not destination.is_empty(): settings_return=""
+	super.close_panel()
+	match destination:
+		"complex": call_deferred("open_complex")
+		"portals": game.call_deferred("open_portals")
+		"bestiary": call_deferred("show_panel","collection")
 var landscape_buttons: Dictionary={}
+func open_home() -> void:
+	open_complex()
+	if game.campaign_progress.completed.is_empty() and not game.journey_state.has_seen("intro"):
+		show_story("intro")
+func open_sandbox() -> void:
+	close_panel()
+	close_navigation()
+	game.leave_campaign()
+	arrange()
+func habitat_status(id: String) -> Dictionary:
+	var source:=Registry.new()
+	source.load_files()
+	var room: Dictionary=source.get_habitat(id)
+	if room.is_empty(): return {"available":false,"progress":0,"reason":"Вольер не назначен"}
+	var models: Dictionary=complex_ui.living_models if is_instance_valid(complex_ui) else Factory.create(source,game.save_path)
+	if not models.has(id): return {"available":false,"progress":0,"reason":"Вольер пока закрыт"}
+	return {"available":true,"progress":models[id].renovation.progress(),"reason":""}
+func visit_from_bestiary(id: String) -> bool:
+	if not habitat_status(id).available: return false
+	close_panel()
+	open_complex()
+	if not complex_ui.navigate_to_habitat(id,false): return false
+	archive_return=true
+	return complex_ui.open_living(id)
 var app_chrome: Control
 func make_portal(): return PortalLandscape.new() if Layout.ecosystem_legacy() else EcoPortal.new()
 func make_experiment(): return ExperimentLandscape.new()
@@ -124,6 +161,16 @@ func draw_text_block(value: String,rect: Rect2,font_size: int) -> void:
 		if y>rect.end.y-font_size: break
 	label(line,Vector2(rect.position.x,y),font_size)
 func show_panel(kind: String) -> void:
+	if kind=="collection" and not Layout.world_legacy():
+		game._cancel_drag()
+		close_panel()
+		close_navigation()
+		panel_kind="collection"
+		overlay=Bestiary.new()
+		overlay.z_index=40
+		overlay.setup(game)
+		add_child(overlay)
+		return
 	super.show_panel(kind)
 	overlay.size=Layout.DESIGN
 	var shade: ColorRect=overlay.get_child(0)

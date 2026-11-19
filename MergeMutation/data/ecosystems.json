@@ -157,10 +157,10 @@
         "bubble_rest"
       ],
       "species_id": "slime",
-      "room_size": "M",
+      "room_size": "S",
       "habitat_id": "habitat_slime",
       "movement_driver": "slime_crawl",
-      "start_x": 560,
+      "start_x": 360,
       "rare_events": [
         {
           "weight": 1,

@@ -2,6 +2,7 @@ extends Control
 const Actor=preload("res://scripts/habitat_actor.gd")
 const W=preload("res://scripts/journey_widgets.gd")
 const RenovationArt=preload("res://scripts/renovation_art.gd")
+const Progression=preload("res://scripts/environment_progression.gd")
 const EcosystemActor=preload("res://scripts/ecosystem_actor.gd")
 var model
 var world: Node2D
@@ -22,7 +23,10 @@ func setup(value,area_size: Vector2,view_width: float=0) -> void:
 	visible_width=view_width if view_width>0 else minf(model.registry.world_width,940)
 	world.scale=area_size/Vector2(visible_width,420)
 	add_child(world)
-	for id in ["back","far","ground","objects","mutant","front","light"]:
+	var layer_ids: Array=["back","far","ground","objects","mutant","front","light"]
+	if model.has_method("configure_ecology") and "--living-world-legacy" not in OS.get_cmdline_user_args():
+		layer_ids=["back","walls","far","ground","small","objects","mutant","front","light","atmosphere"]
+	for id in layer_ids:
 		var layer:=Node2D.new()
 		layer.name=id.capitalize()
 		world.add_child(layer)
@@ -54,9 +58,11 @@ func _process(delta: float) -> void:
 	actor.pose(delta,world.scale)
 	layers.objects.queue_redraw()
 	layers.light.queue_redraw()
+	if layers.has("atmosphere"): layers.atmosphere.queue_redraw()
 func draw_layer(id: String) -> void:
 	if model.has_method("renovation_objects"):
 		RenovationArt.draw_layer(self,id)
+		if model.has_method("configure_ecology"): Progression.draw(self,id)
 		return
 	var node: Node2D=layers[id]
 	var stage: Dictionary=model.registry.stages[model.stage]

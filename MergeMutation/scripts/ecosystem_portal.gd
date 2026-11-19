@@ -1,6 +1,11 @@
 extends "res://scripts/landscape_portal.gd"
 const Chrome=preload("res://scripts/app_chrome.gd")
 var chrome: Control
+func close_to_lab() -> void:
+	if L.world_legacy(): super.close_to_lab()
+	else:
+		hide()
+		lab_view.open_complex()
 func mount_chrome() -> void:
 	chrome=Chrome.new()
 	chrome.setup(game,"portals")
@@ -12,6 +17,10 @@ func build_hub() -> void:
 	for child in get_children():
 		if child is Label and child.position.y==468: L.place(child,Rect2(20,454,600,24))
 	mount_chrome()
+	if not L.world_legacy():
+		for child in get_children():
+			if child is Label and child.position.y==454: child.hide()
+		W.button(self,"SandboxZone","⚗  ЭКСПЕРИМЕНТАЛЬНАЯ ЛАБОРАТОРИЯ · ПЕСОЧНИЦА",Rect2(26,424,580,44),func(): lab_view.open_sandbox(),Color("bde4cc"))
 func open_map(id: String) -> bool:
 	if not super.open_map(id): return false
 	L.place(map_scroll,Rect2(280,72,660,400))
