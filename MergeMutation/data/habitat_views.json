@@ -1,0 +1,79 @@
+{
+  "version": 1,
+  "rooms": {
+    "habitat_slime": {
+      "space_type": "auto",
+      "world_height": 420,
+      "initial_focus": "resident",
+      "view_fraction": 0.8,
+      "zoom_min": 0.45,
+      "zoom_max": 1.4,
+      "axes": [
+        "x"
+      ],
+      "zone_overview": false,
+      "resident_pixels": 128,
+      "zone_min_world_width": 1400,
+      "fractions_by_size": {
+        "S": 0.8,
+        "M": 0.58,
+        "L": 0.42,
+        "XL": 0.3
+      },
+      "focus_points": [
+        {
+          "id": "west",
+          "name": "Купель",
+          "x_fraction": 0.16666666666666666
+        },
+        {
+          "id": "central",
+          "name": "Среда",
+          "x_fraction": 0.5
+        },
+        {
+          "id": "east",
+          "name": "Плазма",
+          "x_fraction": 0.8333333333333334
+        }
+      ]
+    },
+    "habitat_horn": {
+      "space_type": "auto",
+      "world_height": 420,
+      "initial_focus": "resident",
+      "view_fraction": 0.76,
+      "zoom_min": 0.35,
+      "zoom_max": 1.5,
+      "axes": [
+        "x"
+      ],
+      "zone_overview": false,
+      "resident_pixels": 140,
+      "zone_min_world_width": 1400,
+      "fractions_by_size": {
+        "S": 0.76,
+        "M": 0.48,
+        "L": 0.38,
+        "XL": 0.28
+      },
+      "focus_points": [
+        {
+          "id": "west",
+          "name": "Отдых",
+          "x_fraction": 0.16666666666666666
+        },
+        {
+          "id": "central",
+          "name": "Игра",
+          "x_fraction": 0.5
+        },
+        {
+          "id": "east",
+          "name": "Корм",
+          "x_fraction": 0.8333333333333334
+        }
+      ]
+    }
+  }
+}

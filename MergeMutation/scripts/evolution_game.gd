@@ -1,4 +1,5 @@
 extends "res://scripts/core_game.gd"
+const MobileView=preload("res://scripts/mobile_lab.gd")
 const EvolutionView=preload("res://scripts/evolution_lab.gd")
 const Movement=preload("res://scripts/evolution_movement.gd")
 var tap_source=-1
@@ -8,7 +9,7 @@ var previous_bio=0
 func make_view():
 	var isolated: bool=save_path.begins_with("res://.godot/") or ProjectSettings.globalize_path(save_path).contains("/.godot/")
 	if legacy_mode() or (not OS.has_feature("android") and isolated and "--pr21-regression" in OS.get_cmdline_user_args()): return super.make_view()
-	return EvolutionView.new()
+	return EvolutionView.new() if not OS.has_feature("android") and isolated and "--pr22-regression" in OS.get_cmdline_user_args() else MobileView.new()
 func evolved_ui() -> bool: return is_instance_valid(view) and view.has_method("native_design")
 func _ready() -> void:
 	super._ready()
@@ -127,3 +128,7 @@ func _gui_input(event: InputEvent) -> void:
 	if evolved_ui() and event is InputEventScreenTouch and event.canceled and event.index==0:
 		tap_source=-1; _cancel_drag(); accept_event(); return
 	super._gui_input(event)
+
+func _notice(value: String) -> void:
+	super._notice(value)
+	if is_instance_valid(view) and view.has_method("show_notice"): view.show_notice(value)

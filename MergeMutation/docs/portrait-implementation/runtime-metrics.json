@@ -1,0 +1,422 @@
+[
+	{
+		"logical": [
+			540.0,
+			960.0
+		],
+		"observation_height": 836.0,
+		"pixels": [
+			360.0,
+			640.0
+		],
+		"portrait": true,
+		"room_view_fraction": 0.8,
+		"safe": false,
+		"touch_dp": 56.0
+	},
+	{
+		"logical": [
+			540.0,
+			951.428527832031
+		],
+		"observation_height": 827.428527832031,
+		"pixels": [
+			360.0,
+			640.0
+		],
+		"portrait": true,
+		"room_view_fraction": 0.8,
+		"safe": true,
+		"touch_dp": 52.2666666666667
+	},
+	{
+		"logical": [
+			960.0,
+			540.0
+		],
+		"observation_height": 416.0,
+		"pixels": [
+			640.0,
+			360.0
+		],
+		"portrait": false,
+		"room_view_fraction": 0.8,
+		"safe": false,
+		"touch_dp": 56.0
+	},
+	{
+		"logical": [
+			1066.15380859375,
+			540.0
+		],
+		"observation_height": 416.0,
+		"pixels": [
+			640.0,
+			360.0
+		],
+		"portrait": false,
+		"room_view_fraction": 0.8,
+		"safe": true,
+		"touch_dp": 48.5333333333333
+	},
+	{
+		"logical": [
+			540.0,
+			1080.0
+		],
+		"observation_height": 956.0,
+		"pixels": [
+			360.0,
+			720.0
+		],
+		"portrait": true,
+		"room_view_fraction": 0.8,
+		"safe": false,
+		"touch_dp": 56.0
+	},
+	{
+		"logical": [
+			540.0,
+			1080.0
+		],
+		"observation_height": 956.0,
+		"pixels": [
+			360.0,
+			720.0
+		],
+		"portrait": true,
+		"room_view_fraction": 0.8,
+		"safe": true,
+		"touch_dp": 52.2666666666667
+	},
+	{
+		"logical": [
+			1080.0,
+			540.0
+		],
+		"observation_height": 416.0,
+		"pixels": [
+			720.0,
+			360.0
+		],
+		"portrait": false,
+		"room_view_fraction": 0.80243160166639,
+		"safe": false,
+		"touch_dp": 56.0
+	},
+	{
+		"logical": [
+			1204.61535644531,
+			540.0
+		],
+		"observation_height": 416.0,
+		"pixels": [
+			720.0,
+			360.0
+		],
+		"portrait": false,
+		"room_view_fraction": 0.897124140313331,
+		"safe": true,
+		"touch_dp": 48.5333333333333
+	},
+	{
+		"logical": [
+			540.0,
+			1200.0
+		],
+		"observation_height": 1076.0,
+		"pixels": [
+			360.0,
+			800.0
+		],
+		"portrait": true,
+		"room_view_fraction": 0.8,
+		"safe": false,
+		"touch_dp": 56.0
+	},
+	{
+		"logical": [
+			540.0,
+			1208.57141113281
+		],
+		"observation_height": 1084.57141113281,
+		"pixels": [
+			360.0,
+			800.0
+		],
+		"portrait": true,
+		"room_view_fraction": 0.8,
+		"safe": true,
+		"touch_dp": 52.2666666666667
+	},
+	{
+		"logical": [
+			1200.0,
+			540.0
+		],
+		"observation_height": 416.0,
+		"pixels": [
+			800.0,
+			360.0
+		],
+		"portrait": false,
+		"room_view_fraction": 0.893617021276596,
+		"safe": false,
+		"touch_dp": 56.0
+	},
+	{
+		"logical": [
+			1343.07690429688,
+			540.0
+		],
+		"observation_height": 416.0,
+		"pixels": [
+			800.0,
+			360.0
+		],
+		"portrait": false,
+		"room_view_fraction": 1.0023381010015,
+		"safe": true,
+		"touch_dp": 48.5333333333333
+	},
+	{
+		"logical": [
+			540.0,
+			1199.27185058594
+		],
+		"observation_height": 1075.27185058594,
+		"pixels": [
+			412.0,
+			915.0
+		],
+		"portrait": true,
+		"room_view_fraction": 0.8,
+		"safe": false,
+		"touch_dp": 56.0
+	},
+	{
+		"logical": [
+			540.0,
+			1207.79125976563
+		],
+		"observation_height": 1083.79125976563,
+		"pixels": [
+			412.0,
+			915.0
+		],
+		"portrait": true,
+		"room_view_fraction": 0.8,
+		"safe": true,
+		"touch_dp": 52.2666655605279
+	},
+	{
+		"logical": [
+			1199.27185058594,
+			540.0
+		],
+		"observation_height": 416.0,
+		"pixels": [
+			915.0,
+			412.0
+		],
+		"portrait": false,
+		"room_view_fraction": 0.893063744078291,
+		"safe": false,
+		"touch_dp": 56.0
+	},
+	{
+		"logical": [
+			1342.23681640625,
+			540.0
+		],
+		"observation_height": 416.0,
+		"pixels": [
+			915.0,
+			412.0
+		],
+		"portrait": false,
+		"room_view_fraction": 1.00169969923953,
+		"safe": true,
+		"touch_dp": 48.5333269730355
+	},
+	{
+		"logical": [
+			540.0,
+			960.0
+		],
+		"observation_height": 836.0,
+		"pixels": [
+			540.0,
+			960.0
+		],
+		"portrait": true,
+		"room_view_fraction": 0.8,
+		"safe": false,
+		"touch_dp": 56.0
+	},
+	{
+		"logical": [
+			540.0,
+			951.428588867188
+		],
+		"observation_height": 827.428588867188,
+		"pixels": [
+			540.0,
+			960.0
+		],
+		"portrait": true,
+		"room_view_fraction": 0.8,
+		"safe": true,
+		"touch_dp": 52.2666666666667
+	},
+	{
+		"logical": [
+			960.0,
+			540.0
+		],
+		"observation_height": 416.0,
+		"pixels": [
+			960.0,
+			540.0
+		],
+		"portrait": false,
+		"room_view_fraction": 0.8,
+		"safe": false,
+		"touch_dp": 56.0
+	},
+	{
+		"logical": [
+			1066.15380859375,
+			540.0
+		],
+		"observation_height": 416.0,
+		"pixels": [
+			960.0,
+			540.0
+		],
+		"portrait": false,
+		"room_view_fraction": 0.8,
+		"safe": true,
+		"touch_dp": 48.5333333333333
+	},
+	{
+		"logical": [
+			540.0,
+			1170.0
+		],
+		"observation_height": 1046.0,
+		"pixels": [
+			540.0,
+			1170.0
+		],
+		"portrait": true,
+		"room_view_fraction": 0.8,
+		"safe": false,
+		"touch_dp": 56.0
+	},
+	{
+		"logical": [
+			540.0,
+			1176.42858886719
+		],
+		"observation_height": 1052.42858886719,
+		"pixels": [
+			540.0,
+			1170.0
+		],
+		"portrait": true,
+		"room_view_fraction": 0.8,
+		"safe": true,
+		"touch_dp": 52.2666666666667
+	},
+	{
+		"logical": [
+			1170.0,
+			540.0
+		],
+		"observation_height": 416.0,
+		"pixels": [
+			1170.0,
+			540.0
+		],
+		"portrait": false,
+		"room_view_fraction": 0.870820715072307,
+		"safe": false,
+		"touch_dp": 56.0
+	},
+	{
+		"logical": [
+			1308.46154785156,
+			540.0
+		],
+		"observation_height": 416.0,
+		"pixels": [
+			1170.0,
+			540.0
+		],
+		"portrait": false,
+		"room_view_fraction": 0.976034610829455,
+		"safe": true,
+		"touch_dp": 48.5333333333333
+	},
+	{
+		"logical": [
+			540.0,
+			1200.0
+		],
+		"observation_height": 1076.0,
+		"pixels": [
+			540.0,
+			1200.0
+		],
+		"portrait": true,
+		"room_view_fraction": 0.8,
+		"safe": false,
+		"touch_dp": 56.0
+	},
+	{
+		"logical": [
+			540.0,
+			1208.57141113281
+		],
+		"observation_height": 1084.57141113281,
+		"pixels": [
+			540.0,
+			1200.0
+		],
+		"portrait": true,
+		"room_view_fraction": 0.8,
+		"safe": true,
+		"touch_dp": 52.2666666666667
+	},
+	{
+		"logical": [
+			1200.0,
+			540.0
+		],
+		"observation_height": 416.0,
+		"pixels": [
+			1200.0,
+			540.0
+		],
+		"portrait": false,
+		"room_view_fraction": 0.893617021276596,
+		"safe": false,
+		"touch_dp": 56.0
+	},
+	{
+		"logical": [
+			1343.07690429688,
+			540.0
+		],
+		"observation_height": 416.0,
+		"pixels": [
+			1200.0,
+			540.0
+		],
+		"portrait": false,
+		"room_view_fraction": 1.0023381010015,
+		"safe": true,
+		"touch_dp": 48.5333333333333
+	}
+]
